@@ -16,9 +16,9 @@ public:
 	void SetY(int y);
 	int GetX();
 	int GetY();
-	void setHp(uint8_t hp);
-	void SetScore(uint8_t score);
-	void SetPoints(int points);
+	//void SetHp(uint8_t hp); //might change to UpdateHp() since the hp value is set to 3 by default
+	//void SetScore(uint8_t score);
+	//void SetPoints(int points);
 	uint8_t GetHp();
 	uint8_t GetScore();
 	int GetPoints();
