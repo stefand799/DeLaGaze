@@ -3,9 +3,9 @@
 
 class BreakableBlock: public Block{
 public:
-	void render() override;
-	void print() override;
-	void onBreak();
+	virtual void render() override;
+	virtual void print() override;
+	virtual void onBreak();
 private:
 };
 
