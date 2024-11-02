@@ -3,8 +3,8 @@
 
 class UnbreakableBlock : public Block{
 public:
-	void render() override;
-	void print() override;
+	virtual void render() override;
+	virtual void print() override;
 private:
 };
 
