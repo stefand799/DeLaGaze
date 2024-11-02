@@ -134,6 +134,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="Pathway.cpp" />
+    <ClCompile Include="Player.cpp" />
     <ClCompile Include="UnbreakableBlock.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -143,6 +144,7 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="Pathway.h" />
+    <ClInclude Include="Player.h" />
     <ClInclude Include="UnbreakableBlock.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
