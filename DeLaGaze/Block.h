@@ -3,10 +3,10 @@
 
 class Block : public Object {
 public:
-	void render() override;
+	virtual void render() override =0;
 	//OR
 	//void render(int x, int y) override;
-	void print() override;
+	virtual void print() override =0;
 private:
 
 };
