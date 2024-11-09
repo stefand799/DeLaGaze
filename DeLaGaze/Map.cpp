@@ -1,22 +1,11 @@
 #include "Map.h"
 
-Map::Map()
+Map::Map(uint32_t seed /*= std::random_device{}()*/) :
+	m_seed {seed},
+	m_generator {seed}
 {
-	//Setting pseudo-random seed using chrono
-	m_seed = static_cast<uint32_t>(std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count());
-	srand(m_seed);
 
-	//Random generation of map dimentions
-	m_mapWidth = rand() % (kMaxMapWidth - kMinMapWidth) + kMinMapWidth;
-	//Generating random width size untill length is larger
-	while ((m_mapHeight = rand() % (kMaxMapHeight - kMminMapHeight) + kMminMapHeight) >= m_mapWidth) {}
-
-	m_matrix.resize(m_mapHeight);
-	for (std::vector<Object*>& line : m_matrix) {
-		line.resize(m_mapWidth);
-	}
-
-	__DEBUG_MAP__();
+	__DEBUG_MAP_SEED__();
 }
 
 const std::vector<Object*>& Map::operator[](size_t line) const
@@ -30,9 +19,42 @@ std::vector<Object*>& Map::operator[](size_t line)
 	return m_matrix[line];
 }
 
+bool Map::generate(const std::vector<Object*>& objects)
+{
+	//Initializing objects
+	m_objects = objects;
+	
+	generateDimensions();
 
 
-void Map::__DEBUG_MAP__() {
-	std::cout << "Width: " << (int)m_mapWidth << "\nHeight:" << (int)m_mapHeight << "\n"; //FOR DEBUGGING
+	__DEBUG_MAP_DIM__();
+
+	return true;
+}
+
+void Map::generateDimensions() {
+
+	// Defining distributions for width
+	std::uniform_int_distribution<> widthDist(kMinMapWidth, kMaxMapWidth);
+	m_mapWidth = widthDist(m_generator); // Generate width within range
+
+	// Generate height to ensure m_mapHeight <= m_mapWidth
+	std::uniform_int_distribution<> heightDist(kMinMapHeight, std::min(kMaxMapHeight, m_mapWidth));
+	m_mapHeight = heightDist(m_generator);
+
+	// Resize and initialize the matrix
+	m_matrix.resize(m_mapHeight, std::vector<Object*>(m_mapWidth));
+}
+
+
+
+
+void Map::__DEBUG_MAP_DIM__() {
+	std::cout << "Width: " << (int)m_mapWidth << "\nHeight:" << (int)m_mapHeight << std::endl; //FOR DEBUGGING
 	for (auto l : m_matrix) { for (auto c : l) std::cout << "x "; std::cout << "\n"; }
+}
+
+void Map::__DEBUG_MAP_SEED__()
+{
+	std::cout << "Seed:" << m_seed << std::endl;
 }

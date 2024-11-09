@@ -3,35 +3,44 @@
 #include <iostream>
 #include <vector>
 #include <chrono>
+#include <random>
 
 class Map
 {
 public:
-	Map();
+	Map(uint32_t seed = std::random_device{}()); //TODO IDEA: implementation of custom seed when creating a new game
 	~Map() = default;
 
-	//Getter and or Setter
+	//Getter
 	const std::vector<Object*>& operator[](size_t line) const;
+	//Getter and/or setter
 	std::vector<Object*>& operator[](size_t line);
 
-	bool generateMap(std::vector<Object*>& objects);
+	bool generate(const std::vector<Object*>& objects);
 
 
-private:
 	//Methods
+private:
+	void generateDimensions();
 
-//Constants
-	const uint8_t kMinMapWidth = 12, kMminMapHeight = 8,
-		kMaxMapWidth = 20, kMaxMapHeight = 12; // Magic numbers :)) taking as a reference 50px, 1920/50 = 38.4 and 1080/50 = 21.6
+
+	//Constants
+private:
+	const uint8_t kMinMapWidth = 12, kMinMapHeight = 8,
+		kMaxMapWidth = 20, kMaxMapHeight = 12;
 
 	//Atributes
+private:
 	std::vector<std::vector<Object*>> m_matrix;
 	std::vector<Object*> m_objects;
 	uint8_t m_mapWidth, m_mapHeight;
-	uint32_t m_seed; //IDEA: *using a constructor* implementation of custom seed when creating a new game
+	uint32_t m_seed;
+	std::mt19937 m_generator; // Mersenne Twister 19937 generator
 
 
 	//DEBUG METHODS:
-	void __DEBUG_MAP__();
+private:
+	void __DEBUG_MAP_DIM__();
+	void __DEBUG_MAP_SEED__();
 };
 
