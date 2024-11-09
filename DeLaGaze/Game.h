@@ -1,7 +1,12 @@
 #pragma once
 
 #include "Object.h"
-#include "Block.h"
+#include "UnbreakableBlock.h"
+#include "BreakableBlock.h"
+#include "Pathway.h"
+#include "BombTrapBlock.h"
+#include "Player.h"
+#include "Map.h"
 #include <vector>
 #include <cstdint>
 #include <random>
@@ -14,17 +19,19 @@ public:
 
 private:
 	//Methods
-
 	//Constants
-	const uint8_t kMinMapLength = 10, kMminMapWidth = 10,
-		kMaxMapLength = 38, kMaxMapWidth = 21; // Magic numbers :)) taking as a reference 50px, 1920/50 = 38.4 and 1080/50 = 21.6
+
+	const UnbreakableBlock* m_unbreakableBlock;
+	const BreakableBlock* m_breakableBlock;
+	const Pathway* m_pathway;
+	
 
 	//Atributes
-	std::vector<std::vector<Object*>> m_map;
-	uint8_t m_mapLength, m_mapWidth;
-	uint32_t m_seed; //IDEA: *using a constructor* implementation of custom seed when creating a new game
+	Map m_map;
+
+	
 
 
 	//DEBUG METHODS:
-	void __DEBUG_MAP__();
+	
 };
