@@ -15,6 +15,7 @@ class Game {
 public:
 	Game();
 	~Game();
+	void breakBlock(int i, int j);
 
 private:
 	//Methods

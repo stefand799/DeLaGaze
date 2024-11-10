@@ -1,4 +1,7 @@
 #include "game.h"
+#include <crow.h>
+#include <cpr/cpr.h>     
+#include <sqlite_orm/sqlite_orm.h>
 
 int main() {
 	Game* game = new Game();
