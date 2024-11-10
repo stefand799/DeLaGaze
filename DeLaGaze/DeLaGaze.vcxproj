@@ -140,6 +140,7 @@
     <ClCompile Include="Pathway.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="UnbreakableBlock.cpp" />
+    <ClCompile Include="Wall.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Block.h" />
@@ -154,6 +155,7 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="State.h" />
     <ClInclude Include="UnbreakableBlock.h" />
+    <ClInclude Include="Wall.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

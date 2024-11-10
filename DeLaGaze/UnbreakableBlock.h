@@ -1,7 +1,7 @@
 #pragma once
-#include "Block.h"
+#include "Wall.h"
 
-class UnbreakableBlock : public Block{
+class UnbreakableBlock : public Wall{
 public:
 	virtual void render() override;
 	virtual void print() override;
