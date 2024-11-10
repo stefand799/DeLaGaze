@@ -3,8 +3,9 @@
 
 class UnbreakableBlock : public Wall{
 public:
-	virtual void render() override;
-	virtual void print() override;
+	 void render() override;
+	 void print() override;
+	 bool canMoveHere(int i, int j) override;
 private:
 };
 

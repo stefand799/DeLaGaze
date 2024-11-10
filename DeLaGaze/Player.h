@@ -10,6 +10,7 @@ private:
 public:
 	Player();
 	~Player();
+	bool canMoveHere(int i,int j) override;
 	void render() override;
 	void print() override;
 	void SetX(int x);

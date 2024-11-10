@@ -9,6 +9,9 @@ Player::Player()
 Player::~Player()
 {
 }
+bool Player::canMoveHere(int i,int j){
+	return false;
+}
 void Player::render() 
 {
 

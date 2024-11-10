@@ -8,5 +8,6 @@ public:
 	//OR
 	//virtual void render(int x, int y) = 0;
 	virtual void print() = 0;
+	virtual bool canMoveHere(int i,int j) = 0;
 private:
 };

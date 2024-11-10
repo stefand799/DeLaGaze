@@ -9,3 +9,7 @@ void BreakableBlock::print() {
 
 void BreakableBlock::onBreak(){
 }
+
+bool BreakableBlock::canMoveHere(int i, int j){
+	return false;
+}
