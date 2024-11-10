@@ -1,5 +1,8 @@
 #include "Player.h"
 
+Player::Player(const std::pair<int, int>& pos, const std::string_view& username, uint8_t points, uint8_t speed, Direction Facing, State PlayerState, uint8_t score = 0, uint8_t hp = 3)
+	:Object(pos), m_username{ username }, m_points{ points }, m_speed{ speed }, m_facing{ Facing }, m_playerState{ PlayerState }, m_score{ score }, m_hp{ hp } {};
+
 bool Player::canMoveHere(int i,int j){
 	return false;
 }
@@ -40,7 +43,7 @@ int Player::GetX() const
 {
 	return m_x;
 }
-Direction Player::GetDirection() const
+Direction Player::GetFacing() const
 {
 	return m_facing;
 }
@@ -49,3 +52,8 @@ State Player::GetPlayerState() const
 	return m_playerState;
 }
 
+void Player::SetFacing(const Direction& facing) { m_facing = facing; }
+
+void Player::SetUsername(const std::string_view& username) { m_username = username; }
+
+std::string Player::GetUsername() const { return m_username; }

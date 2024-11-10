@@ -16,6 +16,8 @@ public:
 	Game();
 	~Game();
 	void breakBlock(int i, int j);
+	void addPlayer(const Player& player);
+	void removePlayer(const Player& player);
 
 private:
 	//Methods
@@ -28,7 +30,7 @@ private:
 
 	//Atributes
 	Map m_map;
-
+	std::vector<Player> Player;
 	
 
 

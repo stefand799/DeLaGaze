@@ -5,10 +5,13 @@
 #include "State.h"
 #include "Bullet.h"
 #include <vector>
+#include <utility>
+#include <cstdint>
+
 class Player: public Object{
 public:
 	Player() = default;
-	Player(const std::string_view& username, uint8_t points, uint8_t speed, Direction Facing, State PlayerState, uint8_t score = 0, uint8_t hp = 3);
+	Player(const std::pair<int,int>& pos, const std::string_view& username, uint8_t points, uint8_t speed, Direction Facing, State PlayerState, uint8_t score = 0, uint8_t hp = 3);
 	bool canMoveHere(int i,int j) override;
 	void render() override;
 	void print() override;
@@ -27,7 +30,7 @@ public:
 	void SetUsername(const std::string_view& username);
 	void SetFacing(const Direction& facing);
 	void SetPlayerState(const State& playerState);
-	Direction GetDirection() const;
+	Direction GetFacing() const;
 	State GetPlayerState() const;
 private:
 	uint8_t m_hp : 2;
