@@ -36,20 +36,21 @@ public:
 
 	//Methods
 private:
+	bool verifyObjectsAndProbabilities();
 	void generateDimensions();
 	bool generateStructures();
 
 
 	//Constants
 private:
-	const uint8_t kMinMapWidth = 12, kMinMapHeight = 8,
-		kMaxMapWidth = 20, kMaxMapHeight = 12;
+	const uint8_t kMinMapWidth { 12 }, kMinMapHeight { 8 },
+		kMaxMapWidth { 20 }, kMaxMapHeight  { 12 };
 	std::vector<uint8_t> kProbabilities{
 		35, /*Pathway*/
 		25, /*UnbreakableBlock*/
 		40, /*BreakableBlock*/
 	};
-	const uint8_t kTotalBombCount = 3;
+	const uint8_t kTotalBombCount{ 3 };
 
 	//Atributes
 private:

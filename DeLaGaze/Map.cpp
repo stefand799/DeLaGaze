@@ -19,7 +19,10 @@ bool Map::generate(const std::vector<Object*>& objects, const std::vector<uint8_
 	m_seed = seed;
 	m_generator.seed(seed);
 
-	//TODO: Verify if the objects are in order using dynamic cast
+	if (!verifyObjectsAndProbabilities()) {
+		std::cerr << "Objects and/or probabilities provided for map generation are invalid.\n";
+		return false;
+	}
 
 	//Generating
 	generateDimensions();
@@ -29,13 +32,29 @@ bool Map::generate(const std::vector<Object*>& objects, const std::vector<uint8_
 
 	//__DEBUG_MAP_SEED__();
 	//__DEBUG_MAP_DIM__();
-	//__DEBUG_MAP_PRINT__();
+	__DEBUG_MAP_PRINT__();
 
 	return true;
 
 }
 
 
+
+bool Map::verifyObjectsAndProbabilities()
+{
+	if (m_objects.size() < 3) return false;
+	if (m_probabilities.size() != m_objects.size()) return false;
+
+	if (!(dynamic_cast<Pathway*>(m_objects[0]))) return false;
+	if (!(dynamic_cast<UnbreakableBlock*>(m_objects[1]))) return false; // if pathway will remain unbreakable block, this will always not work
+	if (!(dynamic_cast<BreakableBlock*>(m_objects[2]))) return false;
+
+	int sumOfProbabilities = 0;
+	for (int it : m_probabilities) sumOfProbabilities += it;
+	if (sumOfProbabilities > 100 || sumOfProbabilities < 100 || sumOfProbabilities < 0) return false;
+
+	return true;
+}
 
 void Map::generateDimensions() {
 
@@ -51,10 +70,7 @@ void Map::generateDimensions() {
 	m_matrix.resize(m_mapHeight, std::vector<Object*>(m_mapWidth));
 }
 
-bool Map::generateStructures()
-{
-	if (m_objects.size() < 3) return false;
-
+bool Map::generateStructures() {
 	// Defining distrubutions for random object generation
 	std::uniform_int_distribution<> objectRandomNumber(0, 99);
 	// Generating random objects according to probabilities
