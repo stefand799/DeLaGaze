@@ -1,7 +1,5 @@
 #include "Player.h"
 
-
-
 bool Player::canMoveHere(int i,int j){
 	return false;
 }
@@ -41,5 +39,13 @@ void Player::SetX(const int& x)
 int Player::GetX() const
 {
 	return m_x;
+}
+Direction Player::GetDirection() const
+{
+	return m_facing;
+}
+State Player::GetPlayerState() const
+{
+	return m_playerState;
 }
 
