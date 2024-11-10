@@ -1,36 +1,41 @@
 #include "Map.h"
 
-Map::Map(uint32_t seed /*= std::random_device{}()*/) :
-	m_seed {seed},
-	m_generator {seed}
-{
 
-	__DEBUG_MAP_SEED__();
-}
 
 const std::vector<Object*>& Map::operator[](size_t line) const
 {
-	std::cout << "const\n";
 	return m_matrix[line];
 }
 std::vector<Object*>& Map::operator[](size_t line)
 {
-	std::cout << "not const\n";
 	return m_matrix[line];
 }
 
-bool Map::generate(const std::vector<Object*>& objects)
+bool Map::generate(const std::vector<Object*>& objects, const std::vector<uint8_t>& probabilities, uint32_t seed)
 {
 	//Initializing objects
 	m_objects = objects;
-	
+	m_probabilities = probabilities;
+	m_seed = seed;
+	m_generator.seed(seed);
+
+	//TODO: Verify if the objects are in order using dynamic cast
+
+	//Generating
 	generateDimensions();
+	generateStructures();
 
+	// TODO: Verify if there are any isolated spaces and make paths accordingly
 
-	__DEBUG_MAP_DIM__();
+	//__DEBUG_MAP_SEED__();
+	//__DEBUG_MAP_DIM__();
+	//__DEBUG_MAP_PRINT__();
 
 	return true;
+
 }
+
+
 
 void Map::generateDimensions() {
 
@@ -46,6 +51,42 @@ void Map::generateDimensions() {
 	m_matrix.resize(m_mapHeight, std::vector<Object*>(m_mapWidth));
 }
 
+bool Map::generateStructures()
+{
+	if (m_objects.size() < 3) return false;
+
+	// Defining distrubutions for random object generation
+	std::uniform_int_distribution<> objectRandomNumber(0, 99);
+	// Generating random objects according to probabilities
+	for (std::vector<Object*>& line : m_matrix) {
+		for (Object*& object : line) {
+			uint8_t sum = 0;
+			uint8_t current = 0;
+			uint8_t randomNumber = objectRandomNumber(m_generator);
+			for (; sum < 100 && current < m_objects.size(); ++current) {
+				if (randomNumber >= sum && randomNumber < sum + m_probabilities[current]) {
+					object = m_objects[current];
+					break;
+				}
+				sum += m_probabilities[current];
+			}
+		}
+	}
+
+	// Making sure the corners are paths;
+	m_matrix[0][0] = m_objects[0];
+	m_matrix[0][m_mapWidth-1] = m_objects[0];
+	m_matrix[m_mapHeight-1][0] = m_objects[0];
+	m_matrix[m_mapHeight-1][m_mapWidth-1] = m_objects[0];
+
+	// TODO: Generate a random number of bombs by saving the breakable walls in an vector like so std::vector<Object**>???? and changing
+	// random points to bombs according to the random number generated, a randomly generated(1 to 3 bombs) number of times 
+
+	return true;
+}
+
+
+
 
 
 
@@ -54,7 +95,16 @@ void Map::__DEBUG_MAP_DIM__() {
 	for (auto l : m_matrix) { for (auto c : l) std::cout << "x "; std::cout << "\n"; }
 }
 
-void Map::__DEBUG_MAP_SEED__()
-{
+void Map::__DEBUG_MAP_SEED__() {
 	std::cout << "Seed:" << m_seed << std::endl;
+}
+
+void Map::__DEBUG_MAP_PRINT__() {
+	for (std::vector<Object*>& line : m_matrix) {
+		for (Object*& object : line) {
+			object->print();
+			std::cout << " ";
+		}
+		std::cout << "\n";
+	}
 }
