@@ -5,7 +5,7 @@
 
 class Object {
 public:
-	 Object(const std::pair<int,int>& pos);
+	 //Object(const std::pair<int,int>& pos);
 
 	virtual void render() = 0;
 	//OR

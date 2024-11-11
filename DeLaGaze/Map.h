@@ -2,6 +2,7 @@
 #include "Pathway.h"
 #include "UnbreakableBlock.h"
 #include "BreakableBlock.h"
+#include "BombTrapBlock.h"
 #include <iostream>
 #include <vector>
 #include <array>
@@ -16,7 +17,7 @@ public:
 	Map(const Map&) = delete;
 	Map(Map&&) = delete;
 
-	~Map() = default;
+	~Map();
 
 	//Getter
 	const std::vector<Object*>& operator[](size_t line) const;
@@ -25,7 +26,7 @@ public:
 
 	//Methods
 public:
-	bool generate(const std::vector<Object*>& objects = std::vector<Object*>{},
+	bool generate(
 		const std::vector<uint8_t>& probabilities = std::vector<uint8_t>{
 			35, /*Pathway*/
 			25, /*UnbreakableBlock*/
@@ -36,7 +37,7 @@ public:
 
 	//Methods
 private:
-	bool verifyObjectsAndProbabilities();
+	bool verifyProbabilities();
 	void generateDimensions();
 	bool generateStructures();
 
@@ -55,7 +56,6 @@ private:
 	//Atributes
 private:
 	std::vector<std::vector<Object*>> m_matrix;
-	std::vector<Object*> m_objects;
 	std::vector<uint8_t> m_probabilities;
 	uint8_t m_mapWidth, m_mapHeight;
 	uint32_t m_seed;
