@@ -6,6 +6,7 @@
 #include <iostream>
 #include <vector>
 #include <array>
+#include <queue>
 #include <chrono>
 #include <random>
 
@@ -13,7 +14,7 @@ class Map
 {
 	//Constuctors and destructors
 public:
-	Map() = default;
+	Map();
 	Map(const Map&) = delete;
 	Map(Map&&) = delete;
 
@@ -40,6 +41,40 @@ private:
 	bool verifyProbabilities();
 	void generateDimensions();
 	bool generateStructures();
+	void makeCornerPathway(size_t x, size_t y, std::vector<Object**>& breakableBlocksVector);
+	void placeBombs(std::vector<Object**>& breakableBlocksVector);
+
+	// Using Dijkstra to find the path with smallest number of UnbreakableBlocks to change if players are isolated
+	// This uses the nested BestPathNode class
+	std::vector<std::vector<std::pair<size_t, size_t>>> findBestPath(std::pair<size_t, size_t> start, std::pair<size_t,size_t> end);
+	// Changing the UnbreakableBlocks into BreakableBlocks along the found path with findBestPath
+	void breakUnbreakableOnBestPath(std::vector<std::vector<std::pair<size_t, size_t>>> path, std::pair<size_t, size_t> start, std::pair<size_t, size_t> end);
+
+	// Nested Node class for Dijkstra
+private:
+	class BestPathNode {
+	public:
+		BestPathNode(std::pair<size_t, size_t> pos, uint32_t normalBlocksCount, uint32_t unbreakableBlocksCount) :
+			m_pos{ pos },
+			m_normalBlocksCount {normalBlocksCount},
+			m_unbreakableBlocksCount{unbreakableBlocksCount} {}
+		bool operator>(const BestPathNode& other) const {
+			if (this->m_unbreakableBlocksCount != other.m_unbreakableBlocksCount) {
+				// The count of unbreakableBlocks should be minimized
+				return this->m_unbreakableBlocksCount > other.m_unbreakableBlocksCount;
+			}
+			return this->m_normalBlocksCount > other.m_normalBlocksCount;
+		}
+		std::pair<size_t, size_t> getPosition() const { return m_pos; }
+		uint32_t getNormalBlcoksCount() const { return m_normalBlocksCount; }
+		uint32_t getUnbreakableBlcoksCount() const { return m_unbreakableBlocksCount; }
+
+	private:
+		std::pair<size_t, size_t> m_pos;
+		uint32_t m_normalBlocksCount;
+		uint32_t m_unbreakableBlocksCount;
+	};
+
 
 
 	//Constants
@@ -61,6 +96,7 @@ private:
 	uint32_t m_seed;
 	std::mt19937 m_generator; // Mersenne Twister 19937 generator
 
+	bool m_alreadyGenerated : 1;
 
 	//DEBUG METHODS:
 private:
