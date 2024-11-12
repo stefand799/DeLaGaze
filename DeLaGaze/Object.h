@@ -5,7 +5,17 @@
 
 class Object {
 public:
-	 //Object(const std::pair<int,int>& pos);
+	enum class ObjectType {
+		Player,
+		Bullet,
+		Pathway,
+		UnbreakableBlock,
+		BreakableBlock,
+		BombTrapBlock
+	};
+	virtual ObjectType getType() const = 0;
+
+	//Object(const std::pair<int,int>& pos);
 
 	virtual void render() = 0;
 	//OR

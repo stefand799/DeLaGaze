@@ -10,6 +10,7 @@
 
 class Player: public Object{
 public:
+	ObjectType getType() const override { return ObjectType::Player; };
 	Player() = default;
 	Player(const std::pair<int,int>& pos, const std::string_view& username, uint8_t points, uint8_t speed, Direction Facing, State PlayerState, uint8_t score = 0, uint8_t hp = 3);
 	bool canMoveHere(int i,int j) override;
