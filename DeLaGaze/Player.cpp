@@ -52,7 +52,7 @@ State Player::GetPlayerState() const
 	return m_playerState;
 }
 
-void Player::moveUp(Map& map, int i, int j)
+void Player::moveUp(Map& map, const int& i, const int& j)
 {
 	if (map[i][j]->canMoveHere(i,j)) //on client side(QT), we will check if the future position of the player isWithinBounds() before calling any move<Direction> function
 	{
@@ -60,6 +60,45 @@ void Player::moveUp(Map& map, int i, int j)
 		{
 			map[GetX()][GetY()] = new Pathway;
 			SetY(GetY() - 1);
+			map[i][j] = this;
+		}
+	}
+}
+
+void Player::moveDown(Map& map, const int& i, const int& j)
+{
+	if (map[i][j]->canMoveHere(i, j)) //on client side(QT), we will check if the future position of the player isWithinBounds() before calling any move<Direction> function
+	{
+		if (map[i][j]->getType() == ObjectType::Pathway)
+		{
+			map[GetX()][GetY()] = new Pathway;
+			SetY(GetY() + 1);
+			map[i][j] = this;
+		}
+		//collisionCheck will handle the case where a player moves straight into a bullet.
+	}
+}
+
+void Player::moveLeft(Map& map, const int& i, const int& j)
+{
+	if (map[i][j]->canMoveHere(i, j)) //on client side(QT), we will check if the future position of the player isWithinBounds() before calling any move<Direction> function
+	{
+		if (map[i][j]->getType() == ObjectType::Pathway)
+		{
+			map[GetX()][GetY()] = new Pathway;
+			SetX(GetX()-1);
+			map[i][j] = this;
+		}
+	}
+}
+void Player::moveLeft(Map& map, const int& i, const int& j)
+{
+	if (map[i][j]->canMoveHere(i, j)) //on client side(QT), we will check if the future position of the player isWithinBounds() before calling any move<Direction> function
+	{
+		if (map[i][j]->getType() == ObjectType::Pathway)
+		{
+			map[GetX()][GetY()] = new Pathway;
+			SetX(GetX() + 1);
 			map[i][j] = this;
 		}
 	}

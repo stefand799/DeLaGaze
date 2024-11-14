@@ -34,7 +34,10 @@ public:
 	void SetPlayerState(const State& playerState);
 	Direction GetFacing() const;
 	State GetPlayerState() const;
-	void moveUp(Map& map, int i, int j);
+	void moveUp(Map& map, const int& i, const int& j);
+	void moveDown(Map& map, const int& i, const int& j);
+	void moveLeft(Map& map, const int& i, const int& j);
+	void moveRight(Map& map, const int& i, const int& j);
 private:
 	uint8_t m_hp : 2;
 	uint8_t m_score;
