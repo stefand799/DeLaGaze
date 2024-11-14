@@ -25,6 +25,9 @@ public:
 	//Getter and/or setter
 	std::vector<Object*>& operator[](size_t line);
 
+	uint8_t getMapWidth() const { return m_mapWidth; };
+	uint8_t getMapHeight() const { return m_mapHeight; };
+
 	//Methods
 public:
 	bool generate(
@@ -90,6 +93,7 @@ private:
 
 	//Atributes
 private:
+	/*TODO: change matrix to shared_ptr, and all pertaining methods to accomodate for the new usage (matrix.get().Method())*/
 	std::vector<std::vector<Object*>> m_matrix;
 	std::vector<uint8_t> m_probabilities;
 	uint8_t m_mapWidth, m_mapHeight;

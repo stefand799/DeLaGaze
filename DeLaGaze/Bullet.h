@@ -7,4 +7,8 @@ public:
 	void render() override;
 	void print() override;
 	bool canMoveHere(int i, int j) override;
+	void move();
+	std::pair<int, int> getPosition() const { return m_position; };
+private:
+	std::pair<int, int>m_position;
 };

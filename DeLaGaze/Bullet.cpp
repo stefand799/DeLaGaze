@@ -12,3 +12,7 @@ void Bullet::print()
 bool Bullet::canMoveHere(int i,int j){
 	return true;
 }
+
+void Bullet::move(){
+	/*TODO: Implement alongside QT*/
+}
