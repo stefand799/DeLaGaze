@@ -24,6 +24,8 @@ public:
 	void checkCollisions();
 	void markForDestruction(Object* object);
 	void removeDestroyedObjects();
+
+	bool isWithinBounds(const int& i, const int& j) const;
 private:
 	//Methods
 	//Constants

@@ -53,6 +53,10 @@ void Game::checkCollisions(){
 					delete m_map[i][j];
 					m_map[i][j] = new Pathway;
 				}
+				else if (target->getType() == Object::ObjectType::Player)
+				{/*TODO: !!! if(viata=0) -> delete
+						else functie de RESPAWN, scade o viata si se reseteaza pozitia pe spawnpointul specific fiecaruia*/
+				}
 				else if (target->getType() == Object::ObjectType::BombTrapBlock) {
 					
 					for (int sI = -1; sI <= 1; ++sI) {
@@ -91,4 +95,11 @@ void Game::markForDestruction(Object* object){
 
 void Game::removeDestroyedObjects(){
 	m_markedForDestruction.clear();
+}
+
+bool Game::isWithinBounds(const int& i, const int& j) const
+{
+	if (i + 1 > m_map.getMapWidth() or j + 1 > m_map.getMapHeight() or i < 0 or j < 0)
+		return false;
+	return true;
 }

@@ -52,6 +52,19 @@ State Player::GetPlayerState() const
 	return m_playerState;
 }
 
+void Player::moveUp(Map& map, int i, int j)
+{
+	if (map[i][j]->canMoveHere(i,j)) //on client side(QT), we will check if the future position of the player isWithinBounds() before calling any move<Direction> function
+	{
+		if (map[i][j]->getType() == ObjectType::Pathway)
+		{
+			map[GetX()][GetY()] = new Pathway;
+			SetY(GetY() - 1);
+			map[i][j] = this;
+		}
+	}
+}
+
 void Player::SetFacing(const Direction& facing) { m_facing = facing; }
 
 void Player::SetUsername(const std::string_view& username) { m_username = username; }

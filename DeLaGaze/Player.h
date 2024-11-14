@@ -7,7 +7,8 @@
 #include <vector>
 #include <utility>
 #include <cstdint>
-
+#include "Map.h"
+#include "Pathway.h"
 class Player: public Object{
 public:
 	ObjectType getType() const override { return ObjectType::Player; };
@@ -33,6 +34,7 @@ public:
 	void SetPlayerState(const State& playerState);
 	Direction GetFacing() const;
 	State GetPlayerState() const;
+	void moveUp(Map& map, int i, int j);
 private:
 	uint8_t m_hp : 2;
 	uint8_t m_score;
