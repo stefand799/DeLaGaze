@@ -91,7 +91,7 @@ void Player::moveLeft(Map& map, const int& i, const int& j)
 		}
 	}
 }
-void Player::moveLeft(Map& map, const int& i, const int& j)
+void Player::moveRight(Map& map, const int& i, const int& j)
 {
 	if (map[i][j]->canMoveHere(i, j)) //on client side(QT), we will check if the future position of the player isWithinBounds() before calling any move<Direction> function
 	{
