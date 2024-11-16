@@ -12,7 +12,7 @@ void Player::render()
 }
 void Player::print()
 {
-	std::cout << "P";
+	std::cout << "\033[37;41m" << "P" << "\033[0m";
 }
 
 void Player::SetY(const int& y)

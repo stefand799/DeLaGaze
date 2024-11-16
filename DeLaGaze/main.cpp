@@ -4,9 +4,9 @@
 #include <sqlite_orm/sqlite_orm.h>
 
 int main() {
-	Game* game = new Game();
+	Game game;
+	game.start();
 
-	delete game;
 	std::cout << "Rulat cu succes";
 	return 0;
 }

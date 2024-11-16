@@ -3,7 +3,10 @@
 
 
 Map::Map() :
-	m_alreadyGenerated{false}
+	m_alreadyGenerated{false},
+	m_seed{0},
+	m_mapHeight{0},
+	m_mapWidth{0}
 {
 }
 
@@ -200,10 +203,10 @@ std::vector<std::vector<std::pair<size_t, size_t>>> Map::findBestPath(std::pair<
 			if (nextX < 0 || nextY < 0 || nextX >= m_mapHeight || nextY >= m_mapWidth) continue; // invalid position
 			if (bestPath[nextX][nextY] != std::make_pair<size_t, size_t>(-1, -1)) continue; // position already visited
 			if (dynamic_cast<UnbreakableBlock*>(m_matrix[nextX][nextY])) {
-				openList.push(BestPathNode{ {nextX,nextY}, current.getNormalBlcoksCount(), current.getUnbreakableBlcoksCount() + 1 });
+				openList.push(BestPathNode{ {nextX,nextY}, current.getNormalBlocksCount(), current.getUnbreakableBlocksCount() + 1 });
 			}
 			else {
-				openList.push(BestPathNode{ {nextX,nextY}, current.getNormalBlcoksCount() + 1, current.getUnbreakableBlcoksCount() });
+				openList.push(BestPathNode{ {nextX,nextY}, current.getNormalBlocksCount() + 1, current.getUnbreakableBlocksCount() });
 			}
 			bestPath[nextX][nextY] = current.getPosition();
 			if (std::pair<size_t, size_t>{nextX, nextY} == end) return bestPath;

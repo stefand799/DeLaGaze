@@ -1,6 +1,7 @@
 #include "Game.h"
 
-Game::Game()
+Game::Game() :
+	m_isRunning{false}
 {
 
 }
@@ -27,6 +28,13 @@ Game::~Game()
 //	}
 //
 //}
+
+void Game::start()
+{
+	if(!m_map.generate()) return;
+	m_isRunning = true;
+	this->run();
+}
 
 void Game::update(){
 	for (auto& bullet : m_bullets)
@@ -102,4 +110,11 @@ bool Game::isWithinBounds(const int& i, const int& j) const
 	if (i + 1 > m_map.getMapWidth() or j + 1 > m_map.getMapHeight() or i < 0 or j < 0)
 		return false;
 	return true;
+}
+
+void Game::run()
+{
+	while (m_isRunning) {
+		break; //Untill we implement the game ending condition that changes m_isRunning to false
+	}
 }
