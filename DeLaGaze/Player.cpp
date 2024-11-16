@@ -109,3 +109,7 @@ void Player::SetFacing(const Direction& facing) { m_facing = facing; }
 void Player::SetUsername(const std::string_view& username) { m_username = username; }
 
 std::string Player::GetUsername() const { return m_username; }
+
+void shoot(std::vector<std::shared_ptr<Bullet>>& bullets) {
+	bullets.push_back(std::make_unique<Bullet>());
+};
