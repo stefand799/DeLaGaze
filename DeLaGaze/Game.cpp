@@ -40,7 +40,6 @@ void Game::update(){
 	for (auto& bullet : m_bullets)
 		bullet->move();
 	checkCollisions();
-	removeDestroyedObjects();
 }
 
 void Game::checkCollisions(){
@@ -57,13 +56,29 @@ void Game::checkCollisions(){
 				continue; 
 			else{
 				if (target->getType() == Object::ObjectType::BreakableBlock) {
-					//m_map[i][j] = std::make_shared<Pathway>;
-					delete m_map[i][j];
+					delete target;
+					delete bullet;
 					m_map[i][j] = new Pathway;
+					/*TODO: properly push bullet out of bullets vector*/
 				}
-				else if (target->getType() == Object::ObjectType::Player)
-				{/*TODO: !!! if(viata=0) -> delete
-						else functie de RESPAWN, scade o viata si se reseteaza pozitia pe spawnpointul specific fiecaruia*/
+				else if (target->getType() == Object::ObjectType::UnbreakableBlock) {
+					delete bullet;
+				}
+				else if (target->getType() == Object::ObjectType::Player) {
+					Player* player = dynamic_cast<Player*>(target);
+					if (player->GetHp() > 1) {
+						player->SetHp();
+						player->Respawn();
+					}
+					else {
+						delete player;
+						m_map[i][j] = new Pathway;
+					}
+				}
+				else if (target->getType() == Object::ObjectType::Bullet) {
+					delete target;
+					delete bullet;
+					m_map[i][j] = new Pathway;
 				}
 				else if (target->getType() == Object::ObjectType::BombTrapBlock) {
 					
@@ -76,34 +91,33 @@ void Game::checkCollisions(){
 								if (gridCell->getType() == Object::ObjectType::UnbreakableBlock||gridCell->getType()==Object::ObjectType::Pathway)
 									continue;
 								if (gridCell->getType() == Object::ObjectType::Player)
-								{/*TODO: !!! if(viata=0) -> delete
-										else functie de RESPAWN, scade o viata si se reseteaza pozitia pe spawnpointul specific fiecaruia*/
+								{
+									Player* player = dynamic_cast<Player*>(gridCell);
+									if (player->GetHp() > 1) {
+										player->SetHp();
+										player->Respawn();
+									}
+									else {
+										delete player;
+										m_map[gridI][gridJ] = new Pathway;
+									}
 								}
-								if (gridCell->getType() == Object::ObjectType::Bullet)
-										markForDestruction(gridCell);
-
-								delete m_map[gridI][gridJ];
-								m_map[gridI][gridJ] = new Pathway;
+								if (gridCell->getType() == Object::ObjectType::Bullet) {
+									delete gridCell;
+									m_map[gridI][gridJ] = new Pathway;
+								}
 
 							}
 						}
 					}
 					
 				}
-				//bullet is destroyed as long as the block isnt pathway
-				markForDestruction(bullet.get());
 			}
 		}
 	}
 }
 
-void Game::markForDestruction(Object* object){
-	m_markedForDestruction.push_back(object);
-}
 
-void Game::removeDestroyedObjects(){
-	m_markedForDestruction.clear();
-}
 
 void Game::run()
 {

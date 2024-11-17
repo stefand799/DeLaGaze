@@ -42,6 +42,7 @@ public:
 	void moveRight(Map& map);
 	void shoot(std::vector<std::shared_ptr<Bullet>>& bullets);
 	void commitSprite();
+	void Respawn();
 private:
 	Map m_playerMap;
 	uint8_t m_hp : 2;
@@ -55,5 +56,6 @@ private:
 	std::string m_username;
 	bool m_bulletSpeedUpgrade;
 	float shootCooldown;
+	std::pair<int, int> m_spawnpoint;
 };
 

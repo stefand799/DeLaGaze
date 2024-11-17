@@ -175,3 +175,8 @@ void Player::commitSprite() {
 		i = (10 - i) / 2;
 	return;
 }
+
+void Player::Respawn(){
+	SetX(m_spawnpoint.first);
+	SetY(m_spawnpoint.second);
+}
