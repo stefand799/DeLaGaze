@@ -16,3 +16,5 @@ bool Bullet::canMoveHere(int i,int j){
 void Bullet::move(){
 	/*TODO: Implement alongside QT*/
 }
+
+Bullet::Bullet(uint8_t speed) : m_speed{ speed } {};

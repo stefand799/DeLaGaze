@@ -49,5 +49,7 @@ private:
 	State m_playerState;
 	std::vector<Bullet*> m_bullets;
 	std::string m_username;
+	bool m_bulletSpeedUpgrade;
+	float shootCooldown;
 };
 

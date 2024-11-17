@@ -23,6 +23,18 @@ int Player::GetY() const
 {
 	return m_y;
 }
+void Player::SetHp()
+{
+	m_hp = GetHp() - 1;
+}
+void Player::SetScore(uint8_t score)
+{
+	m_score = score;
+}
+void Player::SetPoints(uint16_t points)
+{
+	m_points = points;
+}
 uint8_t Player::GetHp() const
 {
 	return m_hp;
@@ -110,6 +122,10 @@ void Player::SetUsername(const std::string_view& username) { m_username = userna
 
 std::string Player::GetUsername() const { return m_username; }
 
-void shoot(std::vector<std::shared_ptr<Bullet>>& bullets) {
-	bullets.push_back(std::make_unique<Bullet>());
+void Player::shoot(std::vector<std::shared_ptr<Bullet>>& bullets) {
+	uint8_t bulletSpeed = m_bulletSpeedUpgrade ? 2 : 1; //Placeholder for bullet speeds
+	bullets.push_back(std::make_unique<Bullet>(bulletSpeed));
 };
+
+void Player::SetPlayerState(const State& playerState) { m_playerState = playerState; }
+

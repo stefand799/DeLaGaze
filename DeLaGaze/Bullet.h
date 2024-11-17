@@ -9,6 +9,9 @@ public:
 	bool canMoveHere(int i, int j) override;
 	void move();
 	std::pair<int, int> getPosition() const { return m_position; };
+	Bullet()=default;
+	Bullet(uint8_t speed);
 private:
 	std::pair<int, int>m_position;
+	uint8_t m_speed;
 };
