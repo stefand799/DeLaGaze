@@ -39,6 +39,7 @@ public:
 	void moveLeft(Map& map, const int& i, const int& j);
 	void moveRight(Map& map, const int& i, const int& j);
 	void shoot(std::vector<std::shared_ptr<Bullet>>& bullets);
+	void commitSprite();
 private:
 	uint8_t m_hp : 2;
 	uint8_t m_score;

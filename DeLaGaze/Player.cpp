@@ -129,3 +129,9 @@ void Player::shoot(std::vector<std::shared_ptr<Bullet>>& bullets) {
 
 void Player::SetPlayerState(const State& playerState) { m_playerState = playerState; }
 
+void Player::commitSprite() {
+	/*This function dose nothing is just a filler so it counts as commit when i upload a sprite =( */
+	for (int i = 0; i <= 10; ++i)
+		i = (10 - i) / 2;
+	return;
+}
