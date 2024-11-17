@@ -3,10 +3,13 @@
 //Player::Player(const std::pair<int, int>& pos, const std::string_view& username, uint8_t points, uint8_t speed, Direction Facing, State PlayerState, uint8_t score = 0, uint8_t hp = 3)
 //	:Object(pos), m_username{ username }, m_points{ points }, m_speed{ speed }, m_facing{ Facing }, m_playerState{ PlayerState }, m_score{ score }, m_hp{ hp } {};
 
-bool Player::canMoveHere(int i,int j){
+//Player::Player(const Map& m) : m_playerMap{ m } {};
+//
+//Player::Player(const int& i, const int& j, const Map& m) : m_x{ i }, m_y{ j }, m_playerMap{ m } {};
+bool Player::canMoveHere(int i, int j) {
 	return false;
 }
-void Player::render() 
+void Player::render()
 {
 
 }
@@ -64,55 +67,92 @@ State Player::GetPlayerState() const
 	return m_playerState;
 }
 
-void Player::moveUp(Map& map, const int& i, const int& j)
+void Player::moveUp(Map& map)
 {
-	if (map[i][j]->canMoveHere(i,j)) //on client side(QT), we will check if the future position of the player isWithinBounds() before calling any move<Direction> function
-	{
-		if (map[i][j]->getType() == ObjectType::Pathway)
+	int newX = GetX() - 1;
+	int newY = GetY();
+	if (map.isWithinBounds(newX, newY)) {
+		if (map[newX][newY]->canMoveHere(newX, newY))
 		{
-			map[GetX()][GetY()] = new Pathway;
-			SetY(GetY() - 1);
-			map[i][j] = this;
+			if (map[newX][newY]->getType() == ObjectType::Pathway)
+			{
+				map[GetX()][GetY()] = new Pathway;
+				SetX(newX);
+				delete map[newX][newY];
+				map[newX][newY] = this;
+			}
 		}
+		else std::cout << "Can't move here. Unaccesible type of block: "; map[newX][newY]->print(); std::cout << "\n";
+	}
+	else {
+		std::cout << "Can't move here. Out of bounds\n";
 	}
 }
 
-void Player::moveDown(Map& map, const int& i, const int& j)
+void Player::moveDown(Map& map)
 {
-	if (map[i][j]->canMoveHere(i, j)) //on client side(QT), we will check if the future position of the player isWithinBounds() before calling any move<Direction> function
-	{
-		if (map[i][j]->getType() == ObjectType::Pathway)
+	int newX = GetX() + 1;
+	int newY = GetY();
+	if (map.isWithinBounds(newX, newY)) {
+		if (map[newX][newY]->canMoveHere(newX, newY))
 		{
-			map[GetX()][GetY()] = new Pathway;
-			SetY(GetY() + 1);
-			map[i][j] = this;
+			if (map[newX][newY]->getType() == ObjectType::Pathway)
+			{
+				map[GetX()][GetY()] = new Pathway;
+				SetX(newX);
+				delete map[newX][newY];
+				map[newX][newY] = this;
+			}
 		}
-		//collisionCheck will handle the case where a player moves straight into a bullet.
+		else std::cout << "Can't move here. Unaccesible type of block: "; map[newX][newY]->print(); std::cout << "\n";
+	}
+	else {
+		std::cout << "Can't move here. Out of bounds\n";
 	}
 }
 
-void Player::moveLeft(Map& map, const int& i, const int& j)
+void Player::moveLeft(Map& map)
 {
-	if (map[i][j]->canMoveHere(i, j)) //on client side(QT), we will check if the future position of the player isWithinBounds() before calling any move<Direction> function
-	{
-		if (map[i][j]->getType() == ObjectType::Pathway)
+	int newX = GetX();
+	int newY = GetY() - 1;
+	if (map.isWithinBounds(newX, newY)) {
+		if (map[newX][newY]->canMoveHere(newX, newY))
 		{
-			map[GetX()][GetY()] = new Pathway;
-			SetX(GetX()-1);
-			map[i][j] = this;
+			if (map[newX][newY]->getType() == ObjectType::Pathway)
+			{
+
+				map[GetX()][GetY()] = new Pathway;
+				SetY(newY);
+				delete map[newX][newY];
+				map[newX][newY] = this;
+			}
 		}
+		else std::cout << "Can't move here. Unaccesible type of block: "; map[newX][newY]->print(); std::cout << "\n";
+	}
+	else {
+		std::cout << "Can't move here. Out of bounds\n";
 	}
 }
-void Player::moveRight(Map& map, const int& i, const int& j)
+void Player::moveRight(Map& map)
 {
-	if (map[i][j]->canMoveHere(i, j)) //on client side(QT), we will check if the future position of the player isWithinBounds() before calling any move<Direction> function
-	{
-		if (map[i][j]->getType() == ObjectType::Pathway)
+	int newX = GetX();
+	int newY = GetY() + 1; // y = coloana
+	if (map.isWithinBounds(newX, newY)) {
+		if (map[newX][newY]->canMoveHere(newX, newY))
 		{
-			map[GetX()][GetY()] = new Pathway;
-			SetX(GetX() + 1);
-			map[i][j] = this;
+			if (map[newX][newY]->getType() == ObjectType::Pathway)
+			{
+
+				map[GetX()][GetY()] = new Pathway;
+				SetY(newY);
+				delete map[newX][newY];
+				map[newX][newY] = this;
+			}
 		}
+		else std::cout << "Can't move here. Unaccesible type of block: "; map[newX][newY]->print(); std::cout << "\n";
+	}
+	else {
+		std::cout << "Can't move here. Out of bounds\n";
 	}
 }
 

@@ -105,13 +105,6 @@ void Game::removeDestroyedObjects(){
 	m_markedForDestruction.clear();
 }
 
-bool Game::isWithinBounds(const int& i, const int& j) const
-{
-	if (i + 1 > m_map.getMapWidth() or j + 1 > m_map.getMapHeight() or i < 0 or j < 0)
-		return false;
-	return true;
-}
-
 void Game::run()
 {
 	while (m_isRunning) {

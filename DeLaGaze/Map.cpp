@@ -229,7 +229,12 @@ void Map::breakUnbreakableOnBestPath(std::vector<std::vector<std::pair<size_t, s
 }
 
 
-
+bool Map::isWithinBounds(const int& i, const int& j) const
+{
+	if (i + 1 > getMapWidth() or j + 1 > getMapHeight() or i < 0 or j < 0)
+		return false;
+	return true;
+}
 
 
 

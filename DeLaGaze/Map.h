@@ -15,7 +15,7 @@ class Map
 	//Constuctors and destructors
 public:
 	Map();
-	Map(const Map&) = delete;
+	Map(const Map&) = default;
 	Map(Map&&) = delete;
 
 	~Map();
@@ -113,6 +113,8 @@ private:
 
 	bool m_alreadyGenerated : 1;
 
+public:
+	bool isWithinBounds(const int& i, const int& j) const;
 	//DEBUG METHODS:
 private:
 	void __DEBUG_MAP_DIM__();
