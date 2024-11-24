@@ -12,10 +12,10 @@
 class Player: public Object{
 public:
 	ObjectType GetType() const override { return ObjectType::Player; };
-	Player() = default;
-	Player(const Map& m);
-	Player(const int& i, const int& j, const Map& m);
-	Player(const std::pair<int,int>& pos, const std::string_view& username, uint8_t points, uint8_t speed, Direction Facing, State PlayerState, uint8_t score = 0, uint8_t hp = 3);
+	Player() = delete;
+	Player(Map& m);
+	Player(const int& i, const int& j, Map& m);
+	Player(Map& m, const std::pair<int,int>& pos, const std::string_view& username, uint8_t points, uint8_t speed, Direction Facing, State PlayerState, uint8_t score = 0, uint8_t hp = 3);
 	bool CanMoveHere(int i,int j) override;
 	void Render() override;
 	void Print() override;
@@ -36,15 +36,15 @@ public:
 	void SetPlayerState(const State& playerState);
 	Direction GetFacing() const;
 	State GetPlayerState() const;
-	void MoveUp(Map& map);
-	void MoveDown(Map& map);
-	void MoveLeft(Map& map);
-	void MoveRight(Map& map);
+	void MoveUp();
+	void MoveDown();
+	void MoveLeft();
+	void MoveRight();
 	void Shoot(std::vector<std::shared_ptr<Bullet>>& bullets);
 	void CommitSprite();
 	void Respawn();
 private:
-	Map m_playerMap;
+	Map& m_playerMap;
 	uint8_t m_hp : 2;
 	uint8_t m_score;
 	uint16_t m_points;

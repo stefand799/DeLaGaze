@@ -226,7 +226,7 @@ void Map::BreakUnbreakableOnBestPath(std::vector<std::vector<std::pair<size_t, s
 
 bool Map::IsWithinBounds(const int& i, const int& j) const
 {
-	if (i + 1 > GetMapWidth() or j + 1 > GetMapHeight() or i < 0 or j < 0)
+	if (i + 1 > GetMapHeight() or j + 1 > GetMapWidth() or i < 0 or j < 0)
 		return false;
 	return true;
 }
@@ -236,7 +236,7 @@ bool Map::IsWithinBounds(const int& i, const int& j) const
 
 
 void Map::__DEBUG_MAP_DIM__() {
-	std::cout << "Width: " << (int)m_mapWidth << "\nHeight:" << (int)m_mapHeight << std::endl; //FOR DEBUGGING
+	std::cout << "Width: " << (int)m_mapWidth << "\nHeight:" << (int)m_mapHeight << std::endl; //FOR DEBUGGING ONLY
 	for (auto l : m_matrix) { for (auto c : l) std::cout << "x "; std::cout << "\n"; }
 }
 

@@ -1,9 +1,20 @@
 #include "Player.h"
 
-//Player::Player(const std::pair<int, int>& pos, const std::string_view& username, uint8_t points, uint8_t speed, Direction Facing, State PlayerState, uint8_t score = 0, uint8_t hp = 3)
-//	:Object(pos), m_username{ username }, m_points{ points }, m_speed{ speed }, m_facing{ Facing }, m_playerState{ PlayerState }, m_score{ score }, m_hp{ hp } {};
 
-//Player::Player(const Map& m) : m_playerMap{ m } {};
+Player::Player(Map& m) : m_playerMap{ m } {}; //delete this later, only for early on testing. Leave only the constructor with all parameters.
+
+
+//Player::Player(Map& m, const std::pair<int, int>& pos, const std::string_view& username, uint8_t points, uint8_t speed, Direction facing, State playerState, uint8_t score, uint8_t hp) :
+//	Object{ pos },
+//	m_playerMap{m},
+//	m_username{username},
+//	m_points{points},
+//	m_speed{speed},
+//	m_facing{facing},
+//	m_playerState{playerState},
+//	m_score{score},
+//	m_hp{hp}
+//{}
 //
 //Player::Player(const int& i, const int& j, const Map& m) : m_x{ i }, m_y{ j }, m_playerMap{ m } {};
 bool Player::CanMoveHere(int i, int j) {
@@ -67,92 +78,94 @@ State Player::GetPlayerState() const
 	return m_playerState;
 }
 
-void Player::MoveUp(Map& map)
+void Player::MoveUp()
 {
-	int newX = GetX() - 1;
-	int newY = GetY();
-	if (map.IsWithinBounds(newX, newY)) {
-		if (map[newX][newY]->CanMoveHere(newX, newY))
-		{
-			if (map[newX][newY]->GetType() == ObjectType::Pathway)
-			{
-				map[GetX()][GetY()] = new Pathway;
-				SetX(newX);
-				delete map[newX][newY];
-				map[newX][newY] = this;
-			}
-		}
-		else std::cout << "Can't move here. Unaccesible type of block: "; map[newX][newY]->Print(); std::cout << "\n";
-	}
-	else {
+	int newX = m_x;
+	int newY = m_y - 1;
+	if (!m_playerMap.IsWithinBounds(newY, newX)) {
 		std::cout << "Can't move here. Out of bounds\n";
+		return;
+	}
+
+	if (!m_playerMap[newY][newX]->CanMoveHere(newY, newX)) {
+		std::cout << "Can't move here. Unaccesible type of block: "; m_playerMap[newY][newX]->Print(); std::cout << "\n";
+		return;
+	}
+
+	if (m_playerMap[newY][newX]->GetType() == ObjectType::Pathway)
+	{
+		delete m_playerMap[newY][newX];
+		m_playerMap[newY][newX] = this;
+		m_playerMap[m_y][m_x] = new Pathway;
+		SetY(newY);
 	}
 }
 
-void Player::MoveDown(Map& map)
+void Player::MoveDown()
 {
-	int newX = GetX() + 1;
-	int newY = GetY();
-	if (map.IsWithinBounds(newX, newY)) {
-		if (map[newX][newY]->CanMoveHere(newX, newY))
-		{
-			if (map[newX][newY]->GetType() == ObjectType::Pathway)
-			{
-				map[GetX()][GetY()] = new Pathway;
-				SetX(newX);
-				delete map[newX][newY];
-				map[newX][newY] = this;
-			}
-		}
-		else std::cout << "Can't move here. Unaccesible type of block: "; map[newX][newY]->Print(); std::cout << "\n";
-	}
-	else {
+	int newX = m_x;
+	int newY = m_y + 1;
+	if (!m_playerMap.IsWithinBounds(newY, newX)) {
 		std::cout << "Can't move here. Out of bounds\n";
+		return;
+	}
+
+	if (!m_playerMap[newY][newX]->CanMoveHere(newY, newX)) {
+		std::cout << "Can't move here. Unaccesible type of block: "; m_playerMap[newY][newX]->Print(); std::cout << "\n";
+		return;
+	}
+
+	if (m_playerMap[newY][newX]->GetType() == ObjectType::Pathway)
+	{
+		delete m_playerMap[newY][newX];
+		m_playerMap[newY][newX] = this;
+		m_playerMap[m_y][m_x] = new Pathway;
+		SetY(newY);
 	}
 }
 
-void Player::MoveLeft(Map& map)
+void Player::MoveLeft()
 {
-	int newX = GetX();
-	int newY = GetY() - 1;
-	if (map.IsWithinBounds(newX, newY)) {
-		if (map[newX][newY]->CanMoveHere(newX, newY))
-		{
-			if (map[newX][newY]->GetType() == ObjectType::Pathway)
-			{
-
-				map[GetX()][GetY()] = new Pathway;
-				SetY(newY);
-				delete map[newX][newY];
-				map[newX][newY] = this;
-			}
-		}
-		else std::cout << "Can't move here. Unaccesible type of block: "; map[newX][newY]->Print(); std::cout << "\n";
-	}
-	else {
+	int newX = m_x - 1;
+	int newY = m_y;
+	if (!m_playerMap.IsWithinBounds(newY, newX)) {
 		std::cout << "Can't move here. Out of bounds\n";
+		return;
+	}
+
+	if (!m_playerMap[newY][newX]->CanMoveHere(newY, newX)) {
+		std::cout << "Can't move here. Unaccesible type of block: "; m_playerMap[newY][newX]->Print(); std::cout << "\n";
+		return;
+	}
+
+	if (m_playerMap[newY][newX]->GetType() == ObjectType::Pathway)
+	{
+		delete m_playerMap[newY][newX];
+		m_playerMap[newY][newX] = this;
+		m_playerMap[m_y][m_x] = new Pathway;
+		SetX(newX);
 	}
 }
-void Player::MoveRight(Map& map)
+void Player::MoveRight()
 {
-	int newX = GetX();
-	int newY = GetY() + 1; // y = coloana
-	if (map.IsWithinBounds(newX, newY)) {
-		if (map[newX][newY]->CanMoveHere(newX, newY))
-		{
-			if (map[newX][newY]->GetType() == ObjectType::Pathway)
-			{
-
-				map[GetX()][GetY()] = new Pathway;
-				SetY(newY);
-				delete map[newX][newY];
-				map[newX][newY] = this;
-			}
-		}
-		else std::cout << "Can't move here. Unaccesible type of block: "; map[newX][newY]->Print(); std::cout << "\n";
-	}
-	else {
+	int newX = m_x + 1;
+	int newY = m_y;
+	if (!m_playerMap.IsWithinBounds(newY, newX)) {
 		std::cout << "Can't move here. Out of bounds\n";
+		return;
+	}
+
+	if (!m_playerMap[newY][newX]->CanMoveHere(newY, newX)) {
+		std::cout << "Can't move here. Unaccesible type of block: "; m_playerMap[newY][newX]->Print(); std::cout << "\n";
+		return;
+	}
+
+	if (m_playerMap[newY][newX]->GetType() == ObjectType::Pathway)
+	{
+		delete m_playerMap[newY][newX];
+		m_playerMap[newY][newX] = this;
+		m_playerMap[m_y][m_x] = new Pathway;
+		SetX(newX);
 	}
 }
 
