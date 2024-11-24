@@ -59,6 +59,7 @@ private:
 		0.25,
 		0.5
 	};
+public:
 	bool GetBulletSpeedUpgrade();
 	void SetBulletSpeedUpgrade(bool bulletSpeedUpgrade);
 	uint8_t GetBulletSpeed();
