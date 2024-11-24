@@ -10,6 +10,7 @@
 #include <vector>
 #include <cstdint>
 #include <chrono>
+#include <thread>
 
 class Game {
 public:
@@ -51,7 +52,8 @@ private:
 	std::vector<Bullet*>m_bullets;//We could probably use shared_ptr so the bullets get deleted immediately when they go out of scope
 	std::vector<Object*> m_markedForDestruction; //Object*, because currently I have no clue if we're going to alter additional logic and would be optimal not to immediately delete them when they get out of scope
 	//also I'm inadequately educated so I can't call the shots here yet
-
+	std::chrono::duration<float> m_deltaTime;
+	std::chrono::high_resolution_clock::time_point m_lastFrameTime;
 
 	bool m_isRunning;
 	

@@ -1,5 +1,6 @@
 #pragma once
 #include "Object.h"
+#include "Direction.h"
 class Bullet : public Object
 {
 public:
@@ -9,9 +10,10 @@ public:
 	bool CanMoveHere(int i, int j) override;
 	void Move();
 	std::pair<int, int> GetPosition() const { return m_position; };
-	Bullet()=default;
-	Bullet(uint8_t speed);
+	Bullet()=delete;
+	Bullet(std::pair<float,float> pos, float speed, Direction direction);
 private:
-	std::pair<int, int>m_position;
-	uint8_t m_speed;
+	std::pair<float,float> m_position; //TODO: delete the inherited int,int m_position
+	float m_speed;
+	Direction m_direction;
 };

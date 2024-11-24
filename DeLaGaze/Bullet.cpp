@@ -17,4 +17,9 @@ void Bullet::Move(){
 	/*TODO: Implement alongside QT*/
 }
 
-Bullet::Bullet(uint8_t speed) : m_speed{ speed } {};
+Bullet::Bullet(std::pair<float, float> pos, float speed, Direction direction) :
+	m_position{pos},
+	m_speed{speed},
+	m_direction{ direction }
+{}
+

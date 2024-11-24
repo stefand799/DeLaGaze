@@ -33,6 +33,7 @@ void Game::Start()
 {
 	if(!m_map.Generate()) return;
 	m_isRunning = true;
+	m_lastFrameTime = std::chrono::high_resolution_clock::now();
 	this->Run();
 }
 
@@ -121,7 +122,14 @@ void Game::CheckCollisions(){
 
 void Game::Run()
 {
+
 	while (m_isRunning) {
+
+		std::chrono::high_resolution_clock::time_point currentTime = std::chrono::high_resolution_clock::now();
+		m_deltaTime = m_lastFrameTime - currentTime;
+		m_lastFrameTime = currentTime;
+		Update();
+		std::this_thread::sleep_for(std::chrono::milliseconds(100)); //10fps
 		break; //Untill we implement the game ending condition that changes m_isRunning to false
 	}
 }

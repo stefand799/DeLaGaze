@@ -4,17 +4,18 @@
 Player::Player(Map& m) : m_playerMap{ m } {}; //delete this later, only for early on testing. Leave only the constructor with all parameters.
 
 
-//Player::Player(Map& m, const std::pair<int, int>& pos, const std::string_view& username, uint8_t points, uint8_t speed, Direction facing, State playerState, uint8_t score, uint8_t hp) :
-//	Object{ pos },
-//	m_playerMap{m},
-//	m_username{username},
-//	m_points{points},
-//	m_speed{speed},
-//	m_facing{facing},
-//	m_playerState{playerState},
-//	m_score{score},
-//	m_hp{hp}
-//{}
+Player::Player(Map& m, const std::pair<int, int>& pos, const std::string_view& username, uint8_t points, bool bulletSpeedUpgrade, Direction facing, State playerState, uint8_t score, uint8_t hp) :
+	m_playerMap{m},
+	m_username{username},
+	m_points{points},
+	m_bulletSpeedUpgrade{bulletSpeedUpgrade},
+	m_facing{facing},
+	m_score{score},
+	m_hp{hp},
+	m_x{pos.first},
+	m_y{pos.second}
+	//,Object{pos},
+{}
 //
 //Player::Player(const int& i, const int& j, const Map& m) : m_x{ i }, m_y{ j }, m_playerMap{ m } {};
 bool Player::CanMoveHere(int i, int j) {
@@ -169,6 +170,31 @@ void Player::MoveRight()
 	}
 }
 
+void Player::FaceNorth()
+{
+	m_facing = Direction::North;
+}
+
+void Player::FaceSouth()
+{
+	m_facing = Direction::South;
+}
+
+void Player::FaceWest()
+{
+	m_facing = Direction::West;
+}
+
+void Player::FaceEast()
+{
+	m_facing = Direction::East;
+}
+
+Direction Player::GetFacing()
+{
+	return m_facing;
+}
+
 void Player::SetFacing(const Direction& facing) { m_facing = facing; }
 
 void Player::SetUsername(const std::string_view& username) { m_username = username; }
@@ -177,7 +203,7 @@ std::string Player::GetUsername() const { return m_username; }
 
 void Player::Shoot(std::vector<std::shared_ptr<Bullet>>& bullets) {
 	uint8_t bulletSpeed = m_bulletSpeedUpgrade ? 2 : 1; //Placeholder for bullet speeds
-	bullets.push_back(std::make_unique<Bullet>(bulletSpeed));
+	bullets.push_back(std::make_unique<Bullet>(std::pair<float, float>{m_x + 0.5, m_y + 0.5}, bulletSpeed, m_facing)); // set the position the bullet a little in the direction of the player facing
 };
 
 void Player::SetPlayerState(const State& playerState) { m_playerState = playerState; }
