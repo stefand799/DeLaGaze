@@ -15,22 +15,22 @@ class Game {
 public:
 	Game();
 	~Game();
-	void breakBlock(int i, int j);
-	void addPlayer(const Player& player);
-	void removePlayer(const Player& player);
+	void BreakBlock(int i, int j);
+	void AddPlayer(const Player& player);
+	void RemovePlayer(const Player& player);
 
 
 	/// <summary>
 	/// Method which prepares the game for running, generating map, initializing players, and starting the game loop in "run".
 	/// Will probably have parameters in near future for things like connections, player count, seed, etc.
 	/// </summary>
-	void start();
+	void Start();
 
 
-	void update();
-	void checkCollisions();
-	void markForDestruction(Object* object);
-	void removeDestroyedObjects();
+	void Update();
+	void CheckCollisions();
+	void MarkForDestruction(Object* object);
+	void RemoveDestroyedObjects();
 
 private:
 	//Methods
@@ -39,7 +39,7 @@ private:
 	/// Method that contains the game loop.
 	/// The game loop is where all the action happens
 	/// </summary>
-	void run();
+	void Run();
 	
 	//Constants
 

@@ -7,7 +7,7 @@
 
 int main() {
 	Game game;
-	game.start();
+	game.Start();
     /*Map m_map;
     m_map.generate();
     delete m_map[0][0];

@@ -1,10 +1,10 @@
 #include "Block.h"
 
-void Block::render() {
+void Block::Render() {
 	//Should default block have a render?
 }
 
-void Block::print() {
+void Block::Print() {
 	std::cout << "W";
 }
 

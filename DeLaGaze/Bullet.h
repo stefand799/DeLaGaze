@@ -3,12 +3,12 @@
 class Bullet : public Object
 {
 public:
-	ObjectType getType() const override { return ObjectType::Bullet; };
-	void render() override;
-	void print() override;
-	bool canMoveHere(int i, int j) override;
-	void move();
-	std::pair<int, int> getPosition() const { return m_position; };
+	ObjectType GetType() const override { return ObjectType::Bullet; };
+	void Render() override;
+	void Print() override;
+	bool CanMoveHere(int i, int j) override;
+	void Move();
+	std::pair<int, int> GetPosition() const { return m_position; };
 	Bullet()=default;
 	Bullet(uint8_t speed);
 private:

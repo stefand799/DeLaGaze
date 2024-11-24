@@ -32,7 +32,7 @@ std::vector<Object*>& Map::operator[](size_t line)
 
 
 
-bool Map::generate(const std::vector<uint8_t>& probabilities, uint32_t seed)
+bool Map::Generate(const std::vector<uint8_t>& probabilities, uint32_t seed)
 {
 	//Ensuring there is no second call of generate
 	if (m_alreadyGenerated) return false;
@@ -42,24 +42,19 @@ bool Map::generate(const std::vector<uint8_t>& probabilities, uint32_t seed)
 	m_seed = seed;
 	m_generator.seed(seed);
 
-	if (!verifyProbabilities()) {
+	if (!VerifyProbabilities()) {
 		std::cerr << "Probabilities provided for map generation are invalid.\n";
 		return false;
 	}
 
 	// Generating
-	generateDimensions();
-	generateStructures();
+	GenerateDimensions();
+	GenerateStructures();
 
 	// Verifing if there are any isolated players and solving paths between players accordingly
 
-	breakUnbreakableOnBestPath(findBestPath({ 0,0 }, { m_mapHeight - 1,m_mapWidth - 1 }), { 0,0 }, { m_mapHeight - 1,m_mapWidth - 1 });
-	breakUnbreakableOnBestPath(findBestPath({ m_mapHeight - 1 ,0 }, { 0 ,m_mapWidth - 1 }), { m_mapHeight - 1 ,0 }, { 0 ,m_mapWidth - 1 });
-
-
-	//__DEBUG_MAP_SEED__();
-	//__DEBUG_MAP_DIM__();
-	//__DEBUG_MAP_PRINT__();
+	BreakUnbreakableOnBestPath(FindBestPath({ 0,0 }, { m_mapHeight - 1,m_mapWidth - 1 }), { 0,0 }, { m_mapHeight - 1,m_mapWidth - 1 });
+	BreakUnbreakableOnBestPath(FindBestPath({ m_mapHeight - 1 ,0 }, { 0 ,m_mapWidth - 1 }), { m_mapHeight - 1 ,0 }, { 0 ,m_mapWidth - 1 });
 
 	m_alreadyGenerated = true;
 	return true;
@@ -68,7 +63,7 @@ bool Map::generate(const std::vector<uint8_t>& probabilities, uint32_t seed)
 
 
 
-bool Map::verifyProbabilities() {
+bool Map::VerifyProbabilities() {
 	if (m_probabilities.size() != 3) return false;
 
 	int sumOfProbabilities = 0;
@@ -77,7 +72,7 @@ bool Map::verifyProbabilities() {
 
 }
 
-void Map::generateDimensions() {
+void Map::GenerateDimensions() {
 
 	// Defining distributions for width
 	std::uniform_int_distribution<> widthDist(kMinMapWidth, kMaxMapWidth);
@@ -91,7 +86,7 @@ void Map::generateDimensions() {
 	m_matrix.resize(m_mapHeight, std::vector<Object*>(m_mapWidth));
 }
 
-bool Map::generateStructures() {
+bool Map::GenerateStructures() {
 	// Defining a vector for all breakable blocks for the future generation of bombtraps
 	std::vector<Object**> breakableBlocksVector;
 
@@ -128,19 +123,19 @@ bool Map::generateStructures() {
 	}
 
 	// Making sure the corners are paths;
-	makeCornerPathway(0, 0, breakableBlocksVector);
-	makeCornerPathway(0, m_mapWidth - 1, breakableBlocksVector);
-	makeCornerPathway(m_mapHeight - 1, 0, breakableBlocksVector);
-	makeCornerPathway(m_mapHeight - 1, m_mapWidth - 1, breakableBlocksVector);
+	MakeCornerPathway(0, 0, breakableBlocksVector);
+	MakeCornerPathway(0, m_mapWidth - 1, breakableBlocksVector);
+	MakeCornerPathway(m_mapHeight - 1, 0, breakableBlocksVector);
+	MakeCornerPathway(m_mapHeight - 1, m_mapWidth - 1, breakableBlocksVector);
 
 	// Transform a random number of BreakableBlocks generated into BombTraps
-	placeBombs(breakableBlocksVector);
+	PlaceBombs(breakableBlocksVector);
 
 
 	return true;
 }
 
-void Map::makeCornerPathway(size_t x, size_t y, std::vector<Object**>& breakableBlocksVector) {
+void Map::MakeCornerPathway(size_t x, size_t y, std::vector<Object**>& breakableBlocksVector) {
 	if (!dynamic_cast<Pathway*>(m_matrix[x][y])) {
 		auto it = std::find(breakableBlocksVector.begin(), breakableBlocksVector.end(), &m_matrix[x][y]);
 		if (it != breakableBlocksVector.end()) {
@@ -151,7 +146,7 @@ void Map::makeCornerPathway(size_t x, size_t y, std::vector<Object**>& breakable
 	}
 }
 
-void Map::placeBombs(std::vector<Object**>& breakableBlocksVector)
+void Map::PlaceBombs(std::vector<Object**>& breakableBlocksVector)
 {
 	// Defining distrubutions for random bombtrap generation
 	std::uniform_int_distribution<> bombRandomNumber(1, kTotalBombCount);
@@ -176,7 +171,7 @@ void Map::placeBombs(std::vector<Object**>& breakableBlocksVector)
 }
 
 
-std::vector<std::vector<std::pair<size_t, size_t>>> Map::findBestPath(std::pair<size_t, size_t> start, std::pair<size_t, size_t> end)
+std::vector<std::vector<std::pair<size_t, size_t>>> Map::FindBestPath(std::pair<size_t, size_t> start, std::pair<size_t, size_t> end)
 {
 	// bestPath both holds the solution (each position's values is its parent) and serves as a closedList (storing visited positions)
 	// Initial closedList (the size of map m_matrix has {-1,-1} on all positions)
@@ -196,26 +191,26 @@ std::vector<std::vector<std::pair<size_t, size_t>>> Map::findBestPath(std::pair<
 	while (!openList.empty()) {
 		BestPathNode current = openList.top();
 		openList.pop();
-		auto [x, y] = current.getPosition(); //Binding structure
+		auto [x, y] = current.GetPosition(); //Binding structure
 		for (int k = 0; k < 4; ++k) { //Looking for all 4 neighbours
 			size_t nextX = x + dx[k];
 			size_t nextY = y + dy[k];
 			if (nextX < 0 || nextY < 0 || nextX >= m_mapHeight || nextY >= m_mapWidth) continue; // invalid position
 			if (bestPath[nextX][nextY] != std::make_pair<size_t, size_t>(-1, -1)) continue; // position already visited
 			if (dynamic_cast<UnbreakableBlock*>(m_matrix[nextX][nextY])) {
-				openList.push(BestPathNode{ {nextX,nextY}, current.getNormalBlocksCount(), current.getUnbreakableBlocksCount() + 1 });
+				openList.push(BestPathNode{ {nextX,nextY}, current.GetNormalBlocksCount(), current.GetUnbreakableBlocksCount() + 1 });
 			}
 			else {
-				openList.push(BestPathNode{ {nextX,nextY}, current.getNormalBlocksCount() + 1, current.getUnbreakableBlocksCount() });
+				openList.push(BestPathNode{ {nextX,nextY}, current.GetNormalBlocksCount() + 1, current.GetUnbreakableBlocksCount() });
 			}
-			bestPath[nextX][nextY] = current.getPosition();
+			bestPath[nextX][nextY] = current.GetPosition();
 			if (std::pair<size_t, size_t>{nextX, nextY} == end) return bestPath;
 		}
 	}
 	return bestPath;
 }
 
-void Map::breakUnbreakableOnBestPath(std::vector<std::vector<std::pair<size_t, size_t>>> path, std::pair<size_t, size_t> start, std::pair<size_t, size_t> end)
+void Map::BreakUnbreakableOnBestPath(std::vector<std::vector<std::pair<size_t, size_t>>> path, std::pair<size_t, size_t> start, std::pair<size_t, size_t> end)
 {
 	std::pair<size_t,size_t> curr = end;
 	while (curr != start) {
@@ -229,9 +224,9 @@ void Map::breakUnbreakableOnBestPath(std::vector<std::vector<std::pair<size_t, s
 }
 
 
-bool Map::isWithinBounds(const int& i, const int& j) const
+bool Map::IsWithinBounds(const int& i, const int& j) const
 {
-	if (i + 1 > getMapWidth() or j + 1 > getMapHeight() or i < 0 or j < 0)
+	if (i + 1 > GetMapWidth() or j + 1 > GetMapHeight() or i < 0 or j < 0)
 		return false;
 	return true;
 }
@@ -252,7 +247,7 @@ void Map::__DEBUG_MAP_SEED__() {
 void Map::__DEBUG_MAP_PRINT__() {
 	for (std::vector<Object*>& line : m_matrix) {
 		for (Object*& object : line) {
-			object->print();
+			object->Print();
 			std::cout << " ";
 		}
 		std::cout << "\n";

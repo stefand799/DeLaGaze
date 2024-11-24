@@ -2,10 +2,10 @@
 #include "Block.h"
 class Pathway: public Block{
 public:
-	ObjectType getType() const override { return ObjectType::Pathway; };
-	void render() override;
-	void print() override;
-	bool canMoveHere(int i, int j) override;
+	ObjectType GetType() const override { return ObjectType::Pathway; };
+	void Render() override;
+	void Print() override;
+	bool CanMoveHere(int i, int j) override;
 private:
 };
 

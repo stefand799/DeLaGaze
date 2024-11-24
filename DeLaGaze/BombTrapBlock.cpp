@@ -1,11 +1,11 @@
 #include "BombTrapBlock.h"
 
-void BombTrapBlock::render(){
+void BombTrapBlock::Render(){
 }
 
-void BombTrapBlock::print(){
+void BombTrapBlock::Print(){
 	std::cout << "X";
 }
 
-void BombTrapBlock::onBreak(){
+void BombTrapBlock::OnBreak(){
 }

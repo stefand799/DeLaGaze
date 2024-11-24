@@ -6,14 +6,14 @@
 //Player::Player(const Map& m) : m_playerMap{ m } {};
 //
 //Player::Player(const int& i, const int& j, const Map& m) : m_x{ i }, m_y{ j }, m_playerMap{ m } {};
-bool Player::canMoveHere(int i, int j) {
+bool Player::CanMoveHere(int i, int j) {
 	return false;
 }
-void Player::render()
+void Player::Render()
 {
 
 }
-void Player::print()
+void Player::Print()
 {
 	std::cout << "\033[37;41m" << "P" << "\033[0m";
 }
@@ -67,14 +67,14 @@ State Player::GetPlayerState() const
 	return m_playerState;
 }
 
-void Player::moveUp(Map& map)
+void Player::MoveUp(Map& map)
 {
 	int newX = GetX() - 1;
 	int newY = GetY();
-	if (map.isWithinBounds(newX, newY)) {
-		if (map[newX][newY]->canMoveHere(newX, newY))
+	if (map.IsWithinBounds(newX, newY)) {
+		if (map[newX][newY]->CanMoveHere(newX, newY))
 		{
-			if (map[newX][newY]->getType() == ObjectType::Pathway)
+			if (map[newX][newY]->GetType() == ObjectType::Pathway)
 			{
 				map[GetX()][GetY()] = new Pathway;
 				SetX(newX);
@@ -82,21 +82,21 @@ void Player::moveUp(Map& map)
 				map[newX][newY] = this;
 			}
 		}
-		else std::cout << "Can't move here. Unaccesible type of block: "; map[newX][newY]->print(); std::cout << "\n";
+		else std::cout << "Can't move here. Unaccesible type of block: "; map[newX][newY]->Print(); std::cout << "\n";
 	}
 	else {
 		std::cout << "Can't move here. Out of bounds\n";
 	}
 }
 
-void Player::moveDown(Map& map)
+void Player::MoveDown(Map& map)
 {
 	int newX = GetX() + 1;
 	int newY = GetY();
-	if (map.isWithinBounds(newX, newY)) {
-		if (map[newX][newY]->canMoveHere(newX, newY))
+	if (map.IsWithinBounds(newX, newY)) {
+		if (map[newX][newY]->CanMoveHere(newX, newY))
 		{
-			if (map[newX][newY]->getType() == ObjectType::Pathway)
+			if (map[newX][newY]->GetType() == ObjectType::Pathway)
 			{
 				map[GetX()][GetY()] = new Pathway;
 				SetX(newX);
@@ -104,21 +104,21 @@ void Player::moveDown(Map& map)
 				map[newX][newY] = this;
 			}
 		}
-		else std::cout << "Can't move here. Unaccesible type of block: "; map[newX][newY]->print(); std::cout << "\n";
+		else std::cout << "Can't move here. Unaccesible type of block: "; map[newX][newY]->Print(); std::cout << "\n";
 	}
 	else {
 		std::cout << "Can't move here. Out of bounds\n";
 	}
 }
 
-void Player::moveLeft(Map& map)
+void Player::MoveLeft(Map& map)
 {
 	int newX = GetX();
 	int newY = GetY() - 1;
-	if (map.isWithinBounds(newX, newY)) {
-		if (map[newX][newY]->canMoveHere(newX, newY))
+	if (map.IsWithinBounds(newX, newY)) {
+		if (map[newX][newY]->CanMoveHere(newX, newY))
 		{
-			if (map[newX][newY]->getType() == ObjectType::Pathway)
+			if (map[newX][newY]->GetType() == ObjectType::Pathway)
 			{
 
 				map[GetX()][GetY()] = new Pathway;
@@ -127,20 +127,20 @@ void Player::moveLeft(Map& map)
 				map[newX][newY] = this;
 			}
 		}
-		else std::cout << "Can't move here. Unaccesible type of block: "; map[newX][newY]->print(); std::cout << "\n";
+		else std::cout << "Can't move here. Unaccesible type of block: "; map[newX][newY]->Print(); std::cout << "\n";
 	}
 	else {
 		std::cout << "Can't move here. Out of bounds\n";
 	}
 }
-void Player::moveRight(Map& map)
+void Player::MoveRight(Map& map)
 {
 	int newX = GetX();
 	int newY = GetY() + 1; // y = coloana
-	if (map.isWithinBounds(newX, newY)) {
-		if (map[newX][newY]->canMoveHere(newX, newY))
+	if (map.IsWithinBounds(newX, newY)) {
+		if (map[newX][newY]->CanMoveHere(newX, newY))
 		{
-			if (map[newX][newY]->getType() == ObjectType::Pathway)
+			if (map[newX][newY]->GetType() == ObjectType::Pathway)
 			{
 
 				map[GetX()][GetY()] = new Pathway;
@@ -149,7 +149,7 @@ void Player::moveRight(Map& map)
 				map[newX][newY] = this;
 			}
 		}
-		else std::cout << "Can't move here. Unaccesible type of block: "; map[newX][newY]->print(); std::cout << "\n";
+		else std::cout << "Can't move here. Unaccesible type of block: "; map[newX][newY]->Print(); std::cout << "\n";
 	}
 	else {
 		std::cout << "Can't move here. Out of bounds\n";
@@ -162,14 +162,14 @@ void Player::SetUsername(const std::string_view& username) { m_username = userna
 
 std::string Player::GetUsername() const { return m_username; }
 
-void Player::shoot(std::vector<std::shared_ptr<Bullet>>& bullets) {
+void Player::Shoot(std::vector<std::shared_ptr<Bullet>>& bullets) {
 	uint8_t bulletSpeed = m_bulletSpeedUpgrade ? 2 : 1; //Placeholder for bullet speeds
 	bullets.push_back(std::make_unique<Bullet>(bulletSpeed));
 };
 
 void Player::SetPlayerState(const State& playerState) { m_playerState = playerState; }
 
-void Player::commitSprite() {
+void Player::CommitSprite() {
 	/*This function dose nothing is just a filler so it counts as commit when i upload a sprite =( */
 	for (int i = 0; i <= 10; ++i)
 		i = (10 - i) / 2;

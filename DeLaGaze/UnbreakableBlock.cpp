@@ -1,12 +1,12 @@
 #include "UnbreakableBlock.h"
 
-void UnbreakableBlock::render(){
+void UnbreakableBlock::Render(){
 }
 
-void UnbreakableBlock::print(){
+void UnbreakableBlock::Print(){
 	std::cout << "U";
 }
 
-bool UnbreakableBlock::canMoveHere(int i, int j){
+bool UnbreakableBlock::CanMoveHere(int i, int j){
 	return false;
 }

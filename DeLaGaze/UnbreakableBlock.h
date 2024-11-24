@@ -3,10 +3,10 @@
 
 class UnbreakableBlock : public Wall{
 public:
-	ObjectType getType() const override { return ObjectType::UnbreakableBlock; };
-	 void render() override;
-	 void print() override;
-	 bool canMoveHere(int i, int j) override;
+	ObjectType GetType() const override { return ObjectType::UnbreakableBlock; };
+	 void Render() override;
+	 void Print() override;
+	 bool CanMoveHere(int i, int j) override;
 private:
 };
 

@@ -1,12 +1,12 @@
 #include "Pathway.h"
 
-void Pathway::render(){
+void Pathway::Render(){
 }
 
-void Pathway::print(){
+void Pathway::Print(){
 	std::cout << "P";
 }
 
-bool Pathway::canMoveHere(int i, int j){
+bool Pathway::CanMoveHere(int i, int j){
 	return true;
 }

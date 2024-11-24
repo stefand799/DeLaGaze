@@ -11,14 +11,14 @@
 #include "Pathway.h"
 class Player: public Object{
 public:
-	ObjectType getType() const override { return ObjectType::Player; };
+	ObjectType GetType() const override { return ObjectType::Player; };
 	Player() = default;
 	Player(const Map& m);
 	Player(const int& i, const int& j, const Map& m);
 	Player(const std::pair<int,int>& pos, const std::string_view& username, uint8_t points, uint8_t speed, Direction Facing, State PlayerState, uint8_t score = 0, uint8_t hp = 3);
-	bool canMoveHere(int i,int j) override;
-	void render() override;
-	void print() override;
+	bool CanMoveHere(int i,int j) override;
+	void Render() override;
+	void Print() override;
 	void SetX(const int& x);
 	void SetY(const int& y);
 	int GetX() const;
@@ -36,12 +36,12 @@ public:
 	void SetPlayerState(const State& playerState);
 	Direction GetFacing() const;
 	State GetPlayerState() const;
-	void moveUp(Map& map);
-	void moveDown(Map& map);
-	void moveLeft(Map& map);
-	void moveRight(Map& map);
-	void shoot(std::vector<std::shared_ptr<Bullet>>& bullets);
-	void commitSprite();
+	void MoveUp(Map& map);
+	void MoveDown(Map& map);
+	void MoveLeft(Map& map);
+	void MoveRight(Map& map);
+	void Shoot(std::vector<std::shared_ptr<Bullet>>& bullets);
+	void CommitSprite();
 	void Respawn();
 private:
 	Map m_playerMap;

@@ -1,15 +1,15 @@
 #include "BreakableBlock.h"
 
-void BreakableBlock::render(){
+void BreakableBlock::Render(){
 }
 
-void BreakableBlock::print() {
+void BreakableBlock::Print() {
 	std::cout << "B";
 }
 
-void BreakableBlock::onBreak(){
+void BreakableBlock::OnBreak(){
 }
 
-bool BreakableBlock::canMoveHere(int i, int j){
+bool BreakableBlock::CanMoveHere(int i, int j){
 	return false;
 }

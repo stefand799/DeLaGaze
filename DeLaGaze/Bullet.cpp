@@ -1,19 +1,19 @@
 #include "Bullet.h"
 
-void Bullet::render()
+void Bullet::Render()
 {
 }
 
-void Bullet::print()
+void Bullet::Print()
 {
 	std::cout << "Bullet\n";
 }
 
-bool Bullet::canMoveHere(int i,int j){
+bool Bullet::CanMoveHere(int i,int j){
 	return true;
 }
 
-void Bullet::move(){
+void Bullet::Move(){
 	/*TODO: Implement alongside QT*/
 }
 

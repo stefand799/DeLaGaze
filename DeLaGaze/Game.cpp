@@ -29,42 +29,42 @@ Game::~Game()
 //
 //}
 
-void Game::start()
+void Game::Start()
 {
-	if(!m_map.generate()) return;
+	if(!m_map.Generate()) return;
 	m_isRunning = true;
-	this->run();
+	this->Run();
 }
 
-void Game::update(){
+void Game::Update(){
 	for (auto& bullet : m_bullets)
-		bullet->move();
-	checkCollisions();
+		bullet->Move();
+	CheckCollisions();
 }
 
-void Game::checkCollisions(){
-	uint8_t mapWidth = m_map.getMapWidth();
-	uint8_t mapHeight = m_map.getMapHeight();
+void Game::CheckCollisions(){
+	uint8_t mapWidth = m_map.GetMapWidth();
+	uint8_t mapHeight = m_map.GetMapHeight();
 
 	for (auto& bullet : m_bullets) {
-		int i = bullet->getPosition().first;
-		int j = bullet->getPosition().second;
+		int i = bullet->GetPosition().first;
+		int j = bullet->GetPosition().second;
 
 		if (i >= 0 && i < mapWidth && j >= 0 && j < mapHeight) {
 			auto& target = m_map[i][j];
-			if (target->getType() == Object::ObjectType::Pathway)
+			if (target->GetType() == Object::ObjectType::Pathway)
 				continue; 
 			else{
-				if (target->getType() == Object::ObjectType::BreakableBlock) {
+				if (target->GetType() == Object::ObjectType::BreakableBlock) {
 					delete target;
 					delete bullet;
 					m_map[i][j] = new Pathway;
 					/*TODO: properly push bullet out of bullets vector*/
 				}
-				else if (target->getType() == Object::ObjectType::UnbreakableBlock) {
+				else if (target->GetType() == Object::ObjectType::UnbreakableBlock) {
 					delete bullet;
 				}
-				else if (target->getType() == Object::ObjectType::Player) {
+				else if (target->GetType() == Object::ObjectType::Player) {
 					Player* player = dynamic_cast<Player*>(target);
 					if (player->GetHp() > 1) {
 						player->SetHp();
@@ -75,12 +75,12 @@ void Game::checkCollisions(){
 						m_map[i][j] = new Pathway;
 					}
 				}
-				else if (target->getType() == Object::ObjectType::Bullet) {
+				else if (target->GetType() == Object::ObjectType::Bullet) {
 					delete target;
 					delete bullet;
 					m_map[i][j] = new Pathway;
 				}
-				else if (target->getType() == Object::ObjectType::BombTrapBlock) {
+				else if (target->GetType() == Object::ObjectType::BombTrapBlock) {
 					
 					for (int sI = -1; sI <= 1; ++sI) {
 						for (int sJ = -1; sJ <= 1; ++sJ) {
@@ -88,9 +88,9 @@ void Game::checkCollisions(){
 							int gridJ = j + sJ;
 							if (gridI >= 0 && gridI < mapWidth && gridJ >= 0 && gridJ < mapHeight) {
 								auto& gridCell = m_map[gridI][gridJ];
-								if (gridCell->getType() == Object::ObjectType::UnbreakableBlock||gridCell->getType()==Object::ObjectType::Pathway)
+								if (gridCell->GetType() == Object::ObjectType::UnbreakableBlock||gridCell->GetType()==Object::ObjectType::Pathway)
 									continue;
-								if (gridCell->getType() == Object::ObjectType::Player)
+								if (gridCell->GetType() == Object::ObjectType::Player)
 								{
 									Player* player = dynamic_cast<Player*>(gridCell);
 									if (player->GetHp() > 1) {
@@ -102,7 +102,7 @@ void Game::checkCollisions(){
 										m_map[gridI][gridJ] = new Pathway;
 									}
 								}
-								if (gridCell->getType() == Object::ObjectType::Bullet) {
+								if (gridCell->GetType() == Object::ObjectType::Bullet) {
 									delete gridCell;
 									m_map[gridI][gridJ] = new Pathway;
 								}
@@ -119,7 +119,7 @@ void Game::checkCollisions(){
 
 
 
-void Game::run()
+void Game::Run()
 {
 	while (m_isRunning) {
 		break; //Untill we implement the game ending condition that changes m_isRunning to false

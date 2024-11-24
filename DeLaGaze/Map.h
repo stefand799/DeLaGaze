@@ -25,8 +25,8 @@ public:
 	//Getter and/or setter
 	std::vector<Object*>& operator[](size_t line);
 
-	uint8_t getMapWidth() const { return m_mapWidth; };
-	uint8_t getMapHeight() const { return m_mapHeight; };
+	uint8_t GetMapWidth() const { return m_mapWidth; };
+	uint8_t GetMapHeight() const { return m_mapHeight; };
 
 	//Methods
 public:
@@ -40,7 +40,7 @@ public:
 	/// <param name="probabilities"></param>
 	/// <param name="seed"></param>
 	/// <returns></returns>
-	bool generate(
+	bool Generate(
 		const std::vector<uint8_t>& probabilities = std::vector<uint8_t>{
 			35, /*Pathway*/
 			25, /*UnbreakableBlock*/
@@ -51,11 +51,11 @@ public:
 
 	//Methods
 private:
-	bool verifyProbabilities();
-	void generateDimensions();
-	bool generateStructures();
-	void makeCornerPathway(size_t x, size_t y, std::vector<Object**>& breakableBlocksVector);
-	void placeBombs(std::vector<Object**>& breakableBlocksVector);
+	bool VerifyProbabilities();
+	void GenerateDimensions();
+	bool GenerateStructures();
+	void MakeCornerPathway(size_t x, size_t y, std::vector<Object**>& breakableBlocksVector);
+	void PlaceBombs(std::vector<Object**>& breakableBlocksVector);
 
 	
 	/// <summary>
@@ -65,9 +65,9 @@ private:
 	/// <param name="start"></param>
 	/// <param name="end"></param>
 	/// <returns></returns>
-	std::vector<std::vector<std::pair<size_t, size_t>>> findBestPath(std::pair<size_t, size_t> start, std::pair<size_t,size_t> end);
+	std::vector<std::vector<std::pair<size_t, size_t>>> FindBestPath(std::pair<size_t, size_t> start, std::pair<size_t,size_t> end);
 	// Changing the UnbreakableBlocks into BreakableBlocks along the found path with findBestPath
-	void breakUnbreakableOnBestPath(std::vector<std::vector<std::pair<size_t, size_t>>> path, std::pair<size_t, size_t> start, std::pair<size_t, size_t> end);
+	void BreakUnbreakableOnBestPath(std::vector<std::vector<std::pair<size_t, size_t>>> path, std::pair<size_t, size_t> start, std::pair<size_t, size_t> end);
 
 private:
 	// Nested Node class for Dijkstra
@@ -84,9 +84,9 @@ private:
 			}
 			return this->m_normalBlocksCount > other.m_normalBlocksCount;
 		}
-		std::pair<size_t, size_t> getPosition() const { return m_pos; }
-		uint32_t getNormalBlocksCount() const { return m_normalBlocksCount; }
-		uint32_t getUnbreakableBlocksCount() const { return m_unbreakableBlocksCount; }
+		std::pair<size_t, size_t> GetPosition() const { return m_pos; }
+		uint32_t GetNormalBlocksCount() const { return m_normalBlocksCount; }
+		uint32_t GetUnbreakableBlocksCount() const { return m_unbreakableBlocksCount; }
 
 	private:
 		std::pair<size_t, size_t> m_pos;
@@ -114,7 +114,7 @@ private:
 	bool m_alreadyGenerated : 1;
 
 public:
-	bool isWithinBounds(const int& i, const int& j) const;
+	bool IsWithinBounds(const int& i, const int& j) const;
 	//DEBUG METHODS:
 private:
 	void __DEBUG_MAP_DIM__();

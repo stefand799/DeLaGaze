@@ -2,10 +2,10 @@
 #include "BreakableBlock.h"
 class BombTrapBlock: public BreakableBlock{
 public:
-	ObjectType getType() const override { return ObjectType::BombTrapBlock; };
-	void render() override;
-	void print() override;
-	void onBreak() override;
+	ObjectType GetType() const override { return ObjectType::BombTrapBlock; };
+	void Render() override;
+	void Print() override;
+	void OnBreak() override;
 private:
 };
 
