@@ -10,7 +10,8 @@ namespace database
     bool PlayerStorage::AddPlayer(const Player& player)
     {
         try {
-            m_db.insert(Player{ player.GetUsername(),
+            m_db.insert(Player{ player.GetId(),
+                player.GetUsername(),
                 player.GetScore(),
                 player.GetPoints(),
                 player.GetBulletSpeed()
