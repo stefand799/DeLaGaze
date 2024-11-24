@@ -59,10 +59,16 @@ private:
 		0.25,
 		0.5
 	};
+	bool GetBulletSpeedUpgrade();
+	void SetBulletSpeedUpgrade(bool bulletSpeedUpgrade);
+	uint8_t GetBulletSpeed();
+	void SetBulletSpeed(uint8_t bulletSpeed);
+
 private:
 	Map& m_playerMap;
 	uint8_t m_hp : 2;
 	uint8_t m_score;
+	uint8_t m_bulletSpeed;
 	uint16_t m_points;
 	int m_x, m_y;
 	bool m_bulletSpeedUpgrade;

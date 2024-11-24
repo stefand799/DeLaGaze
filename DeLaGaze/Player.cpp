@@ -219,3 +219,9 @@ void Player::Respawn(){
 	SetX(m_spawnpoint.first);
 	SetY(m_spawnpoint.second);
 }
+
+
+bool Player::GetBulletSpeedUpgrade() { return m_bulletSpeedUpgrade; }
+void Player::SetBulletSpeedUpgrade(bool bulletSpeedUpgrade) { m_bulletSpeedUpgrade = bulletSpeedUpgrade; }
+uint8_t Player::GetBulletSpeed() { return m_bulletSpeed; }
+void Player::SetBulletSpeed(uint8_t bulletSpeed) { m_bulletSpeed = bulletSpeed; }

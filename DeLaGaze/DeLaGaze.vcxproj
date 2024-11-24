@@ -129,6 +129,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\DatabaseManager.cpp" />
     <ClCompile Include="Block.cpp" />
     <ClCompile Include="BombTrapBlock.cpp" />
     <ClCompile Include="BreakableBlock.cpp" />
@@ -143,6 +144,7 @@
     <ClCompile Include="Wall.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\DatabaseManager.h" />
     <ClInclude Include="Block.h" />
     <ClInclude Include="BombTrapBlock.h" />
     <ClInclude Include="BreakableBlock.h" />
