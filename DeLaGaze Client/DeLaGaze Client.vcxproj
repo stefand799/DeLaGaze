@@ -103,7 +103,7 @@
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="LoginScreen.h" />
-    <ClInclude Include="MainScreen.h" />
+    <QtMoc Include="MainScreen.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
