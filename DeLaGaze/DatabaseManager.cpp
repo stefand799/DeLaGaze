@@ -10,7 +10,11 @@ namespace database
     bool PlayerStorage::AddPlayer(const Player& player)
     {
         try {
-            m_db.insert(player);
+            m_db.insert(Player{ player.GetUsername(),
+                player.GetScore(),
+                player.GetPoints(),
+                player.GetBulletSpeed()
+                ,player.GetBulletSpeedUpgrade() });
             return true;
         }
         catch (const std::exception& e) {

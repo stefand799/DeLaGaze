@@ -140,6 +140,7 @@
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="Pathway.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Routes.cpp" />
     <ClCompile Include="UnbreakableBlock.cpp" />
     <ClCompile Include="Wall.cpp" />
   </ItemGroup>
@@ -155,6 +156,7 @@
     <ClInclude Include="Object.h" />
     <ClInclude Include="Pathway.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="Routes.h" />
     <ClInclude Include="State.h" />
     <ClInclude Include="UnbreakableBlock.h" />
     <ClInclude Include="Wall.h" />

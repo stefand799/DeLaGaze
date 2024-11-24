@@ -12,15 +12,22 @@
 class Player: public Object{
 public:
 	ObjectType GetType() const override { return ObjectType::Player; };
-	Player() = delete;
+	Player() = default;
 	Player(Map& m);
 	Player(const int& i, const int& j, Map& m);
-	Player(Map& m, const std::pair<int,int>& pos, const std::string_view& username, uint8_t points, bool bulletSpeedUpgrade, Direction facing, State playerState, uint8_t score = 0, uint8_t hp = 3);
+	Player(Map& m, const std::pair<int,int>& pos, const std::string& username, uint8_t points, bool bulletSpeedUpgrade, Direction facing, State playerState, uint8_t score = 0, uint8_t hp = 3);
+	Player(const int& id,const std::string& username, uint8_t score, uint16_t points, uint8_t bulletSpeed, bool bulletSpeedUpgrade)
+		: m_id(id),
+		m_username(username),
+		m_score(score),
+		m_points(points),
+		m_bulletSpeed(bulletSpeed),
+		m_bulletSpeedUpgrade(bulletSpeedUpgrade) {}
 	bool CanMoveHere(int i,int j) override;
 	void Render() override;
 	void Print() override;
 	void SetX(const int& x);
-	void SetY(const int& y);
+	void SetY(const int& y);	
 	int GetX() const;
 	int GetY() const;
 	void SetHp(); //no parameter since we will use GetHp()-1
@@ -30,8 +37,8 @@ public:
 	uint8_t GetScore() const;
 	uint16_t GetPoints() const;
 	~Player() = default;
-	std::string GetUsername() const;
-	void SetUsername(const std::string_view& username);
+	const std::string GetUsername() const;
+	void SetUsername(const std::string& username);
 	void SetFacing(const Direction& facing);
 	void SetPlayerState(const State& playerState);
 	Direction GetFacing() const;
@@ -60,13 +67,17 @@ private:
 		0.5
 	};
 public:
-	bool GetBulletSpeedUpgrade();
+	const bool GetBulletSpeedUpgrade() const;
 	void SetBulletSpeedUpgrade(bool bulletSpeedUpgrade);
-	uint8_t GetBulletSpeed();
+	const uint8_t GetBulletSpeed() const;
 	void SetBulletSpeed(uint8_t bulletSpeed);
+	const int GetId() const;
+	void SetId(int id);
 
 private:
-	Map& m_playerMap;
+	int m_id;
+	std::string m_username;
+	Map m_playerMap;
 	uint8_t m_hp : 2;
 	uint8_t m_score;
 	uint8_t m_bulletSpeed;
@@ -76,7 +87,6 @@ private:
 	Direction m_facing;
 	State m_playerState;
 	std::vector<Bullet*> m_bullets;
-	std::string m_username;
 	float shootCooldown;
 	std::pair<int, int> m_spawnpoint;
 };

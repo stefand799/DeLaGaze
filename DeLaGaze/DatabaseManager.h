@@ -15,8 +15,9 @@ namespace database
         return sql::make_storage(
             filename,
             sql::make_table(
-                "Players",
-                sql::make_column("username", &Player::SetUsername, &Player::GetUsername, sql::primary_key()),
+                "Players",  
+                sql::make_column("id",&Player::SetId,&Player::GetId,sql::primary_key()),
+                sql::make_column("username", &Player::SetUsername, &Player::GetUsername),
                 sql::make_column("score", &Player::SetScore, &Player::GetScore),
                 sql::make_column("points", &Player::SetPoints, &Player::GetPoints),
                 sql::make_column("firerate", &Player::SetBulletSpeed, &Player::GetBulletSpeed),

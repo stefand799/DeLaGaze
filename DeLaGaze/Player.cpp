@@ -4,7 +4,7 @@
 Player::Player(Map& m) : m_playerMap{ m } {}; //delete this later, only for early on testing. Leave only the constructor with all parameters.
 
 
-Player::Player(Map& m, const std::pair<int, int>& pos, const std::string_view& username, uint8_t points, bool bulletSpeedUpgrade, Direction facing, State playerState, uint8_t score, uint8_t hp) :
+Player::Player(Map& m, const std::pair<int, int>& pos, const std::string& username, uint8_t points, bool bulletSpeedUpgrade, Direction facing, State playerState, uint8_t score, uint8_t hp) :
 	m_playerMap{m},
 	m_username{username},
 	m_points{points},
@@ -18,6 +18,7 @@ Player::Player(Map& m, const std::pair<int, int>& pos, const std::string_view& u
 {}
 //
 //Player::Player(const int& i, const int& j, const Map& m) : m_x{ i }, m_y{ j }, m_playerMap{ m } {};
+
 bool Player::CanMoveHere(int i, int j) {
 	return false;
 }
@@ -197,9 +198,9 @@ Direction Player::GetFacing()
 
 void Player::SetFacing(const Direction& facing) { m_facing = facing; }
 
-void Player::SetUsername(const std::string_view& username) { m_username = username; }
+void Player::SetUsername(const std::string& username) { m_username = username; }
 
-std::string Player::GetUsername() const { return m_username; }
+const std::string Player::GetUsername() const { return m_username; }
 
 void Player::Shoot(std::vector<std::shared_ptr<Bullet>>& bullets) {
 	uint8_t bulletSpeed = m_bulletSpeedUpgrade ? 2 : 1; //Placeholder for bullet speeds
@@ -221,7 +222,18 @@ void Player::Respawn(){
 }
 
 
-bool Player::GetBulletSpeedUpgrade() { return m_bulletSpeedUpgrade; }
+const bool Player::GetBulletSpeedUpgrade() const { return m_bulletSpeedUpgrade; };
 void Player::SetBulletSpeedUpgrade(bool bulletSpeedUpgrade) { m_bulletSpeedUpgrade = bulletSpeedUpgrade; }
-uint8_t Player::GetBulletSpeed() { return m_bulletSpeed; }
+const uint8_t Player::GetBulletSpeed()const { return m_bulletSpeed; } ;
 void Player::SetBulletSpeed(uint8_t bulletSpeed) { m_bulletSpeed = bulletSpeed; }
+
+const int Player::GetId() const
+{
+	return m_id;
+}
+
+void Player::SetId(int id)
+{
+	m_id = id;
+}
+
