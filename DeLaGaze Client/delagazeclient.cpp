@@ -1,18 +1,40 @@
 #include "delagazeclient.h"
 
-DeLaGazeClient::DeLaGazeClient(QWidget *parent)
-    : QMainWindow(parent)
+DeLaGazeClient::DeLaGazeClient(QWidget* parent)
+    : QMainWindow(parent), stackedWidget(new QStackedWidget(this)), loginScreen(new LoginScreen(this)),mainScreen(new MainScreen(this))
 {
     ui.setupUi(this);
 
-    stackedWidget = new QStackedWidget(this);
     setCentralWidget(stackedWidget);
 
-    loginScreen = new LoginScreen(this);
-
     stackedWidget->addWidget(loginScreen);
+    stackedWidget->addWidget(mainScreen);
+    initializeConnections();
     stackedWidget->setCurrentWidget(loginScreen);
 }
 
 DeLaGazeClient::~DeLaGazeClient()
 {}
+
+void DeLaGazeClient::initializeConnections(){
+    connect(loginScreen, &LoginScreen::loginSuccessful, this, [&]() {
+        stackedWidget->setCurrentWidget(mainScreen);
+        });
+    connect(mainScreen, &MainScreen::selectedScreen, this, [&](MainScreen::Screen screen) {
+        switch (screen)
+        {
+       /* case MainScreen::PlayScreen:
+            stackedWidget->setCurrentWidget(playScreen);
+            break;
+        case MainScreen::UpgradesScreen:
+            stackedWidget->setCurrentWidget(upgradesScreen);
+            break;
+        case MainScreen::PlayScreen:
+            stackedWidget->setCurrentWidget(playScreen);
+            break;*/
+        case MainScreen::LoginScreen:
+            stackedWidget->setCurrentWidget(loginScreen);
+            break;
+        }
+        });
+}

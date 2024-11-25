@@ -55,9 +55,4 @@
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>
-  <ItemGroup>
-    <QtUic Include="LoginScreen.ui">
-      <Filter>Form Files</Filter>
-    </QtUic>
-  </ItemGroup>
 </Project>

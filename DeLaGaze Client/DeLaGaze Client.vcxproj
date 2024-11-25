@@ -99,7 +99,6 @@
     <QtMoc Include="delagazeclient.h" />
     <ClCompile Include="delagazeclient.cpp" />
     <ClCompile Include="main.cpp" />
-    <QtUic Include="LoginScreen.ui" />
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="LoginScreen.h" />

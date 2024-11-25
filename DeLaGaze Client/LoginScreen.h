@@ -3,16 +3,18 @@
 #include <QWidget>
 #include "qlineedit.h"
 #include "qpushbutton.h"
-#include "ui_LoginScreen.h"
 
 class LoginScreen :public QWidget {
 	Q_OBJECT
 public:
 	LoginScreen(QWidget* parent = nullptr);
 	~LoginScreen();
+signals:
+	void loginSuccessful();
+private slots:
+	void manageLogin();
 private:
-	Ui::LoginScreen ui;
-	QLineEdit* usernameInput;
+	QLineEdit* usernameLineEdit;
 	QPushButton* loginButton;
 	
 };
