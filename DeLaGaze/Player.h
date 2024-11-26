@@ -1,21 +1,23 @@
 #pragma once
-#include "Object.h"
 #include <cstdint>
-#include "Direction.h"
-#include "State.h"
-#include "Bullet.h"
 #include <vector>
 #include <utility>
 #include <cstdint>
+#include "Object.h"
+#include "Direction.h"
+#include "State.h"
+#include "Bullet.h"
 #include "Map.h"
 #include "Pathway.h"
-class Player: public Object{
+
+//TODO: ADD PLAYER MOVEMENT COOLDOWN
+class Player: public Object {
 public:
 	ObjectType GetType() const override { return ObjectType::Player; };
 	Player() = default;
-	Player(Map& m);
+	Player(Map* m);
 	Player(const int& i, const int& j, Map& m);
-	Player(Map& m, const std::pair<int,int>& pos, const std::string& username, uint8_t points, bool bulletSpeedUpgrade, Direction facing, State playerState, uint8_t score = 0, uint8_t hp = 3);
+	Player(Map* m, const std::pair<int,int>& pos, const int& id, const std::string& username, uint8_t points, bool bulletSpeedUpgrade, Direction facing, State playerState, uint8_t score = 0, uint8_t hp = 3);
 	Player(const int& id,const std::string& username, uint8_t score, uint16_t points, uint8_t bulletSpeed, bool bulletSpeedUpgrade)
 		: m_id(id),
 		m_username(username),
@@ -53,8 +55,14 @@ public:
 	void FaceEast();
 	Direction GetFacing();
 	void Shoot(std::vector<std::shared_ptr<Bullet>>& bullets);
-	void CommitSprite();
 	void Respawn();
+	const bool GetBulletSpeedUpgrade() const;
+	void SetBulletSpeedUpgrade(bool bulletSpeedUpgrade);
+	const uint8_t GetBulletSpeed() const;
+	void SetBulletSpeed(uint8_t bulletSpeed);
+	const int GetId() const;
+	void SetId(int id);
+
 private:
 	const float kShootingCooldowns[4] = {
 		1.0,
@@ -66,18 +74,11 @@ private:
 		0.25,
 		0.5
 	};
-public:
-	const bool GetBulletSpeedUpgrade() const;
-	void SetBulletSpeedUpgrade(bool bulletSpeedUpgrade);
-	const uint8_t GetBulletSpeed() const;
-	void SetBulletSpeed(uint8_t bulletSpeed);
-	const int GetId() const;
-	void SetId(int id);
 
 private:
 	int m_id;
 	std::string m_username;
-	Map m_playerMap;
+	Map* m_playerMap;
 	uint8_t m_hp : 2;
 	uint8_t m_score;
 	uint8_t m_bulletSpeed;
@@ -89,5 +90,6 @@ private:
 	std::vector<Bullet*> m_bullets;
 	float shootCooldown;
 	std::pair<int, int> m_spawnpoint;
+	//TODO: Add float x and y
 };
 

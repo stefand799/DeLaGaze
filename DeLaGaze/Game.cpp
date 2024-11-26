@@ -1,8 +1,14 @@
 #include "Game.h"
 
+
 Game::Game() :
-	m_isRunning{false}
+	m_isRunning{false},
+	m_targetFrameDuration{ std::chrono::nanoseconds(1000000000 / m_maxFps) }
 {
+#if defined(_WIN32) || defined(_WIN64) || defined(WIN32) || defined(WIN64)
+	m_shortestSleepTime = Nsec(1000000 / 64);
+#elif defined(__unix__)
+#endif // 
 
 }
 
@@ -32,14 +38,48 @@ Game::~Game()
 void Game::Start()
 {
 	if(!m_map.Generate()) return;
+	//Creating players
+
+	delete m_map[0][0];
+	m_players.emplace_back(new Player(&m_map, { 0,0 }, 1, "Player1", 0, false, Direction::South, State::Idle));
+	m_map[0][0] = m_players[0];
+
+	//ONLY FOR TESTING
+	__DEBUG_PRINT_MAP__();
+
 	m_isRunning = true;
 	m_lastFrameTime = std::chrono::high_resolution_clock::now();
+	std::thread playerInputThread([this]() {
+		GetPlayerInputs();
+		});
 	this->Run();
+
+	if (playerInputThread.joinable())
+		playerInputThread.join();
 }
 
 void Game::Update(){
+	//Handle player input
+	//for now only one player
+	while (!m_playerInputs.empty()) {
+		auto [currPlayer,currInput] = m_playerInputs.front();
+		m_playerInputs.pop();
+		if (currInput == 27) m_isRunning = false; //escape
+		if (currInput == 'w' || currInput == 'W') currPlayer->MoveUp();
+		if (currInput == 'a' || currInput == 'A') currPlayer->MoveLeft();
+		if (currInput == 's' || currInput == 'S') currPlayer->MoveDown();
+		if (currInput == 'd' || currInput == 'D') currPlayer->MoveRight();
+		if (currInput == 1) currPlayer->FaceNorth();
+		if (currInput == 2) currPlayer->FaceSouth();
+		if (currInput == 3) currPlayer->FaceWest();
+		if (currInput == 4) currPlayer->FaceEast();
+		//if (currInput == ' ') currPlayer->Shoot(m_bullets);
+	}
+
+	//Handle bullets Update;
 	for (auto& bullet : m_bullets)
-		bullet->Move();
+		bullet->Move(m_deltaTime);
+	//Handle collisions
 	CheckCollisions();
 }
 
@@ -48,8 +88,8 @@ void Game::CheckCollisions(){
 	uint8_t mapHeight = m_map.GetMapHeight();
 
 	for (auto& bullet : m_bullets) {
-		int i = bullet->GetPosition().first;
-		int j = bullet->GetPosition().second;
+		int i = bullet->GetY();
+		int j = bullet->GetX();
 
 		if (i >= 0 && i < mapWidth && j >= 0 && j < mapHeight) {
 			auto& target = m_map[i][j];
@@ -122,14 +162,71 @@ void Game::CheckCollisions(){
 
 void Game::Run()
 {
+	//Clock::time_point lastSecond = Clock::now();
+	//int x = 0;
 
 	while (m_isRunning) {
 
-		std::chrono::high_resolution_clock::time_point currentTime = std::chrono::high_resolution_clock::now();
-		m_deltaTime = m_lastFrameTime - currentTime;
-		m_lastFrameTime = currentTime;
-		Update();
-		std::this_thread::sleep_for(std::chrono::milliseconds(100)); //10fps
-		break; //Untill we implement the game ending condition that changes m_isRunning to false
+		Clock::time_point frameInitialTimePoint = Clock::now();
+
+		m_deltaTime = fSecDur(frameInitialTimePoint - m_lastFrameTime).count();
+		m_lastFrameTime = frameInitialTimePoint;
+
+		if (!m_playerInputs.empty() || !m_bullets.empty())
+		{
+			Update();
+			//HERE ONLY FOR MOMENTARY DESPLAY OF MAP FOR TESTING
+			__DEBUG_PRINT_MAP__();
+
+		}
+
+
+		Clock::time_point frameFinalTimePoint = std::chrono::high_resolution_clock::now();
+		Nsec frameTime = std::chrono::duration_cast<Nsec>(frameFinalTimePoint - frameInitialTimePoint);
+		Nsec sleepTime{ m_targetFrameDuration - frameTime };
+		if (frameTime < m_targetFrameDuration) {
+			Nsec remainingSleepTime = sleepTime;
+			//TODO: add hybrid frame limiter using std::this_thread::sleep_for(SLEEPTIME_OR_SOME_DURATION) before the current busy-waiting
+			// but find a way to work around or with the windows 64hz resolution clock that limits the sleep precision without overexagerating context switching
+			if(sleepTime >= Nsec((1000000/64)*2)) std::this_thread::sleep_for(sleepTime / 2); //the 64 comes from the 64hz windows clock
+			while (Clock::now() < frameFinalTimePoint + sleepTime); //busy waiting
+		}
+
+		//break; //Untill we implement the game ending condition that changes m_isRunning to false
+	}
+}
+
+//for now only for testing with one player but in the future may collect input data from players as part of the server part
+void Game::GetPlayerInputs()
+{
+	while(m_isRunning) {
+		char keyboardInput = _getch();
+
+		if (keyboardInput == -32) { //Arrow input
+			char arrowKey = _getch();
+			if(arrowKey == 'H') //up
+				m_playerInputs.push({ m_players[0], 1});
+			if(arrowKey == 'P') //down
+				m_playerInputs.push({ m_players[0], 2 });
+			if (arrowKey == 'K') //left
+				m_playerInputs.push({ m_players[0], 3 });
+			if (arrowKey == 'M') //right
+				m_playerInputs.push({ m_players[0], 4 });
+		}
+		else 
+			m_playerInputs.push({ m_players[0],keyboardInput});
+		if (keyboardInput == 27) break; // ESCAPE, to ensure that the loop is not run again before the other thread changes m_isRunning to false
+	}
+}
+
+void Game::__DEBUG_PRINT_MAP__()
+{
+	system("cls");
+	for (size_t line = 0; line < m_map.GetMapHeight(); ++line) {
+		for (size_t column = 0; column < m_map.GetMapWidth(); ++column) {
+			m_map[line][column]->Print();
+			std::cout << " ";
+		}
+		std::cout << "\n";
 	}
 }
