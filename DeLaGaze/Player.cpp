@@ -1,20 +1,23 @@
 #include "Player.h"
 
 
-Player::Player(Map* m) : m_playerMap{ m } {}; //delete this later, only for early on testing. Leave only the constructor with all parameters.
+Player::Player(Map* m) : m_playerMap{ m } {} //delete this later, only for early on testing. Leave only the constructor with all parameters.
 
 
 Player::Player(Map* m, const std::pair<int, int>& pos, const int& id, const std::string& username, uint8_t points, bool bulletSpeedUpgrade, Direction facing, State playerState, uint8_t score, uint8_t hp) :
-	m_playerMap{m},
-	m_username{username},
-	m_id{id},
-	m_points{points},
-	m_bulletSpeedUpgrade{bulletSpeedUpgrade},
-	m_facing{facing},
-	m_score{score},
-	m_hp{hp},
-	m_x{pos.first},
-	m_y{pos.second}
+	m_playerMap{ m },
+	m_username{ username },
+	m_id{ id },
+	m_points{ points },
+	m_bulletSpeedUpgrade{ bulletSpeedUpgrade },
+	m_facing{ facing },
+	m_score{ score },
+	m_hp{ hp },
+	m_x{ pos.first },
+	m_y{ pos.second },
+	m_moveCooldown{ kDefaultMoveCooldown },
+	m_lastMovedTime{ Clock::now() },
+	m_lastShotTime{ Clock::now() }
 	//,Object{pos},
 {}
 //
@@ -27,9 +30,12 @@ void Player::Render()
 {
 
 }
-void Player::Print()
+void Player::Print() const
 {
-	std::cout << "\033[37;41m" << "P" << "\033[0m";
+	if(m_facing == Direction::North) std::cout << "\033[37;41m" << "^" << "\033[0m";
+	if(m_facing == Direction::South) std::cout << "\033[37;41m" << "v" << "\033[0m";
+	if(m_facing == Direction::West) std::cout << "\033[37;41m" << "<" << "\033[0m";
+	if(m_facing == Direction::East) std::cout << "\033[37;41m" << ">" << "\033[0m";
 }
 
 void Player::SetY(const int& y)
@@ -83,15 +89,14 @@ State Player::GetPlayerState() const
 
 void Player::MoveUp()
 {
+	if (std::chrono::duration<float>(Clock::now() - m_lastMovedTime).count() < m_moveCooldown) return;
 	int newX = m_x;
 	int newY = m_y - 1;
 	if (!m_playerMap->IsWithinBounds(newY, newX)) {
-		std::cout << "Can't move here. Out of bounds\n";
 		return;
 	}
 
 	if (!(*m_playerMap)[newY][newX]->CanMoveHere(newY, newX)) {
-		std::cout << "Can't move here. Unaccesible type of block: "; (*m_playerMap)[newY][newX]->Print(); std::cout << "\n";
 		return;
 	}
 
@@ -102,19 +107,19 @@ void Player::MoveUp()
 		(*m_playerMap)[m_y][m_x] = new Pathway;
 		SetY(newY);
 	}
+	m_lastMovedTime = Clock::now();
 }
 
 void Player::MoveDown()
 {
+	if (std::chrono::duration<float>(Clock::now() - m_lastMovedTime).count() < m_moveCooldown) return;
 	int newX = m_x;
 	int newY = m_y + 1;
 	if (!(*m_playerMap).IsWithinBounds(newY, newX)) {
-		std::cout << "Can't move here. Out of bounds\n";
 		return;
 	}
 
 	if (!(*m_playerMap)[newY][newX]->CanMoveHere(newY, newX)) {
-		std::cout << "Can't move here. Unaccesible type of block: "; (*m_playerMap)[newY][newX]->Print(); std::cout << "\n";
 		return;
 	}
 
@@ -125,19 +130,19 @@ void Player::MoveDown()
 		(*m_playerMap)[m_y][m_x] = new Pathway;
 		SetY(newY);
 	}
+	m_lastMovedTime = Clock::now();
 }
 
 void Player::MoveLeft()
 {
+	if (std::chrono::duration<float>(Clock::now() - m_lastMovedTime).count() < m_moveCooldown) return;
 	int newX = m_x - 1;
 	int newY = m_y;
 	if (!(*m_playerMap).IsWithinBounds(newY, newX)) {
-		std::cout << "Can't move here. Out of bounds\n";
 		return;
 	}
 
 	if (!(*m_playerMap)[newY][newX]->CanMoveHere(newY, newX)) {
-		std::cout << "Can't move here. Unaccesible type of block: "; (*m_playerMap)[newY][newX]->Print(); std::cout << "\n";
 		return;
 	}
 
@@ -148,18 +153,18 @@ void Player::MoveLeft()
 		(*m_playerMap)[m_y][m_x] = new Pathway;
 		SetX(newX);
 	}
+	m_lastMovedTime = Clock::now();
 }
 void Player::MoveRight()
 {
+	if (std::chrono::duration<float>(Clock::now() - m_lastMovedTime).count() < m_moveCooldown) return;
 	int newX = m_x + 1;
 	int newY = m_y;
 	if (!(*m_playerMap).IsWithinBounds(newY, newX)) {
-		std::cout << "Can't move here. Out of bounds\n";
 		return;
 	}
 
 	if (!(*m_playerMap)[newY][newX]->CanMoveHere(newY, newX)) {
-		std::cout << "Can't move here. Unaccesible type of block: "; (*m_playerMap)[newY][newX]->Print(); std::cout << "\n";
 		return;
 	}
 
@@ -170,6 +175,7 @@ void Player::MoveRight()
 		(*m_playerMap)[m_y][m_x] = new Pathway;
 		SetX(newX);
 	}
+	m_lastMovedTime = Clock::now();
 }
 
 void Player::FaceNorth()
@@ -203,9 +209,10 @@ void Player::SetUsername(const std::string& username) { m_username = username; }
 
 const std::string Player::GetUsername() const { return m_username; }
 
-void Player::Shoot(std::vector<std::shared_ptr<Bullet>>& bullets) {
-	uint8_t bulletSpeed = m_bulletSpeedUpgrade ? kBulletSpeeds[0] : kBulletSpeeds[1]; //Placeholder for bullet speeds
-	bullets.push_back(std::make_unique<Bullet>(m_x, m_y, bulletSpeed, m_facing)); // set the position the bullet a little in the direction of the player facing
+void Player::Shoot(std::vector<Bullet*>& bullets) {
+	uint8_t bulletSpeed = m_bulletSpeedUpgrade ? kBulletSpeeds[1] : kBulletSpeeds[0]; //Placeholder for bullet speeds
+	bullets.emplace_back(new Bullet(m_x, m_y, bulletSpeed, m_facing)); // set the position the bullet a little in the direction of the player facing
+	//bullets.push_back(std::make_unique<Bullet>(m_x, m_y, bulletSpeed, m_facing)); // set the position the bullet a little in the direction of the player facing
 };
 
 void Player::SetPlayerState(const State& playerState) { m_playerState = playerState; }

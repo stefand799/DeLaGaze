@@ -4,7 +4,7 @@ class BombTrapBlock: public BreakableBlock{
 public:
 	ObjectType GetType() const override { return ObjectType::BombTrapBlock; };
 	void Render() override;
-	void Print() override;
+	void Print() const override;
 	void OnBreak() override;
 private:
 };

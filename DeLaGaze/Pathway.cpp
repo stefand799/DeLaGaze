@@ -3,8 +3,8 @@
 void Pathway::Render(){
 }
 
-void Pathway::Print(){
-	std::cout << "P";
+void Pathway::Print() const{
+	std::cout << "\033[37;42m" << " " << "\033[0m"; //P
 }
 
 bool Pathway::CanMoveHere(int i, int j){

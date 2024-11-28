@@ -12,7 +12,7 @@
 #include <chrono>
 #include <thread>
 
-
+#define DEBUG
 
 //These are included only for the command-line UI for testing and will be removed after ui can be done in QT
 #include <WinSock2.h>
@@ -30,10 +30,7 @@ public:
 	void RemovePlayer(const Player& player);
 
 
-	/// <summary>
-	/// Method which prepares the game for running, generating map, initializing players, and starting the game loop in "run".
-	/// Will probably have parameters in near future for things like connections, player count, seed, etc.
-	/// </summary>
+
 	void Start();
 
 
@@ -51,10 +48,7 @@ private:
 
 	//Methods
 	
-	/// <summary>
-	/// Method that contains the game loop.
-	/// The game loop is where all the action happens
-	/// </summary>
+
 	void Run();
 	
 	void GetPlayerInputs();

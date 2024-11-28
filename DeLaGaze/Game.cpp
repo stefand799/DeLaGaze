@@ -45,7 +45,10 @@ void Game::Start()
 	m_map[0][0] = m_players[0];
 
 	//ONLY FOR TESTING
+#ifdef DEBUG
 	__DEBUG_PRINT_MAP__();
+#endif // DEBUG
+
 
 	m_isRunning = true;
 	m_lastFrameTime = std::chrono::high_resolution_clock::now();
@@ -73,11 +76,11 @@ void Game::Update(){
 		if (currInput == 2) currPlayer->FaceSouth();
 		if (currInput == 3) currPlayer->FaceWest();
 		if (currInput == 4) currPlayer->FaceEast();
-		//if (currInput == ' ') currPlayer->Shoot(m_bullets);
+		if (currInput == ' ') currPlayer->Shoot(m_bullets);
 	}
 
 	//Handle bullets Update;
-	for (auto& bullet : m_bullets)
+	for (Bullet* bullet : m_bullets)
 		bullet->Move(m_deltaTime);
 	//Handle collisions
 	CheckCollisions();
@@ -175,11 +178,13 @@ void Game::Run()
 		if (!m_playerInputs.empty() || !m_bullets.empty())
 		{
 			Update();
-			//HERE ONLY FOR MOMENTARY DESPLAY OF MAP FOR TESTING
+#ifdef DEBUG
+			//HERE ONLY FOR MOMENTARY DISPLAY OF MAP FOR TESTING
 			__DEBUG_PRINT_MAP__();
+#endif // DEBUG
+
 
 		}
-
 
 		Clock::time_point frameFinalTimePoint = std::chrono::high_resolution_clock::now();
 		Nsec frameTime = std::chrono::duration_cast<Nsec>(frameFinalTimePoint - frameInitialTimePoint);
@@ -192,7 +197,7 @@ void Game::Run()
 			while (Clock::now() < frameFinalTimePoint + sleepTime); //busy waiting
 		}
 
-		//break; //Untill we implement the game ending condition that changes m_isRunning to false
+
 	}
 }
 
@@ -224,8 +229,16 @@ void Game::__DEBUG_PRINT_MAP__()
 	system("cls");
 	for (size_t line = 0; line < m_map.GetMapHeight(); ++line) {
 		for (size_t column = 0; column < m_map.GetMapWidth(); ++column) {
-			m_map[line][column]->Print();
-			std::cout << " ";
+			bool isBulletHere = false;
+			for (const Bullet* currBullet : m_bullets) {
+				if ((int)currBullet->GetY() == line && (int)currBullet->GetX() == column) {
+					currBullet->Print();
+					isBulletHere = true;
+					break;
+				}
+			}
+			if(!isBulletHere) m_map[line][column]->Print();
+			//std::cout << " ";
 		}
 		std::cout << "\n";
 	}

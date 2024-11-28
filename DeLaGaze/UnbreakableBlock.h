@@ -5,7 +5,7 @@ class UnbreakableBlock : public Wall{
 public:
 	ObjectType GetType() const override { return ObjectType::UnbreakableBlock; };
 	 void Render() override;
-	 void Print() override;
+	 void Print() const override;
 	 bool CanMoveHere(int i, int j) override;
 private:
 };

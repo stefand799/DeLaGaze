@@ -3,8 +3,8 @@
 void BreakableBlock::Render(){
 }
 
-void BreakableBlock::Print() {
-	std::cout << "B";
+void BreakableBlock::Print() const{
+	std::cout << "\033[37;43m" << " " << "\033[0m"; //B
 }
 
 void BreakableBlock::OnBreak(){

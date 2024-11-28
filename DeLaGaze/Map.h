@@ -30,16 +30,7 @@ public:
 
 	//Methods
 public:
-	/// <summary>
-	/// Method that randomly generates the map using dynamic allocation of memory.
-	/// Probabilies are, in order:
-	/// Pathway = default 35% : 
-	/// UnbreakableBlock = default 25% : 
-	/// BreakableBlock = default 40% ;
-	/// </summary>
-	/// <param name="probabilities"></param>
-	/// <param name="seed"></param>
-	/// <returns></returns>
+
 	bool Generate(
 		const std::vector<uint8_t>& probabilities = std::vector<uint8_t>{
 			//35, /*Pathway*/
@@ -62,13 +53,7 @@ private:
 	void PlaceBombs(std::vector<Object**>& breakableBlocksVector);
 
 	
-	/// <summary>
-	/// Using Dijkstra to find the path with smallest number of UnbreakableBlocks to change if players are isolated.
-	/// This uses the nested BestPathNode class
-	/// </summary>
-	/// <param name="start"></param>
-	/// <param name="end"></param>
-	/// <returns></returns>
+
 	std::vector<std::vector<std::pair<size_t, size_t>>> FindBestPath(std::pair<size_t, size_t> start, std::pair<size_t,size_t> end);
 	// Changing the UnbreakableBlocks into BreakableBlocks along the found path with findBestPath
 	void BreakUnbreakableOnBestPath(std::vector<std::vector<std::pair<size_t, size_t>>> path, std::pair<size_t, size_t> start, std::pair<size_t, size_t> end);

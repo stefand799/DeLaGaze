@@ -8,12 +8,13 @@ public:
 	Bullet(float x, float y, float speed, Direction direction);
 	ObjectType GetType() const override;
 	void Render() override;
-	void Print() override;
+	void Print() const override;
 	bool CanMoveHere(int i, int j) override;
 	void Move(float deltaTime);
 	//std::pair<int, int> GetPosition() const { return {(int)m_x,(int)m_y}; };
-	float GetX();
-	float GetY();
+public:
+	float GetX() const;
+	float GetY() const;
 private:
 	//TODO: delete the inherited int,int m_position
 	float m_x;

@@ -1,8 +1,8 @@
 #pragma once
-#include <cstdint>
 #include <vector>
 #include <utility>
 #include <cstdint>
+#include <chrono>
 #include "Object.h"
 #include "Direction.h"
 #include "State.h"
@@ -27,7 +27,7 @@ public:
 		m_bulletSpeedUpgrade(bulletSpeedUpgrade) {}
 	bool CanMoveHere(int i,int j) override;
 	void Render() override;
-	void Print() override;
+	void Print() const override;
 	void SetX(const int& x);
 	void SetY(const int& y);	
 	int GetX() const;
@@ -54,7 +54,7 @@ public:
 	void FaceWest();
 	void FaceEast();
 	Direction GetFacing();
-	void Shoot(std::vector<std::shared_ptr<Bullet>>& bullets);
+	void Shoot(std::vector<Bullet*>& bullets);
 	void Respawn();
 	const bool GetBulletSpeedUpgrade() const;
 	void SetBulletSpeedUpgrade(bool bulletSpeedUpgrade);
@@ -64,6 +64,8 @@ public:
 	void SetId(int id);
 
 private:
+	using Clock = std::chrono::high_resolution_clock;
+	//Constants
 	const float kShootingCooldowns[4] = {
 		1.0,
 		0.5,
@@ -71,11 +73,11 @@ private:
 		0.125
 	};
 	const float kBulletSpeeds[2] = {
-		0.25,
-		0.5
+		2.0f,
+		4.0f
 	};
-
-private:
+	const float kDefaultMoveCooldown = 0.25;
+	//Atributes
 	int m_id;
 	std::string m_username;
 	Map* m_playerMap;
@@ -88,7 +90,10 @@ private:
 	Direction m_facing;
 	State m_playerState;
 	std::vector<Bullet*> m_bullets;
-	float shootCooldown;
+	float m_shootCooldown;
+	Clock::time_point m_lastShotTime;
+	float m_moveCooldown;
+	Clock::time_point m_lastMovedTime;
 	std::pair<int, int> m_spawnpoint;
 	//TODO: Add float x and y
 };

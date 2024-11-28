@@ -4,7 +4,7 @@ void Block::Render() {
 	//Should default block have a render?
 }
 
-void Block::Print() {
-	std::cout << "W";
-}
+//void Block::Print() const {
+//	std::cout << "W";
+//}
 

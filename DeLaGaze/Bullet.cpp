@@ -7,16 +7,16 @@ Bullet::Bullet(float x, float y, float speed, Direction direction) :
 	m_direction{ direction }
 {
 	if (m_direction == Direction::North) {
-		m_y -= 0.5;
+		m_y -= 1;
 	}
 	if (m_direction == Direction::South) {
-		m_y += 0.5;
+		m_y += 1;
 	}
 	if (m_direction == Direction::West) {
-		m_x -= 0.5;
+		m_x -= 1;
 	}
 	if (m_direction == Direction::East) {
-		m_x += 0.5;
+		m_x += 1;
 	}
 	m_prevX = m_x;
 	m_prevY = m_y;
@@ -26,9 +26,13 @@ void Bullet::Render()
 {
 }
 
-void Bullet::Print()
+void Bullet::Print() const
 {
-	std::cout << "Bullet\n";
+	//std::cout << "\033[37;42m" << "*" << "\033[0m";	if(m_facing == Direction::North) std::cout << "\033[37;41m" << "^" << "\033[0m";
+	if (m_direction == Direction::North) std::cout << "\033[37;42m" << "^" << "\033[0m";
+	if (m_direction == Direction::South) std::cout << "\033[37;42m" << "v" << "\033[0m";
+	if (m_direction == Direction::West) std::cout << "\033[37;42m" << "<" << "\033[0m";
+	if (m_direction == Direction::East) std::cout << "\033[37;42m" << ">" << "\033[0m";
 }
 
 bool Bullet::CanMoveHere(int i,int j) {
@@ -53,15 +57,17 @@ void Bullet::Move(float deltaTime)
 	if (m_direction == Direction::East) {
 		newX += m_speed * deltaTime;
 	}
+	m_x = newX;
+	m_y = newY;
 	//TODO: verify if the bullet is still on the map. If it is, then place it there and then call check colisions in update(). If it is not, then call its delete?
 }
 
-float Bullet::GetX()
+float Bullet::GetX() const
 {
 	return m_x;
 }
 
-float Bullet::GetY()
+float Bullet::GetY() const
 {
 	return m_y;
 }
