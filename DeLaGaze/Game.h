@@ -8,6 +8,7 @@
 #include "Player.h"
 #include "Map.h"
 #include <vector>
+#include <unordered_set>
 #include <cstdint>
 #include <chrono>
 #include <thread>
@@ -35,8 +36,13 @@ public:
 
 
 	void Update();
-	void CheckCollisions();
-	void MarkForDestruction(Object* object);
+	void HandleCollisions();
+	void HandleBulletToWallCollisions(const Bullet* bullet);
+	void HandleBulletToBulletCollisions(std::vector<Bullet*>::iterator& bulletIterator);
+	void HandleBulletToPlayerCollisions(const Bullet* bullet);
+
+	//void CheckCollisions();
+	//void MarkForDestruction(Object* object);
 	void RemoveDestroyedObjects();
 
 private:
@@ -64,8 +70,30 @@ private:
 	//Atributes
 	Map m_map;
 	std::vector<Player*> m_players;
-	std::vector<Bullet*>m_bullets; //We could probably use shared_ptr so the bullets get deleted immediately when they go out of scope
-	std::vector<Object*> m_markedForDestruction; //Object*, because currently I have no clue if we're going to alter additional logic and would be optimal not to immediately delete them when they get out of scope
+	std::vector<Bullet*> m_bullets; //We could probably use shared_ptr so the bullets get deleted immediately when they go out of scope
+	//std::vector<Object*> m_markedForDestruction; //Object*, because currently I have no clue if we're going to alter additional logic and would be optimal not to immediately delete them when they get out of scope
+	
+	struct ObjectCollision {
+		ObjectCollision(Object* obj1, Object* obj2, float collisionTime) :
+			first{ obj1 },
+			second{ obj2 },
+			time{ collisionTime } 
+		{}
+		ObjectCollision(std::tuple<Object*,Object*,float>&& values) :
+			first{ std::get<0>(values)},
+			second{ std::get<1>(values) },
+			time{ std::get<2>(values) }
+		{}
+
+		Object* first;
+		Object* second;
+		float time;
+		bool operator<(const ObjectCollision& other) const {
+			return this->time < other.time;
+		}
+	};
+
+	std::priority_queue<ObjectCollision> m_collisions;
 	//also I'm inadequately educated so I can't call the shots here yet
 	float m_deltaTime; //The time from the last frame
 	Clock::time_point m_lastFrameTime;
