@@ -18,6 +18,26 @@ void Routes::Run(database::PlayerStorage& playerStorage)
 			Player* player = playerStorage.GetPlayerByName(playerStorage.GetAllPlayers(), req.url_params.get("username"));
 			return UpdatePlayerBulletSpeed(playerStorage, *player, req);
 		});
+	CROW_ROUTE(m_app, "/player/move_up")([&, this](const crow::request& req)
+		{
+			Player* player = playerStorage.GetPlayerByName(playerStorage.GetAllPlayers(), req.url_params.get("username"));
+			return PlayerMoveUp(*player, req);
+		});
+	CROW_ROUTE(m_app, "/player/move_down")([&, this](const crow::request& req)
+		{
+			Player* player = playerStorage.GetPlayerByName(playerStorage.GetAllPlayers(), req.url_params.get("username"));
+			return PlayerMoveDown(*player, req);
+		});
+	CROW_ROUTE(m_app, "/player/move_left")([&, this](const crow::request& req)
+		{
+			Player* player = playerStorage.GetPlayerByName(playerStorage.GetAllPlayers(), req.url_params.get("username"));
+			return PlayerMoveLeft(*player, req);
+		});
+	CROW_ROUTE(m_app, "/player/move_right")([&, this](const crow::request& req)
+		{
+			Player* player = playerStorage.GetPlayerByName(playerStorage.GetAllPlayers(), req.url_params.get("username"));
+			return PlayerMoveRight(*player, req);
+		});
 }
 crow::response Routes::AddPlayerToDatabase(database::PlayerStorage& playerStorage, const crow::request& req) {
     crow::json::rvalue body = crow::json::load(req.body);
@@ -76,7 +96,6 @@ crow::response Routes::GetPlayersFromDatabase(database::PlayerStorage& playerSto
 	}
 	return crow::json::wvalue{ players_json };
 }
-
 crow::response Routes::PlayerMoveUp(Player& p, const crow::request& req)
 {
 	p.MoveUp();
