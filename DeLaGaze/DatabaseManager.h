@@ -40,7 +40,7 @@ namespace database
         bool UpdatePlayer(const Player& player);
         bool DeletePlayer(const std::string& username);
         std::vector<Player> GetAllPlayers();
-
+        Player* GetPlayerByName(const std::vector<Player>& playersVector, const std::string& name);
     private:
         void PopulateStorage();
 

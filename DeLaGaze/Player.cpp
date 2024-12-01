@@ -238,3 +238,8 @@ void Player::SetId(int id)
 	m_id = id;
 }
 
+Map* Player::GetMap()
+{
+	return m_playerMap;
+}
+

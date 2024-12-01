@@ -8,13 +8,15 @@ void Routes::Run(database::PlayerStorage& playerStorage)
     CROW_ROUTE(m_app, "/players/add")([&,this](const crow::request& req) {
 		return AddPlayerToDatabase(playerStorage, req);
         });
-	CROW_ROUTE(m_app, "/players/update_firerate<int>")([&,this](const crow::request& req,Player& player, int x)
+	CROW_ROUTE(m_app, "/players/update_firerate/<string>/<int>")([&,this](const crow::request& req, const std::string& username, const int& x)
 		{
-			return UpdatePlayerFirerate(playerStorage, req,player,x);
+			Player* player = playerStorage.GetPlayerByName(playerStorage.GetAllPlayers(), req.url_params.get("username"));
+			return UpdatePlayerFirerate(playerStorage, req,*player,x);
 		});
-	CROW_ROUTE(m_app, "/players/update_bullet_speed")([&, this](const crow::request& req, Player& player)
+	CROW_ROUTE(m_app, "/players/update_bullet_speed/<string>")([&, this](const crow::request& req, const std::string& username)
 		{
-			return UpdatePlayerBulletSpeed(playerStorage, player, req);
+			Player* player = playerStorage.GetPlayerByName(playerStorage.GetAllPlayers(), req.url_params.get("username"));
+			return UpdatePlayerBulletSpeed(playerStorage, *player, req);
 		});
 }
 crow::response Routes::AddPlayerToDatabase(database::PlayerStorage& playerStorage, const crow::request& req) {
@@ -73,4 +75,42 @@ crow::response Routes::GetPlayersFromDatabase(database::PlayerStorage& playerSto
 			});
 	}
 	return crow::json::wvalue{ players_json };
+}
+
+crow::response Routes::PlayerMoveUp(Player& p, const crow::request& req)
+{
+	p.MoveUp();
+	std::vector<crow::json::wvalue> map_json;
+	Map* map = p.GetMap();
+	map_json.push_back(crow::json::wvalue{
+		{"map", map}
+		});
+	return crow::json::wvalue{ map_json };
+}
+crow::response Routes::PlayerMoveDown(Player& p, const crow::request& req) {
+	p.MoveDown();
+	std::vector<crow::json::wvalue> map_json;
+	Map* map = p.GetMap();
+	map_json.push_back(crow::json::wvalue{
+		{"map", map}
+		});
+	return crow::json::wvalue{ map_json };
+}
+crow::response Routes::PlayerMoveLeft(Player& p, const crow::request& req) {
+	p.MoveLeft();
+	std::vector<crow::json::wvalue> map_json;
+	Map* map = p.GetMap();
+	map_json.push_back(crow::json::wvalue{
+		{"map", map}
+		});
+	return crow::json::wvalue{ map_json };
+}
+crow::response Routes::PlayerMoveRight(Player& p, const crow::request& req) {
+	p.MoveRight();
+	std::vector<crow::json::wvalue> map_json;
+	Map* map = p.GetMap();
+	map_json.push_back(crow::json::wvalue{
+		{"map", map}
+		});
+	return crow::json::wvalue{ map_json };
 }

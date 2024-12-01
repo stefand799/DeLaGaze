@@ -62,6 +62,7 @@ public:
 	void SetBulletSpeed(uint8_t bulletSpeed);
 	const int GetId() const;
 	void SetId(int id);
+	Map* GetMap();
 
 private:
 	using Clock = std::chrono::high_resolution_clock;

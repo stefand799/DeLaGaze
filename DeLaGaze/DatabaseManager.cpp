@@ -70,4 +70,12 @@ namespace database
             return {};
         }
     }
+    Player* PlayerStorage::GetPlayerByName(const std::vector<Player>& playersVector, const std::string& name) {
+        for (const auto& player : playersVector) {
+            if (player.GetUsername() == name) {
+                return const_cast<Player*>(&player);  // Return a pointer to the player
+            }
+        }
+        return nullptr;  // If no player was found, return nullptr
+    }
 }
