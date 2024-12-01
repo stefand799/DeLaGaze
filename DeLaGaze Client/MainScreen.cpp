@@ -31,7 +31,6 @@ void MainScreen::buttonClicked(){
 		qWarning() << "Sender does not belong to the known buttons!";
 	} else if (clickedButton==playButton){
 		emit selectedScreen(MainScreen::PlayScreen);
-
 	}else if (clickedButton==upgradesButton){
 		emit selectedScreen(MainScreen::UpgradesScreen);
 	}else if (clickedButton==optionsButton){
