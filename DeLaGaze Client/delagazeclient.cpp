@@ -1,7 +1,11 @@
 #include "delagazeclient.h"
 
 DeLaGazeClient::DeLaGazeClient(QWidget* parent)
-    : QMainWindow(parent), stackedWidget(new QStackedWidget(this)), loginScreen(new LoginScreen(this)),mainScreen(new MainScreen(this))
+    : QMainWindow(parent),
+    stackedWidget(new QStackedWidget(this)),
+    loginScreen(new LoginScreen(this)),
+    mainScreen(new MainScreen(this)),
+    playScreen(new PlayScreen(this))
 {
     ui.setupUi(this);
 
@@ -9,6 +13,7 @@ DeLaGazeClient::DeLaGazeClient(QWidget* parent)
 
     stackedWidget->addWidget(loginScreen);
     stackedWidget->addWidget(mainScreen);
+    stackedWidget->addWidget(playScreen);
     initializeConnections();
     stackedWidget->setCurrentWidget(loginScreen);
 }
@@ -28,10 +33,10 @@ void DeLaGazeClient::initializeConnections(){
             break;
         case MainScreen::UpgradesScreen:
             stackedWidget->setCurrentWidget(upgradesScreen);
-            break;
+            break;*/
         case MainScreen::PlayScreen:
             stackedWidget->setCurrentWidget(playScreen);
-            break;*/
+            break;
         case MainScreen::LoginScreen:
             stackedWidget->setCurrentWidget(loginScreen);
             break;
