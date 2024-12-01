@@ -6,7 +6,7 @@ Routes::Routes(crow::SimpleApp& app)
         try {
             std::vector<crow::json::wvalue> players_json;
 
-            for (const auto& player : player_storage.GetAllPlayers()) {
+            for (const auto& player : m_playerStorage.GetAllPlayers()) {
                 players_json.push_back(crow::json::wvalue{
                     {"username", player.GetUsername()},
                     {"score", player.GetScore()},
