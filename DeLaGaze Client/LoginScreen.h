@@ -3,6 +3,7 @@
 #include <QWidget>
 #include "qlineedit.h"
 #include "qpushbutton.h"
+#include <regex>
 
 class LoginScreen :public QWidget {
 	Q_OBJECT
@@ -14,6 +15,7 @@ signals:
 private slots:
 	void manageLogin();
 private:
+	std::regex m_validUsernamePattern;
 	QLineEdit* usernameLineEdit;
 	QPushButton* loginButton;
 	

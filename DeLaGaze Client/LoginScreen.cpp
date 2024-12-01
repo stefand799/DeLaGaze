@@ -4,7 +4,8 @@
 LoginScreen::LoginScreen(QWidget *parent)
 	: QWidget(parent),
 	usernameLineEdit(new QLineEdit(this)),
-	loginButton(new QPushButton("LOGIN",this)){
+	loginButton(new QPushButton("LOGIN",this)),
+	m_validUsernamePattern(R"(^\S{3,}$)") {
 	
 	
 	auto groupLayout = new QVBoxLayout();
@@ -27,8 +28,11 @@ LoginScreen::~LoginScreen()
 {}
 
 void LoginScreen::manageLogin() {
-	if (!usernameLineEdit->text().isEmpty())
+
+	if (std::regex_match(usernameLineEdit->text().toStdString(), m_validUsernamePattern))
 		emit loginSuccessful();
-	else
-		usernameLineEdit->setPlaceholderText("Insert a non-empty username!");
+	else {
+		usernameLineEdit->clear();
+		usernameLineEdit->setPlaceholderText("Too short or illegal! Try again!");
+	}
 }

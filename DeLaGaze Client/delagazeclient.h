@@ -5,6 +5,7 @@
 #include "qstackedwidget.h"
 #include "MainScreen.h"
 #include "LoginScreen.h"
+#include "PlayScreen.h"
 
 class DeLaGazeClient : public QMainWindow
 {
@@ -19,6 +20,7 @@ private:
     QStackedWidget* stackedWidget;
     LoginScreen* loginScreen;
     MainScreen* mainScreen;
+    PlayScreen* playScreen;
 
     void initializeConnections();
 };

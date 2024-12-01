@@ -63,6 +63,11 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
   </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+    </ClCompile>
+  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="Configuration">
     <ClCompile>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -94,6 +99,7 @@
   <ItemGroup>
     <ClCompile Include="LoginScreen.cpp" />
     <ClCompile Include="MainScreen.cpp" />
+    <ClCompile Include="PlayScreen.cpp" />
     <QtRcc Include="delagazeclient.qrc" />
     <QtUic Include="delagazeclient.ui" />
     <QtMoc Include="delagazeclient.h" />
@@ -103,6 +109,9 @@
   <ItemGroup>
     <QtMoc Include="LoginScreen.h" />
     <QtMoc Include="MainScreen.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="PlayScreen.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
