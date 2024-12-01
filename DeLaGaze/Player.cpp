@@ -4,20 +4,20 @@
 Player::Player(Map* m) : m_playerMap{ m } {} //delete this later, only for early on testing. Leave only the constructor with all parameters.
 
 
-Player::Player(Map* m, const std::pair<int, int>& pos, const int& id, const std::string& username, uint8_t points, bool bulletSpeedUpgrade, Direction facing, State playerState, uint8_t score, uint8_t hp) :
-	m_playerMap{ m },
-	m_username{ username },
-	m_id{ id },
-	m_points{ points },
-	m_bulletSpeedUpgrade{ bulletSpeedUpgrade },
-	m_facing{ facing },
-	m_score{ score },
-	m_hp{ hp },
-	m_x{ pos.first },
-	m_y{ pos.second },
-	m_moveCooldown{ kDefaultMoveCooldown },
-	m_lastMovedTime{ Clock::now() },
-	m_lastShotTime{ Clock::now() }
+Player::Player(Map& m) : m_playerMap{ m } {}; //delete this later, only for early on testing. Leave only the constructor with all parameters.
+
+
+Player::Player(Map& m, const std::pair<int, int>& pos, const std::string& username, uint8_t points, bool bulletSpeedUpgrade, Direction facing, State playerState, uint8_t score, uint8_t hp) :
+	
+	m_playerMap{m},
+	m_username{username},
+	m_points{points},
+	m_bulletSpeedUpgrade{bulletSpeedUpgrade},
+	m_facing{facing},
+	m_score{score},
+	m_hp{hp},
+	m_x{pos.first},
+	m_y{pos.second}
 	//,Object{pos},
 {}
 //
@@ -207,12 +207,11 @@ void Player::SetFacing(const Direction& facing) { m_facing = facing; }
 
 void Player::SetUsername(const std::string& username) { m_username = username; }
 
-const std::string Player::GetUsername() const { return m_username; }
+ std::string Player::GetUsername() const { return m_username; }
 
-void Player::Shoot(std::vector<Bullet*>& bullets) {
-	uint8_t bulletSpeed = m_bulletSpeedUpgrade ? kBulletSpeeds[1] : kBulletSpeeds[0]; //Placeholder for bullet speeds
-	bullets.emplace_back(new Bullet(m_x, m_y, bulletSpeed, m_facing)); // set the position the bullet a little in the direction of the player facing
-	//bullets.push_back(std::make_unique<Bullet>(m_x, m_y, bulletSpeed, m_facing)); // set the position the bullet a little in the direction of the player facing
+void Player::Shoot(std::vector<std::shared_ptr<Bullet>>& bullets) {
+	uint8_t bulletSpeed = m_bulletSpeedUpgrade ? 2 : 1; //Placeholder for bullet speeds
+	bullets.push_back(std::make_unique<Bullet>(std::pair<float, float>{m_x + 0.5, m_y + 0.5}, bulletSpeed, m_facing)); // set the position the bullet a little in the direction of the player facing
 };
 
 void Player::SetPlayerState(const State& playerState) { m_playerState = playerState; }
