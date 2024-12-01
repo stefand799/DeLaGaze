@@ -3,52 +3,19 @@
 void Routes::Run(database::PlayerStorage& playerStorage)
 {
     CROW_ROUTE(m_app,"/players")([&]() {
-        try {
-            std::vector<crow::json::wvalue> players_json;
-
-            for (const auto& player : playerStorage.GetAllPlayers()) {
-                players_json.push_back(crow::json::wvalue{
-                    {"username", player.GetUsername()},
-                    {"score", player.GetScore()},
-                    {"points", player.GetPoints()},
-                    {"firerate", player.GetBulletSpeed()},
-                    {"upgrade_bs", player.GetBulletSpeedUpgrade()}
-                    });
-            }
-            return crow::json::wvalue{ players_json };
-        }
-        catch (const std::exception& e) {
-            return crow::json::wvalue{
-                {"code", 500},
-                {"message", e.what()}
-            };
-        }
+		return GetPlayersFromDatabase(playerStorage);
     });
-    CROW_ROUTE(m_app, "/players/add")([&](const crow::request& req) {
-        try {
-            crow::json::rvalue body = crow::json::load(req.body);
-            if (!body) {
-                return crow::response(400, "Invalid JSON body");
-            }
-
-            Player new_player;
-            new_player.SetUsername(body["username"].s());
-            new_player.SetScore(body["score"].i());
-            new_player.SetPoints(body["points"].i());
-            new_player.SetBulletSpeed(body["firerate"].i());
-            new_player.SetBulletSpeedUpgrade(body["upgrade_bs"].i());
-
-            if (playerStorage.AddPlayer(new_player)) {
-                return crow::response(201, "Player added successfully");
-            }
-            else {
-                return crow::response(500, "Error adding player");
-            }
-        }
-        catch (const std::exception& e) {
-            return crow::response(500, "Internal server error: " + std::string(e.what()));
-        }
+    CROW_ROUTE(m_app, "/players/add")([&,this](const crow::request& req) {
+		return AddPlayerToDatabase(playerStorage, req);
         });
+	CROW_ROUTE(m_app, "/players/update_firerate<int>")([&,this](const crow::request& req,Player& player, int x)
+		{
+			return UpdatePlayerFirerate(playerStorage, req,player,x);
+		});
+	CROW_ROUTE(m_app, "/players/update_bullet_speed")([&, this](const crow::request& req, Player& player)
+		{
+			return UpdatePlayerBulletSpeed(playerStorage, player, req);
+		});
 }
 crow::response Routes::AddPlayerToDatabase(database::PlayerStorage& playerStorage, const crow::request& req) {
     crow::json::rvalue body = crow::json::load(req.body);
@@ -91,4 +58,19 @@ crow::response Routes::UpdatePlayerBulletSpeed(database::PlayerStorage& playerSt
 	else {
 		return crow::response(500, "Error updating player");
 	}
+}
+crow::response Routes::GetPlayersFromDatabase(database::PlayerStorage& playerStorage) 
+{
+	std::vector<crow::json::wvalue> players_json;
+	for (const auto& player : playerStorage.GetAllPlayers())
+	{
+		players_json.push_back(crow::json::wvalue{
+			{"username", player.GetUsername()},
+			{"score", player.GetScore()},
+			{"points", player.GetPoints()},
+			{"firerate", player.GetBulletSpeed()},
+			{"upgrade_bs", player.GetBulletSpeedUpgrade()}
+			});
+	}
+	return crow::json::wvalue{ players_json };
 }
