@@ -15,6 +15,7 @@ private slots:
 private:
 	QPushButton* ffaGameButton;
 	QPushButton* teamGameButton;
+	QPushButton* backButton;
 	QTextEdit* ffaGameTextEdit;
 	QTextEdit* teamGameTextEdit;
 	QString ffaGameDescription;

@@ -3,16 +3,16 @@
 
 PlayScreen::PlayScreen(QWidget* parent)
 	: QWidget(parent),
-
 	/*TODO: stop hardcoding strings. Create a separate file for them, akin to the android strings.xml ( gotta be the .qrc here i think)*/
 	ffaGameDescription("An all out feline mayhem, where everyone must fend for themselves!\n\n * 2-4 players"),
 	teamGameDescription("A collaborative feline showdown,where everyone must fend for themselves, and their teammate!\n\n *2 teams of 2 players each \n* This gamemode does NOT offer any points\n "),
 	ffaGameTextEdit(new QTextEdit( this)),
 	teamGameTextEdit(new QTextEdit(this)),
 	ffaGameButton(new QPushButton("Free For All", this)),
-	teamGameButton(new QPushButton("Team", this))
+	teamGameButton(new QPushButton("Team", this)),
+	backButton(new QPushButton("Back",this))
 {
-	/*TODO: scrollbarPolicies, padding, propersizing*/
+	/*TODO: scrollbarPolicies, padding, proper sizing*/
 	ffaGameTextEdit->setText(ffaGameDescription);
 	ffaGameTextEdit->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	teamGameTextEdit->setText(teamGameDescription);
@@ -50,8 +50,23 @@ PlayScreen::PlayScreen(QWidget* parent)
 		connect(button, &QPushButton::clicked, this, &PlayScreen::buttonClicked);
 		groupLayout->addRow(button, textEdit);
 	}
+
+	QFont backButtonFont;
+	backButtonFont.setPointSize(15);
+	backButton->setFixedSize(200, 50);
+	backButton->setFont(backButtonFont);
+
+	auto topLayout = new QHBoxLayout();
+	topLayout->addWidget(backButton);
+	topLayout->addStretch();
+
+	auto mainLayout = new QVBoxLayout;
+	mainLayout->addLayout(topLayout);
+	mainLayout->addLayout(groupLayout);
+
+	setLayout(mainLayout);
 	
-	setLayout(groupLayout);
+
 
 }
 
