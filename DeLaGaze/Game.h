@@ -38,6 +38,7 @@ public:
 	void Update();
 	void HandleCollisions();
 	void HandleBulletToWallCollisions(const Bullet* bullet);
+	void HandleBulletToBorderCollisions(const Bullet* bullet);
 	void HandleBulletToBulletCollisions(std::vector<Bullet*>::iterator& bulletIterator);
 	void HandleBulletToPlayerCollisions(const Bullet* bullet);
 
@@ -77,17 +78,26 @@ private:
 		ObjectCollision(Object* obj1, Object* obj2, float collisionTime) :
 			first{ obj1 },
 			second{ obj2 },
-			time{ collisionTime } 
+			time{ collisionTime },
+			isBorderCollision{ false }
 		{}
 		ObjectCollision(std::tuple<Object*,Object*,float>&& values) :
 			first{ std::get<0>(values)},
 			second{ std::get<1>(values) },
-			time{ std::get<2>(values) }
+			time{ std::get<2>(values) },
+			isBorderCollision{ false }
+		{}
+		ObjectCollision(Object* obj, float collisionTime) :
+			first{ obj },
+			second{ nullptr },
+			time{ collisionTime },
+			isBorderCollision{ true }
 		{}
 
 		Object* first;
 		Object* second;
 		float time;
+		bool isBorderCollision;
 		bool operator<(const ObjectCollision& other) const {
 			return this->time < other.time;
 		}

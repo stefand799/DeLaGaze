@@ -119,6 +119,15 @@ void Game::RemoveDestroyedObjects()
 	while (!m_collisions.empty()) {
 		ObjectCollision currCollision = m_collisions.top();
 		m_collisions.pop();
+		if (currCollision.isBorderCollision) {
+			if (currCollision.first) {
+				if (destroyedObjects.find(currCollision.first) == destroyedObjects.end()) {
+					destroyedObjects.insert(currCollision.first);
+				}
+			}
+			continue;
+		}
+
 		if (currCollision.first && currCollision.second) 
 			if (destroyedObjects.find(currCollision.first) == destroyedObjects.end() &&
 				destroyedObjects.find(currCollision.second) == destroyedObjects.end()) 
