@@ -34,11 +34,20 @@ void DeLaGazeClient::initializeConnections(){
         case MainScreen::UpgradesScreen:
             stackedWidget->setCurrentWidget(upgradesScreen);
             break;*/
-        case MainScreen::PlayScreen:
+        case MainScreen::Screen::PlayScreen :
             stackedWidget->setCurrentWidget(playScreen);
             break;
-        case MainScreen::LoginScreen:
+        case MainScreen::Screen::LoginScreen:
             stackedWidget->setCurrentWidget(loginScreen);
+            break;
+        }
+        });
+    connect(playScreen, &PlayScreen::selectedScreen, this, [&](PlayScreen::Screen screen) {
+        switch (screen)
+        {
+        case PlayScreen::Screen::MainScreen:
+            stackedWidget->setCurrentWidget(mainScreen);
+            /*TODO: Implement the other screens, for the gamemodes, make the network calls in their constructors*/
             break;
         }
         });

@@ -10,6 +10,14 @@ class PlayScreen  : public QWidget
 public:
 	PlayScreen(QWidget *parent=nullptr);
 	~PlayScreen();
+	enum class Screen
+	{
+		FFAGameScreen,
+		TeamGameScreen,
+		MainScreen
+	};
+signals:
+	void selectedScreen(PlayScreen::Screen);
 private slots:
 	void buttonClicked();
 private:

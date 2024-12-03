@@ -6,7 +6,7 @@ class MainScreen:public QWidget{
 	Q_OBJECT
 public:
 	MainScreen(QWidget* parent = nullptr);
-	enum Screen
+	enum class Screen
 	{
 		PlayScreen,
 		UpgradesScreen,

@@ -55,6 +55,7 @@ PlayScreen::PlayScreen(QWidget* parent)
 	backButtonFont.setPointSize(15);
 	backButton->setFixedSize(200, 50);
 	backButton->setFont(backButtonFont);
+	connect(backButton, &QPushButton::clicked, this, &PlayScreen::buttonClicked);
 
 	auto topLayout = new QHBoxLayout();
 	topLayout->addWidget(backButton);
@@ -75,4 +76,15 @@ PlayScreen::~PlayScreen()
 
 void PlayScreen::buttonClicked()
 {
+	QPushButton* clickedButton = qobject_cast<QPushButton*>(sender());
+	if (clickedButton==nullptr){
+		qWarning() << "Sender does not belong to the known buttons!";
+	} else if (clickedButton==backButton){
+		qDebug() << "Back button clicked!";
+		emit selectedScreen(Screen::MainScreen);
+	} else if (clickedButton==ffaGameButton){
+		emit selectedScreen(Screen::FFAGameScreen);
+	}else if (clickedButton==teamGameButton){
+		emit selectedScreen(Screen::TeamGameScreen);
+	}
 }
