@@ -14,7 +14,7 @@ namespace database
                 player.GetUsername(),
                 player.GetScore(),
                 player.GetPoints(),
-                player.GetBulletSpeed()
+                player.GetFireRate()
                 ,player.GetBulletSpeedUpgrade() });
             return true;
         }

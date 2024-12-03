@@ -14,6 +14,8 @@
 class Player: public Object {
 public:
 	ObjectType GetType() const override { return ObjectType::Player; };
+	
+	// Constructors
 	Player() = default;
 	Player(Map* m);
 	Player(const int& i, const int& j, Map& m);
@@ -25,49 +27,60 @@ public:
 		m_points(points),
 		m_bulletSpeed(bulletSpeed),
 		m_bulletSpeedUpgrade(bulletSpeedUpgrade) {}
-	bool CanMoveHere(int i,int j) override;
-	void Render() override;
-	void Print() const override;
-	void SetX(const int& x);
-	void SetY(const int& y);	
-	int GetX() const;
-	int GetY() const;
-	void SetHp(); //no parameter since we will use GetHp()-1
-	void SetScore(uint8_t score);
-	void SetPoints(uint16_t points);
-	uint8_t GetHp() const;
+
+	~Player() = default;
+
+	// Getters
+	const int GetId() const;
+	const std::string GetUsername() const;
 	uint8_t GetScore() const;
 	uint16_t GetPoints() const;
-	~Player() = default;
-	const std::string GetUsername() const;
+	uint8_t GetFireRate() const;
+	const bool GetBulletSpeedUpgrade() const;
+	uint8_t GetHp() const;
+	int GetX() const;
+	int GetY() const;
+	State GetPlayerState() const;	// This will be moved in client, maybe
+	Direction GetFacing() const;
+	Map* GetMap();
+
+	// Setteri
+	void SetId(int id);
 	void SetUsername(const std::string& username);
+	void SetScore(uint8_t score);
+	void SetPoints(uint16_t points);
+	void SetFireRate(uint8_t fireRate);
+	void SetBulletSpeedUpgrade(bool bulletSpeedUpgrade);
+	void SetHp(); //no parameter since we will use GetHp()-1
 	void SetFacing(const Direction& facing);
 	void SetPlayerState(const State& playerState);
-	Direction GetFacing() const;
-	State GetPlayerState() const;
+	void SetX(const int& x);
+	void SetY(const int& y);
+
+	// Movement
+	bool CanMoveHere(int i, int j) override;
 	void MoveUp();
 	void MoveDown();
 	void MoveLeft();
 	void MoveRight();
+
+	// Facing
 	void FaceNorth();
 	void FaceSouth();
 	void FaceWest();
 	void FaceEast();
-	Direction GetFacing();
+	
+	// Functionalities
 	void Shoot(std::vector<Bullet*>& bullets);
 	void Respawn();
-	const bool GetBulletSpeedUpgrade() const;
-	void SetBulletSpeedUpgrade(bool bulletSpeedUpgrade);
-	const uint8_t GetBulletSpeed() const;
-	void SetBulletSpeed(uint8_t bulletSpeed);
-	const int GetId() const;
-	void SetId(int id);
-	Map* GetMap();
+
+	void Render() override;
+	void Print() const override;
 
 private:
 	using Clock = std::chrono::high_resolution_clock;
 	//Constants
-	const float kShootingCooldowns[4] = {
+	const float kFireRates[4] = {
 		1.0,
 		0.5,
 		0.25,
@@ -77,17 +90,18 @@ private:
 		2.0f,
 		4.0f
 	};
-	const float kDefaultMoveCooldown = 0.25;
+	const float kDefaultMoveCooldown = 0.0;
 	//Atributes
 	int m_id;
 	std::string m_username;
 	Map* m_playerMap;
 	uint8_t m_hp : 2;
 	uint8_t m_score;
-	uint8_t m_bulletSpeed;
+	float m_bulletSpeed;
 	uint16_t m_points;
 	int m_x, m_y;
 	bool m_bulletSpeedUpgrade;
+	uint8_t m_fireRate;
 	Direction m_facing;
 	State m_playerState;
 	std::vector<Bullet*> m_bullets;

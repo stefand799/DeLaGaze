@@ -52,7 +52,7 @@ crow::response Routes::AddPlayerToDatabase(database::PlayerStorage& playerStorag
 	p.SetUsername(body["username"].s());
 	p.SetScore(0);
 	p.SetPoints(0);
-	p.SetBulletSpeed(1);
+	p.SetFireRate(1);
 	p.SetBulletSpeedUpgrade(false);
 	if (playerStorage.AddPlayer(p)) {
 		return crow::response(201, "Player added successfully");
@@ -63,7 +63,7 @@ crow::response Routes::AddPlayerToDatabase(database::PlayerStorage& playerStorag
 }
 crow::response Routes::UpdatePlayerFirerate(database::PlayerStorage& playerStorage, const crow::request& req,Player& player, int x)
 {
-	player.SetBulletSpeed(x);
+	player.SetFireRate(x);
 	if (playerStorage.UpdatePlayer(player)) {
 		return crow::response(200, "Player updated successfully");
 	}
@@ -90,7 +90,7 @@ crow::response Routes::GetPlayersFromDatabase(database::PlayerStorage& playerSto
 			{"username", player.GetUsername()},
 			{"score", player.GetScore()},
 			{"points", player.GetPoints()},
-			{"firerate", player.GetBulletSpeed()},
+			{"firerate", player.GetFireRate()},
 			{"upgrade_bs", player.GetBulletSpeedUpgrade()}
 			});
 	}

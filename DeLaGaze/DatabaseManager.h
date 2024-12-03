@@ -20,7 +20,7 @@ namespace database
                 sql::make_column("username", &Player::SetUsername, &Player::GetUsername),
                 sql::make_column("score", &Player::SetScore, &Player::GetScore),
                 sql::make_column("points", &Player::SetPoints, &Player::GetPoints),
-                sql::make_column("firerate", &Player::SetBulletSpeed, &Player::GetBulletSpeed),
+                sql::make_column("firerate", &Player::SetFireRate, &Player::GetFireRate),
                 sql::make_column("upgrade_bs", &Player::SetBulletSpeedUpgrade, &Player::GetBulletSpeedUpgrade)
             )
         );
