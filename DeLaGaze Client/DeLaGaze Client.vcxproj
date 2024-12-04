@@ -100,6 +100,7 @@
     <ClCompile Include="LoginScreen.cpp" />
     <ClCompile Include="MainScreen.cpp" />
     <ClCompile Include="PlayScreen.cpp" />
+    <ClCompile Include="UpgradesScreen.cpp" />
     <QtRcc Include="delagazeclient.qrc" />
     <QtUic Include="delagazeclient.ui" />
     <QtMoc Include="delagazeclient.h" />
@@ -112,6 +113,9 @@
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="PlayScreen.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="UpgradesScreen.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
