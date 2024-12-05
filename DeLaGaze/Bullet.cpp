@@ -60,6 +60,27 @@ float Bullet::GetY() const
 	return m_y;
 }
 
+crow::json::wvalue Bullet::toJson()
+{
+		crow::json::wvalue jsonObj;
+		jsonObj["type"] = "Bullet";
+		jsonObj["x"] = m_x;
+		jsonObj["y"] = m_y;
+		jsonObj["direction"] = DirectionToString(m_direction);
+		return jsonObj;
+}
+
+std::string DirectionToString(Direction direction) 
+{
+	switch (direction) {
+	case Direction::North: return "North";
+	case Direction::East: return "East";
+	case Direction::South: return "South";
+	case Direction::West: return "West";
+	default: return "Unknown";
+	}
+}
+
 
 
 inline Object::ObjectType Bullet::GetType() const { return ObjectType::Bullet; }

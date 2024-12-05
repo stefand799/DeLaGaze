@@ -7,7 +7,7 @@ public:
 	//OR
 	//void render(int x, int y) override;
 	virtual void Print() const override =0;
-	virtual void toJson() override = 0;
+	virtual crow::json::wvalue toJson() override = 0;
 private:
 
 };

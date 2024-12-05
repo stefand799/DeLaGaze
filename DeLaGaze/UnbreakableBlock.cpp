@@ -10,3 +10,12 @@ void UnbreakableBlock::Print() const{
 bool UnbreakableBlock::CanMoveHere(int i, int j){
 	return false;
 }
+
+crow::json::wvalue UnbreakableBlock::toJson()
+{
+	crow::json::wvalue jsonObj;
+	jsonObj["type"] = "UnbreakableBlock";
+	jsonObj["x"] = m_pos.first;
+	jsonObj["y"] = m_pos.second;
+	return jsonObj;
+}

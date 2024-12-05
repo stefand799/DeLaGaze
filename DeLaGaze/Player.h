@@ -76,7 +76,7 @@ public:
 
 	void Render() override;
 	void Print() const override;
-	virtual void toJson() override;
+	virtual crow::json::wvalue toJson() override;
 
 private:
 	using Clock = std::chrono::high_resolution_clock;

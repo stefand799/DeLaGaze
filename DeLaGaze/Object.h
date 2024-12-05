@@ -2,7 +2,7 @@
 
 #include <iostream>
 #include <utility>
-
+#include <crow.h>
 class Object {
 public:
 	enum class ObjectType {
@@ -16,10 +16,10 @@ public:
 	virtual ObjectType GetType() const = 0;
 
 	//Object(const std::pair<int,int>& pos);
-
+	virtual crow::json::wvalue toJson() = 0;
 	virtual void Render() = 0;
 	virtual void Print() const = 0;
 	virtual bool CanMoveHere(int i,int j) = 0; //TODO: Remove parameters, it already knows it's position from m_pos.
-private:
+protected:
 	std::pair<int, int> m_pos;
 };
