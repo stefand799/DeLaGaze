@@ -99,37 +99,34 @@ crow::response Routes::GetPlayersFromDatabase(database::PlayerStorage& playerSto
 crow::response Routes::PlayerMoveUp(Player& p, const crow::request& req)
 {
 	p.MoveUp();
-	std::vector<crow::json::wvalue> map_json;
+	crow::json::wvalue mapJson;
 	Map* map = p.GetMap();
-	map_json.push_back(crow::json::wvalue{
-		{"map", map}
-		});
-	return crow::json::wvalue{ map_json };
+	mapJson = map->toJson();
+	return mapJson;
 }
 crow::response Routes::PlayerMoveDown(Player& p, const crow::request& req) {
 	p.MoveDown();
-	std::vector<crow::json::wvalue> map_json;
+	crow::json::wvalue mapJson;
 	Map* map = p.GetMap();
-	map_json.push_back(crow::json::wvalue{
-		{"map", map}
-		});
-	return crow::json::wvalue{ map_json };
+	mapJson = map->toJson();
+	return mapJson;
 }
 crow::response Routes::PlayerMoveLeft(Player& p, const crow::request& req) {
 	p.MoveLeft();
-	std::vector<crow::json::wvalue> map_json;
+	crow::json::wvalue mapJson;
 	Map* map = p.GetMap();
-	map_json.push_back(crow::json::wvalue{
-		{"map", map}
-		});
-	return crow::json::wvalue{ map_json };
+	mapJson = map->toJson();
+	return mapJson;
 }
 crow::response Routes::PlayerMoveRight(Player& p, const crow::request& req) {
 	p.MoveRight();
-	std::vector<crow::json::wvalue> map_json;
+	crow::json::wvalue mapJson;
 	Map* map = p.GetMap();
-	map_json.push_back(crow::json::wvalue{
-		{"map", map}
-		});
-	return crow::json::wvalue{ map_json };
+	mapJson = map->toJson();
+	return mapJson;
+}
+crow::response Routes::GetBulletsFromPlayer(Player& p, const crow::request& req)
+{
+	crow::json::wvalue bulletsJson = p.BulletsToJson();
+	return bulletsJson;
 }
