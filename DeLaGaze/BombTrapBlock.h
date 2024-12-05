@@ -6,6 +6,7 @@ public:
 	void Render() override;
 	void Print() const override;
 	void OnBreak() override;
+	virtual void toJson() override;
 private:
 };
 

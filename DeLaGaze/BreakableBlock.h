@@ -8,6 +8,7 @@ public:
 	virtual void Print() const override;
 	virtual void OnBreak();
 	bool CanMoveHere(int i, int j) override;
+	virtual void toJson() override;
 private:
 };
 

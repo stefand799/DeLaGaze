@@ -5,6 +5,7 @@ public:
 	ObjectType GetType() const override { return ObjectType::Pathway; };
 	void Render() override;
 	void Print() const override;
+	virtual void toJson() override;
 	bool CanMoveHere(int i, int j) override;
 private:
 };

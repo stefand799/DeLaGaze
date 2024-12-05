@@ -3,5 +3,6 @@
 class Wall:public Block{
 	virtual void Render() override = 0;
 	virtual void Print() const override = 0;
+	virtual void toJson() override = 0;
 };
 

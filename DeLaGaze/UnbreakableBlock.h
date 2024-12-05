@@ -7,6 +7,7 @@ public:
 	 void Render() override;
 	 void Print() const override;
 	 bool CanMoveHere(int i, int j) override;
+	 virtual void toJson() override;
 private:
 };
 
