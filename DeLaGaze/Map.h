@@ -3,6 +3,7 @@
 #include "UnbreakableBlock.h"
 #include "BreakableBlock.h"
 #include "BombTrapBlock.h"
+#include "Object.h"
 #include <iostream>
 #include <vector>
 #include <array>
@@ -17,7 +18,8 @@ public:
 	Map();
 	Map(const Map&) = default;
 	Map(Map&&) = delete;
-
+	crow::json::wvalue toJson();
+	std::string ObjectTypeToString(int i, int j);
 	~Map();
 
 	//Getter

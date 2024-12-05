@@ -10,6 +10,41 @@ Map::Map() :
 {
 }
 
+crow::json::wvalue Map::toJson()
+{
+	crow::json::wvalue::list mapJson;
+	for (int i = 0; i < m_mapHeight; i++) {
+		crow::json::wvalue rowJson;
+		rowJson["type"] = ObjectTypeToString(i, i);
+		rowJson["x"] = i;
+		rowJson["y"] = i;
+		mapJson.push_back(rowJson);
+	}
+	return crow::json::wvalue(mapJson);
+}
+
+std::string Map::ObjectTypeToString(int i, int j)
+{
+	Object* obj = m_matrix[i][j];
+	Object::ObjectType type = obj->GetType();
+	switch (obj->GetType()) {
+	case Object::ObjectType::Player:
+		return "Player";
+	case Object::ObjectType::Bullet:
+		return "Bullet";
+	case Object::ObjectType::Pathway:
+		return "Pathway";
+	case Object::ObjectType::UnbreakableBlock:
+		return "UnbreakableBlock";
+	case Object::ObjectType::BreakableBlock:
+		return "BreakableBlock";
+	case Object::ObjectType::BombTrapBlock:
+		return "BombTrapBlock";
+	default:
+		return "Unknown ObjectType";
+	}
+}
+
 Map::~Map()
 {
 	for (std::vector<Object*>& line : m_matrix) {
