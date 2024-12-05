@@ -38,7 +38,7 @@ public:
 	void Update();
 	void HandleCollisions();
 	void HandleBulletToWallCollisions(const Bullet* bullet);
-	void HandleBulletToBorderCollisions(const Bullet* bullet);
+	void HandleBulletToBorderCollisions(Bullet* bullet);
 	void HandleBulletToBulletCollisions(std::vector<Bullet*>::iterator& bulletIterator);
 	void HandleBulletToPlayerCollisions(const Bullet* bullet);
 

@@ -80,6 +80,21 @@ crow::json::wvalue Bullet::toJson()
 		return jsonObj;
 }
 
+float Bullet::GetXSpeed() const
+{
+	return m_xSpeed;
+}
+
+float Bullet::GetYSpeed() const
+{
+	return m_ySpeed;
+}
+
+float Bullet::getRadius() const
+{
+	return kRadius;
+}
+
 
 
 inline Object::ObjectType Bullet::GetType() const { return ObjectType::Bullet; }

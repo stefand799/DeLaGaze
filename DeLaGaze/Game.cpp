@@ -98,9 +98,51 @@ void Game::HandleCollisions()
 {
 	for (std::vector<Bullet*>::iterator it = m_bullets.begin(); it != m_bullets.end(); it++) {
 		if (*it == nullptr) continue;
+		HandleBulletToBorderCollisions(*it);
 		HandleBulletToBulletCollisions(it);
 	}
 	RemoveDestroyedObjects();
+}
+
+void Game::HandleBulletToBorderCollisions(Bullet* bullet)
+{
+	float x = bullet->GetX();
+	float y = bullet->GetY();
+	float xSpeed = bullet->GetXSpeed();
+	float ySpeed = bullet->GetYSpeed();
+	float radius = bullet->getRadius();
+
+	if (x < 0.0f || x > m_map.GetMapWidth()) {
+		m_collisions.push(ObjectCollision{ bullet, 0 });
+		return;
+	}
+	if (y < 0.0f || y > m_map.GetMapHeight()) {
+		m_collisions.push(ObjectCollision{ bullet, 0 });
+		return;
+	}
+
+	float Tx = -1 , Ty = -1;
+	if (xSpeed < 0.0f) 
+		Tx = (0 - x + radius) / xSpeed;
+
+	if (xSpeed > 0.0f) 
+		Tx = (m_map.GetMapWidth() - x - radius) / xSpeed;
+	
+	if (ySpeed < 0.0f) 
+		Ty = (0 - y + radius) / ySpeed;
+	
+	if (ySpeed > 0.0f) 
+		Ty = (m_map.GetMapHeight() - y - radius) / ySpeed;
+	
+
+	if (Tx > 0 && Tx <= m_deltaTime) {
+		m_collisions.push(ObjectCollision{ bullet,Tx });
+		return;
+	}
+	if (Ty > 0 && Ty <= m_deltaTime) {
+		m_collisions.push(ObjectCollision{ bullet,Ty });
+		return;
+	}
 }
 
 void Game::HandleBulletToBulletCollisions(std::vector<Bullet*>::iterator& bulletIterator)
@@ -109,7 +151,7 @@ void Game::HandleBulletToBulletCollisions(std::vector<Bullet*>::iterator& bullet
 	for (std::vector<Bullet*>::iterator it = bulletIterator + 1; it != m_bullets.end(); it++) {
 		Bullet* otherBullet = *it;
 		ObjectCollision collision{ GetBulletToBulletColision(bullet, otherBullet) };
-		if (collision.time > 0 && collision.time < m_deltaTime) m_collisions.push(collision);
+		if (collision.time > 0 && collision.time <= m_deltaTime) m_collisions.push(collision);
 	}
 }
 
@@ -127,11 +169,9 @@ void Game::RemoveDestroyedObjects()
 			}
 			continue;
 		}
-
+		
 		if (currCollision.first && currCollision.second) 
-			if (destroyedObjects.find(currCollision.first) == destroyedObjects.end() &&
-				destroyedObjects.find(currCollision.second) == destroyedObjects.end()) 
-			{
+			if (destroyedObjects.find(currCollision.first) == destroyedObjects.end() && destroyedObjects.find(currCollision.second) == destroyedObjects.end()) {
 				destroyedObjects.insert(currCollision.first);
 				destroyedObjects.insert(currCollision.second);
 			}
@@ -309,7 +349,6 @@ void Game::__DEBUG_PRINT_MAP__()
 				}
 			}
 			if(!isBulletHere) m_map[line][column]->Print();
-			//std::cout << " ";
 		}
 		std::cout << "\n";
 	}

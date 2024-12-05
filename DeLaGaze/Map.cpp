@@ -48,8 +48,9 @@ std::string Map::ObjectTypeToString(int i, int j)
 Map::~Map()
 {
 	for (std::vector<Object*>& line : m_matrix) {
-		for (Object*& object : line) {
-			if (object) delete object;
+		for (Object* object : line) {
+			if (object != nullptr) delete object;
+			object = nullptr;
 		}
 	}
 }

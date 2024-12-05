@@ -13,6 +13,9 @@ public:
 	void Move(float deltaTime);
 	float GetX() const;
 	float GetY() const;
+	float GetXSpeed() const;
+	float GetYSpeed() const;
+	float getRadius() const;
 	friend std::tuple<Object*, Object*, float> GetBulletToBulletColision(Bullet* first, Bullet* second);
 	virtual crow::json::wvalue toJson() override;
 	std::string DirectionToString(Direction direction);
