@@ -77,6 +77,7 @@ public:
 	void Render() override;
 	void Print() const override;
 	virtual crow::json::wvalue toJson() override;
+	virtual crow::json::wvalue BulletsToJson();
 	std::string DirectionToString(Direction direction);
 	std::string StateToString(State state);
 

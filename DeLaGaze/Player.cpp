@@ -178,6 +178,15 @@ std::string Player::StateToString(State state)
 
 	}
 }
+crow::json::wvalue Player::BulletsToJson()
+{
+	std::vector<crow::json::wvalue> jsonBullets;
+	for (const auto& bullet : m_bullets)
+	{
+		jsonBullets.push_back(bullet->toJson());
+	}
+	return jsonBullets;
+}
 std::string Player::DirectionToString(Direction direction)
 {
 	switch (direction) {
