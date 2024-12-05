@@ -77,6 +77,8 @@ public:
 	void Render() override;
 	void Print() const override;
 	virtual crow::json::wvalue toJson() override;
+	std::string DirectionToString(Direction direction);
+	std::string StateToString(State state);
 
 private:
 	using Clock = std::chrono::high_resolution_clock;

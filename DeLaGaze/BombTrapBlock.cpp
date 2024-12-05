@@ -9,3 +9,12 @@ void BombTrapBlock::Print() const{
 
 void BombTrapBlock::OnBreak(){
 }
+
+crow::json::wvalue BombTrapBlock::toJson()
+{
+	crow::json::wvalue jsonObj;
+	jsonObj["type"] = "BombTrapBlock";
+	jsonObj["x"] = m_pos.first;
+	jsonObj["y"] = m_pos.second;
+	return jsonObj;
+}

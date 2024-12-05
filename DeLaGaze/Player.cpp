@@ -167,3 +167,39 @@ void Player::Print() const
 	if (m_facing == Direction::West) std::cout << "\033[37;41m" << "<" << "\033[0m";
 	if (m_facing == Direction::East) std::cout << "\033[37;41m" << ">" << "\033[0m";
 }
+std::string Player::StateToString(State state)
+{
+	switch (state)
+	{
+	case State::Idle: return "Idle";
+	case State::Moving: return "Moving";
+	case State::Shooting: return "Shooting";
+	default: return "Unknown";
+
+	}
+}
+std::string Player::DirectionToString(Direction direction)
+{
+	switch (direction) {
+	case Direction::North: return "North";
+	case Direction::East: return "East";
+	case Direction::South: return "South";
+	case Direction::West: return "West";
+	default: return "Unknown";
+	}
+}
+crow::json::wvalue Player::toJson()
+{
+
+	crow::json::wvalue jsonPlayerObj;
+	jsonPlayerObj["type"] = "Player";
+	jsonPlayerObj["id"] = m_id;
+	jsonPlayerObj["username"] = m_username;
+	jsonPlayerObj["x"] = m_x;
+	jsonPlayerObj["y"] = m_y;
+	jsonPlayerObj["facing"] = DirectionToString(m_facing);
+	jsonPlayerObj["state"] = StateToString(m_playerState);
+	jsonPlayerObj["spawnX"] = m_spawnpoint.first;
+	jsonPlayerObj["spawnY"] = m_spawnpoint.second;
+	return jsonPlayerObj;
+}

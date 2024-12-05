@@ -13,3 +13,12 @@ void BreakableBlock::OnBreak(){
 bool BreakableBlock::CanMoveHere(int i, int j){
 	return false;
 }
+
+crow::json::wvalue BreakableBlock::toJson()
+{
+	crow::json::wvalue jsonObj;
+	jsonObj["type"] = "BreakableBlock";
+	jsonObj["x"] = m_pos.first;
+	jsonObj["y"] = m_pos.second;
+	return jsonObj;
+}

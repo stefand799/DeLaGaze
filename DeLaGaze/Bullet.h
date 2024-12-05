@@ -15,6 +15,7 @@ public:
 	float GetY() const;
 	friend std::tuple<Object*, Object*, float> GetBulletToBulletColision(Bullet* first, Bullet* second);
 	virtual crow::json::wvalue toJson() override;
+	std::string DirectionToString(Direction direction);
 	//std::pair<int, int> GetPosition() const { return {(int)m_x,(int)m_y}; };
 private:
 	//Constants
