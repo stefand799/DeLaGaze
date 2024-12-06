@@ -5,7 +5,8 @@ DeLaGazeClient::DeLaGazeClient(QWidget* parent)
     stackedWidget(new QStackedWidget(this)),
     loginScreen(new LoginScreen(this)),
     mainScreen(new MainScreen(this)),
-    playScreen(new PlayScreen(this))
+    playScreen(new PlayScreen(this)),
+	upgradesScreen(new UpgradesScreen(this))
 {
     ui.setupUi(this);
 
@@ -14,6 +15,7 @@ DeLaGazeClient::DeLaGazeClient(QWidget* parent)
     stackedWidget->addWidget(loginScreen);
     stackedWidget->addWidget(mainScreen);
     stackedWidget->addWidget(playScreen);
+    stackedWidget->addWidget(upgradesScreen);
     initializeConnections();
     stackedWidget->setCurrentWidget(loginScreen);
 }
@@ -30,10 +32,10 @@ void DeLaGazeClient::initializeConnections(){
         {
        /* case MainScreen::PlayScreen:
             stackedWidget->setCurrentWidget(playScreen);
-            break;
-        case MainScreen::UpgradesScreen:
-            stackedWidget->setCurrentWidget(upgradesScreen);
             break;*/
+        case MainScreen::Screen::UpgradesScreen:
+            stackedWidget->setCurrentWidget(upgradesScreen);
+            break;
         case MainScreen::Screen::PlayScreen :
             stackedWidget->setCurrentWidget(playScreen);
             break;

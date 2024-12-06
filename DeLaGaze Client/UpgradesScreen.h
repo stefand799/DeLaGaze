@@ -1,6 +1,8 @@
 #pragma once
 
 #include <QWidget>
+#include "qlabel.h"
+#include "qpushbutton.h"
 
 class UpgradesScreen  : public QWidget
 {
@@ -9,4 +11,9 @@ class UpgradesScreen  : public QWidget
 public:
 	UpgradesScreen(QWidget *parent);
 	~UpgradesScreen();
+private:
+	QLabel* fireRateLabel;
+	QLabel* bulletSpeedLabel;
+	QPushButton* fireRateBuyButton;
+	QPushButton* bulletSpeedBuyButton;
 };
