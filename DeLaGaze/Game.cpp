@@ -99,10 +99,89 @@ void Game::HandleCollisions()
 	for (std::vector<Bullet*>::iterator it = m_bullets.begin(); it != m_bullets.end(); it++) {
 		if (*it == nullptr) continue;
 		HandleBulletToBorderCollisions(*it);
+		HandleBulletToWallCollisions(*it);
 		HandleBulletToBulletCollisions(it);
 	}
 	RemoveDestroyedObjects();
 }
+
+
+void Game::HandleBulletToWallCollisions(Bullet* bullet)
+{
+	float x = bullet->GetX();
+	float y = bullet->GetY();
+	float xSpeed = bullet->GetXSpeed();
+	float ySpeed = bullet->GetYSpeed();
+	float radius = bullet->GetRadius();
+
+	if (x<0 || x > m_map.GetMapWidth() || y < 0 || y > m_map.GetMapHeight()) {
+		return;
+	}
+	else
+	{
+		Object* collidedToObject = m_map[static_cast<int>(y)][static_cast<int>(x)];
+		Object::ObjectType type = collidedToObject->GetType();
+		if (type == Object::ObjectType::BombTrapBlock || type == Object::ObjectType::BreakableBlock || type == Object::ObjectType::UnbreakableBlock) 
+			m_collisions.push(ObjectCollision{ bullet, collidedToObject, 0 });
+	}
+
+	if (xSpeed < 0.0f) {
+		int nextBlockX = static_cast<int>(x);
+		float t = -1;
+		do {
+			if (t > 0.0f) {
+				Object* collidedToObject = m_map[static_cast<int>(y)][nextBlockX];
+				Object::ObjectType type = collidedToObject->GetType();
+				if (type == Object::ObjectType::BombTrapBlock || type == Object::ObjectType::BreakableBlock || type == Object::ObjectType::UnbreakableBlock) 
+					m_collisions.push(ObjectCollision{ bullet, collidedToObject, t });
+			}
+			t = (nextBlockX-- -x + radius) / xSpeed;
+		} while (t < m_deltaTime && nextBlockX >= 0);
+	}
+	if (xSpeed > 0.0f) {
+		int nextBlockX = static_cast<int>(x);
+		float t = -1;
+		do {
+			if (t > 0.0f) {
+				Object* collidedToObject = m_map[static_cast<int>(y)][nextBlockX];
+				Object::ObjectType type = collidedToObject->GetType();
+				if (type == Object::ObjectType::BombTrapBlock || type == Object::ObjectType::BreakableBlock || type == Object::ObjectType::UnbreakableBlock) 
+					m_collisions.push(ObjectCollision{ bullet, collidedToObject, t });
+			}
+			t = (++nextBlockX - x - radius) / xSpeed;
+		} while (t < m_deltaTime && nextBlockX < m_map.GetMapWidth());
+	}
+
+	if (ySpeed < 0.0f) {
+		int nextBlockY = static_cast<int>(y);
+		float t = -1;
+		do {
+			if (t > 0.0f) {
+				Object* collidedToObject = m_map[nextBlockY][static_cast<int>(x)];
+				Object::ObjectType type = collidedToObject->GetType();
+				if (type == Object::ObjectType::BombTrapBlock || type == Object::ObjectType::BreakableBlock || type == Object::ObjectType::UnbreakableBlock) 
+					m_collisions.push(ObjectCollision{ bullet, collidedToObject, t });
+			}
+			t = (nextBlockY-- - y + radius) / ySpeed;
+		} while (t < m_deltaTime && nextBlockY >= 0);
+	}
+	if (ySpeed > 0.0f) {
+		int nextBlockY = static_cast<int>(y);
+		float t = -1;
+		do {
+			if (t > 0.0f) {
+				Object* collidedToObject = m_map[nextBlockY][static_cast<int>(x)];
+				Object::ObjectType type = collidedToObject->GetType();
+				if (type == Object::ObjectType::BombTrapBlock || type == Object::ObjectType::BreakableBlock || type == Object::ObjectType::UnbreakableBlock) 
+					m_collisions.push(ObjectCollision{ bullet, collidedToObject, t });
+			}
+			t = (++nextBlockY - y - radius) / ySpeed;
+		} while (t < m_deltaTime && nextBlockY < m_map.GetMapHeight());
+	}
+}
+
+
+
 
 void Game::HandleBulletToBorderCollisions(Bullet* bullet)
 {
@@ -110,7 +189,7 @@ void Game::HandleBulletToBorderCollisions(Bullet* bullet)
 	float y = bullet->GetY();
 	float xSpeed = bullet->GetXSpeed();
 	float ySpeed = bullet->GetYSpeed();
-	float radius = bullet->getRadius();
+	float radius = bullet->GetRadius();
 
 	if (x < 0.0f || x > m_map.GetMapWidth()) {
 		m_collisions.push(ObjectCollision{ bullet, 0 });
@@ -121,26 +200,26 @@ void Game::HandleBulletToBorderCollisions(Bullet* bullet)
 		return;
 	}
 
-	float Tx = -1 , Ty = -1;
+	float tx = -1 , ty = -1;
 	if (xSpeed < 0.0f) 
-		Tx = (0 - x + radius) / xSpeed;
+		tx = (0 - x + radius) / xSpeed;
 
 	if (xSpeed > 0.0f) 
-		Tx = (m_map.GetMapWidth() - x - radius) / xSpeed;
+		tx = (m_map.GetMapWidth() - x - radius) / xSpeed;
 	
 	if (ySpeed < 0.0f) 
-		Ty = (0 - y + radius) / ySpeed;
+		ty = (0 - y + radius) / ySpeed;
 	
 	if (ySpeed > 0.0f) 
-		Ty = (m_map.GetMapHeight() - y - radius) / ySpeed;
+		ty = (m_map.GetMapHeight() - y - radius) / ySpeed;
 	
 
-	if (Tx > 0 && Tx <= m_deltaTime) {
-		m_collisions.push(ObjectCollision{ bullet,Tx });
+	if (tx > 0 && tx <= m_deltaTime) {
+		m_collisions.push(ObjectCollision{ bullet,tx });
 		return;
 	}
-	if (Ty > 0 && Ty <= m_deltaTime) {
-		m_collisions.push(ObjectCollision{ bullet,Ty });
+	if (ty > 0 && ty <= m_deltaTime) {
+		m_collisions.push(ObjectCollision{ bullet,ty });
 		return;
 	}
 }

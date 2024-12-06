@@ -90,7 +90,7 @@ float Bullet::GetYSpeed() const
 	return m_ySpeed;
 }
 
-float Bullet::getRadius() const
+float Bullet::GetRadius() const
 {
 	return kRadius;
 }
