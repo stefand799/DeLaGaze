@@ -3,7 +3,7 @@
 #include <QWidget>
 #include "qlabel.h"
 #include "qpushbutton.h"
-
+/*TODO: server requests, to get the upgrade number, the player's score and points,*/
 class UpgradesScreen  : public QWidget
 {
 	Q_OBJECT
@@ -11,6 +11,9 @@ class UpgradesScreen  : public QWidget
 public:
 	UpgradesScreen(QWidget *parent);
 	~UpgradesScreen();
+
+private slots:
+	void buyButtonClicked();
 private:
 	QLabel* fireRateLabel;
 	QLabel* bulletSpeedLabel;

@@ -57,7 +57,7 @@ PlayScreen::PlayScreen(QWidget* parent)
 	backButton->setFont(backButtonFont);
 	connect(backButton, &QPushButton::clicked, this, &PlayScreen::buttonClicked);
 
-	auto topLayout = new QHBoxLayout();
+	auto topLayout = new QHBoxLayout;
 	topLayout->addWidget(backButton);
 	topLayout->addStretch();
 
