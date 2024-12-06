@@ -67,7 +67,7 @@ void Player::MoveUp()
 	{
 		delete (*m_playerMap)[newY][newX];
 		(*m_playerMap)[newY][newX] = this;
-		(*m_playerMap)[m_y][m_x] = new Pathway;
+		(*m_playerMap)[m_y][m_x] = new Pathway{ {m_y,m_x} };
 		SetY(newY);
 	}
 	m_lastMovedTime = Clock::now();
@@ -89,7 +89,7 @@ void Player::MoveDown()
 	{
 		delete (*m_playerMap)[newY][newX];
 		(*m_playerMap)[newY][newX] = this;
-		(*m_playerMap)[m_y][m_x] = new Pathway;
+		(*m_playerMap)[m_y][m_x] = new Pathway{ {m_y,m_x} };
 		SetY(newY);
 	}
 	m_lastMovedTime = Clock::now();
@@ -111,7 +111,7 @@ void Player::MoveLeft()
 	{
 		delete (*m_playerMap)[newY][newX];
 		(*m_playerMap)[newY][newX] = this;
-		(*m_playerMap)[m_y][m_x] = new Pathway;
+		(*m_playerMap)[m_y][m_x] = new Pathway{ {m_y,m_x} };
 		SetX(newX);
 	}
 	m_lastMovedTime = Clock::now();
@@ -133,7 +133,7 @@ void Player::MoveRight()
 	{
 		delete (*m_playerMap)[newY][newX];
 		(*m_playerMap)[newY][newX] = this;
-		(*m_playerMap)[m_y][m_x] = new Pathway;
+		(*m_playerMap)[m_y][m_x] = new Pathway{ {m_y,m_x} };
 		SetX(newX);
 	}
 	m_lastMovedTime = Clock::now();

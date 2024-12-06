@@ -258,15 +258,32 @@ void Game::RemoveDestroyedObjects()
 
 	for (Object* obj : destroyedObjects) {
 		if (!obj) continue;
-
-		if (obj->GetType() == Object::ObjectType::Bullet) {
+		Object::ObjectType type = obj->GetType();
+		if (type == Object::ObjectType::Bullet) {
 			auto it = std::find(m_bullets.begin(), m_bullets.end(), obj);
 			if (it != m_bullets.end()) m_bullets.erase(it);
 			delete obj;
 			continue;
 		}
 		//Handle other types of objects...
+		if (type == Object::ObjectType::UnbreakableBlock) {
+			continue;
+		}
 
+		if (BreakableBlock* breakable = dynamic_cast<BreakableBlock*>(obj)) {
+			auto [y, x] = breakable->GetPos();
+			breakable->OnBreak();
+			delete obj;
+			obj = new Pathway{ {y,x} };
+			continue;
+		}
+		if (BombTrapBlock* bombTrap = dynamic_cast<BombTrapBlock*>(obj)) {
+			auto [y, x] = bombTrap->GetPos();
+			bombTrap->OnBreak();
+			delete obj;
+			obj = new Pathway{ {y,x} }; //TODO: FIX THE PROBLEM THAT CRASHES THE GAME WHEN DISTROYING BOMB
+			continue;
+		}
 	}
 }
 

@@ -3,6 +3,7 @@
 
 class BreakableBlock: public Wall{
 public:
+	BreakableBlock(std::pair<int, int> pos);
 	ObjectType GetType() const override { return ObjectType::BreakableBlock; };
 	virtual void Render() override;
 	virtual void Print() const override;

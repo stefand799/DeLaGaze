@@ -1,5 +1,10 @@
 #include "BreakableBlock.h"
 
+BreakableBlock::BreakableBlock(std::pair<int, int> pos) :
+	Wall{pos}
+{
+}
+
 void BreakableBlock::Render(){
 }
 
@@ -8,6 +13,7 @@ void BreakableBlock::Print() const{
 }
 
 void BreakableBlock::OnBreak(){
+	//Possibly call for break animation
 }
 
 bool BreakableBlock::CanMoveHere(int i, int j){

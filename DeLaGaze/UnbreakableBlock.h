@@ -3,6 +3,7 @@
 
 class UnbreakableBlock : public Wall{
 public:
+	UnbreakableBlock(std::pair<int, int> pos);
 	ObjectType GetType() const override { return ObjectType::UnbreakableBlock; };
 	 void Render() override;
 	 void Print() const override;

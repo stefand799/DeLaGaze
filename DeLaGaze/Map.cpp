@@ -124,13 +124,15 @@ void Map::GenerateDimensions() {
 
 bool Map::GenerateStructures() {
 	// Defining a vector for all breakable blocks for the future generation of bombtraps
-	std::vector<Object**> breakableBlocksVector;
+	std::vector<BreakableBlock**> breakableBlocksVector;
 
 	// Defining distrubutions for random object generation
 	std::uniform_int_distribution<> objectRandomNumber(0, 99);
 	// Generating random objects according to probabilities
-	for (std::vector<Object*>& line : m_matrix) {
-		for (Object*& object : line) {
+	for (size_t i = 0; i < m_matrix.size(); ++i) {
+		std::vector<Object*>& line = m_matrix[i];
+		for (size_t j = 0; j < m_matrix[0].size(); ++j) {
+			Object*& object = line[j];
 			uint8_t sum = 0;
 			uint8_t current = 0;
 			uint8_t randomNumber = objectRandomNumber(m_generator);
@@ -138,14 +140,15 @@ bool Map::GenerateStructures() {
 				if (randomNumber >= sum && randomNumber < sum + m_probabilities[current]) {
 					switch (current) {
 					case 0:
-						object = new Pathway;
+						object = new Pathway{ {i,j} };
 						break;
 					case 1:
-						object = new UnbreakableBlock;
+						object = new UnbreakableBlock{ {i,j} };
 						break;
 					case 2:
-						object = new BreakableBlock;
-						breakableBlocksVector.push_back(&object);
+						object = new BreakableBlock{ {i,j} };
+						breakableBlocksVector.push_back(reinterpret_cast<BreakableBlock**>(&object));
+
 						break;
 					default:
 						std::cerr << "Could not initialize position!";
@@ -171,26 +174,27 @@ bool Map::GenerateStructures() {
 	return true;
 }
 
-void Map::MakeCornerPathway(size_t x, size_t y, std::vector<Object**>& breakableBlocksVector) {
+void Map::MakeCornerPathway(size_t x, size_t y, std::vector<BreakableBlock**>& breakableBlocksVector) {
 	if (!dynamic_cast<Pathway*>(m_matrix[x][y])) {
-		auto it = std::find(breakableBlocksVector.begin(), breakableBlocksVector.end(), &m_matrix[x][y]);
+		auto it = std::find(breakableBlocksVector.begin(), breakableBlocksVector.end(), reinterpret_cast<BreakableBlock**>(&m_matrix[x][y]));
 		if (it != breakableBlocksVector.end()) {
 			breakableBlocksVector.erase(it);
 		}
 		delete m_matrix[x][y];
-		m_matrix[x][y] = new Pathway;
+		m_matrix[x][y] = new Pathway{ {x,y} };
 	}
 }
 
-void Map::PlaceBombs(std::vector<Object**>& breakableBlocksVector)
+void Map::PlaceBombs(std::vector<BreakableBlock**>& breakableBlocksVector)
 {
 	// Defining distrubutions for random bombtrap generation
 	std::uniform_int_distribution<> bombRandomNumber(1, kTotalBombCount);
 	size_t bombCount = bombRandomNumber(m_generator);
 	if (bombCount >= breakableBlocksVector.size()) {
-		for (Object** curr : breakableBlocksVector) {
+		for (BreakableBlock** curr : breakableBlocksVector) {
+			auto [y, x] = (*curr)->GetPos();
 			delete* curr;
-			*curr = new BombTrapBlock;
+			*curr = new BombTrapBlock{ {y,x}, this };
 		}
 	}
 	else {
@@ -198,8 +202,9 @@ void Map::PlaceBombs(std::vector<Object**>& breakableBlocksVector)
 		while (bombCount > 0) {
 			size_t bombPos = bombRandomPosition(m_generator);
 			if (!dynamic_cast<BombTrapBlock*>(*(breakableBlocksVector[bombPos]))) {
+				auto [y, x] = (*(breakableBlocksVector[bombPos]))->GetPos();
 				delete* (breakableBlocksVector[bombPos]);
-				*(breakableBlocksVector[bombPos]) = new BombTrapBlock;
+				*(breakableBlocksVector[bombPos]) = new BombTrapBlock{ {y,x}, this };
 				--bombCount;
 			}
 		}
@@ -253,7 +258,7 @@ void Map::BreakUnbreakableOnBestPath(std::vector<std::vector<std::pair<size_t, s
 		auto [x, y] = curr;
 		if (dynamic_cast<UnbreakableBlock*>(m_matrix[x][y])) {
 			delete m_matrix[x][y];
-			m_matrix[x][y] = new BreakableBlock;
+			m_matrix[x][y] = new BreakableBlock{ {x,y} };
 		}
 		curr = path[x][y];
 	}

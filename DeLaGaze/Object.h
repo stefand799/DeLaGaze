@@ -20,6 +20,5 @@ public:
 	virtual void Render() = 0;
 	virtual void Print() const = 0;
 	virtual bool CanMoveHere(int i,int j) = 0; //TODO: Remove parameters, it already knows it's position from m_pos.
-protected:
-	std::pair<int, int> m_pos;
+
 };

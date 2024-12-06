@@ -51,8 +51,8 @@ private:
 	bool VerifyProbabilities();
 	void GenerateDimensions();
 	bool GenerateStructures();
-	void MakeCornerPathway(size_t x, size_t y, std::vector<Object**>& breakableBlocksVector);
-	void PlaceBombs(std::vector<Object**>& breakableBlocksVector);
+	void MakeCornerPathway(size_t x, size_t y, std::vector<BreakableBlock**>& breakableBlocksVector);
+	void PlaceBombs(std::vector<BreakableBlock**>& breakableBlocksVector);
 
 	
 

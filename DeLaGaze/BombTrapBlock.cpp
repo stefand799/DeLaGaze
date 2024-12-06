@@ -1,4 +1,12 @@
 #include "BombTrapBlock.h"
+#include "Map.h"
+
+
+BombTrapBlock::BombTrapBlock(std::pair<int, int> pos, Map* map) :
+	BreakableBlock{pos},
+	m_map{map}
+{
+}
 
 void BombTrapBlock::Render(){
 }
@@ -8,6 +16,8 @@ void BombTrapBlock::Print() const{
 }
 
 void BombTrapBlock::OnBreak(){
+	//Possibly add boom animation
+	Boom();
 }
 
 crow::json::wvalue BombTrapBlock::toJson()
@@ -17,4 +27,9 @@ crow::json::wvalue BombTrapBlock::toJson()
 	jsonObj["x"] = m_pos.first;
 	jsonObj["y"] = m_pos.second;
 	return jsonObj;
+}
+
+void BombTrapBlock::Boom()
+{
+	
 }

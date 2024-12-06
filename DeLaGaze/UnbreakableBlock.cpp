@@ -1,5 +1,10 @@
 #include "UnbreakableBlock.h"
 
+UnbreakableBlock::UnbreakableBlock(std::pair<int, int> pos) :
+	Wall{pos}
+{
+}
+
 void UnbreakableBlock::Render(){
 }
 

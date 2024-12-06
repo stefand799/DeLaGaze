@@ -1,5 +1,10 @@
 #include "Pathway.h"
 
+Pathway::Pathway(std::pair<int, int> pos) :
+	Block{pos}
+{
+}
+
 void Pathway::Render(){
 }
 
