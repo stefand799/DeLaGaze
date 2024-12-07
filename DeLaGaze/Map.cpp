@@ -192,7 +192,7 @@ void Map::PlaceBombs(std::vector<BreakableBlock**>& breakableBlocksVector)
 	size_t bombCount = bombRandomNumber(m_generator);
 	if (bombCount >= breakableBlocksVector.size()) {
 		for (BreakableBlock** curr : breakableBlocksVector) {
-			auto [y, x] = (*curr)->GetPos();
+			auto [x, y] = (*curr)->GetPos();
 			delete* curr;
 			*curr = new BombTrapBlock{ {y,x}, this };
 		}
@@ -202,7 +202,7 @@ void Map::PlaceBombs(std::vector<BreakableBlock**>& breakableBlocksVector)
 		while (bombCount > 0) {
 			size_t bombPos = bombRandomPosition(m_generator);
 			if (!dynamic_cast<BombTrapBlock*>(*(breakableBlocksVector[bombPos]))) {
-				auto [y, x] = (*(breakableBlocksVector[bombPos]))->GetPos();
+				auto [x, y] = (*(breakableBlocksVector[bombPos]))->GetPos();
 				delete* (breakableBlocksVector[bombPos]);
 				*(breakableBlocksVector[bombPos]) = new BombTrapBlock{ {y,x}, this };
 				--bombCount;

@@ -1,6 +1,6 @@
 #include "UnbreakableBlock.h"
 
-UnbreakableBlock::UnbreakableBlock(std::pair<int, int> pos) :
+UnbreakableBlock::UnbreakableBlock(std::pair<size_t, size_t> pos) :
 	Wall{pos}
 {
 }

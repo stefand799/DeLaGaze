@@ -1,6 +1,6 @@
 #include "Block.h"
 
-Block::Block(std::pair<int, int> pos) :
+Block::Block(std::pair<size_t, size_t> pos) :
 	m_pos{pos}
 {
 }

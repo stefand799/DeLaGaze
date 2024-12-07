@@ -1,6 +1,6 @@
 #include "Pathway.h"
 
-Pathway::Pathway(std::pair<int, int> pos) :
+Pathway::Pathway(std::pair<size_t, size_t> pos) :
 	Block{pos}
 {
 }

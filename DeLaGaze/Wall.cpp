@@ -1,6 +1,6 @@
 #include "Wall.h"
 
-Wall::Wall(std::pair<int, int> pos) :
+Wall::Wall(std::pair<size_t, size_t> pos) :
 	Block{pos}
 {
 }

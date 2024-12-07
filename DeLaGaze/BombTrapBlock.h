@@ -4,7 +4,7 @@ class Map;
 
 class BombTrapBlock: public BreakableBlock{
 public:
-	BombTrapBlock(std::pair<int, int> pos, Map* map);
+	BombTrapBlock(std::pair<size_t, size_t> pos, Map* map);
 	ObjectType GetType() const override { return ObjectType::BombTrapBlock; };
 	void Render() override;
 	void Print() const override;
@@ -16,6 +16,8 @@ private:
 
 	// Atributes
 	Map* m_map;
-	float m_boomRadius = 3;
+	int m_boomRadius = 3;
+	bool m_hasExploded;
+
 };
 

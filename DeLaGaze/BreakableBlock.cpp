@@ -1,6 +1,6 @@
 #include "BreakableBlock.h"
 
-BreakableBlock::BreakableBlock(std::pair<int, int> pos) :
+BreakableBlock::BreakableBlock(std::pair<size_t, size_t> pos) :
 	Wall{pos}
 {
 }

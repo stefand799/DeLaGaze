@@ -35,13 +35,13 @@ public:
 
 	bool Generate(
 		const std::vector<uint8_t>& probabilities = std::vector<uint8_t>{
-			//35, /*Pathway*/
-			//25, /*UnbreakableBlock*/
-			//40 /*BreakableBlock*/ },
+			35, /*Pathway*/
+			25, /*UnbreakableBlock*/
+			40 /*BreakableBlock*/ },
 			// The values above are for release, the values below will be used for testing the movement of player
-			70, /*Pathway*/
-			10, /*UnbreakableBlock*/
-			20 /*BreakableBlock*/ },
+			//70, /*Pathway*/
+			//10, /*UnbreakableBlock*/
+			//20 /*BreakableBlock*/ },
 			uint32_t seed = std::random_device{}()
 			); //TODO IDEA: implementation of custom seed when creating a new game
 

@@ -269,19 +269,11 @@ void Game::RemoveDestroyedObjects()
 		if (type == Object::ObjectType::UnbreakableBlock) {
 			continue;
 		}
-
 		if (BreakableBlock* breakable = dynamic_cast<BreakableBlock*>(obj)) {
 			auto [y, x] = breakable->GetPos();
 			breakable->OnBreak();
-			delete obj;
-			obj = new Pathway{ {y,x} };
-			continue;
-		}
-		if (BombTrapBlock* bombTrap = dynamic_cast<BombTrapBlock*>(obj)) {
-			auto [y, x] = bombTrap->GetPos();
-			bombTrap->OnBreak();
-			delete obj;
-			obj = new Pathway{ {y,x} }; //TODO: FIX THE PROBLEM THAT CRASHES THE GAME WHEN DISTROYING BOMB
+			delete m_map[y][x];
+			m_map[y][x] = new Pathway{ {x,y} };
 			continue;
 		}
 	}
