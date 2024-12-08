@@ -2,6 +2,10 @@
 
 void Routes::Run(database::PlayerStorage& playerStorage)
 {
+	CROW_ROUTE(m_app, "/login/<string>")([&, this](const crow::request& req, const std::string& username) {
+		return LoginPlayer(playerStorage, username);
+		});
+
     CROW_ROUTE(m_app,"/players")([&]() {
 		return GetPlayersFromDatabase(playerStorage);
     });
@@ -39,6 +43,27 @@ void Routes::Run(database::PlayerStorage& playerStorage)
 			return PlayerMoveRight(*player, req);
 		});
 }
+	
+crow::response Routes::LoginPlayer(database::PlayerStorage& playerStorage, const std::string& username) {
+	Player* player = playerStorage.GetPlayerByName(playerStorage.GetAllPlayers(), username);
+
+	if (player != nullptr) {
+		// Create a JSON response with player details
+		crow::json::wvalue jsonPlayer{
+			{"id", player->GetId()},
+			{"username", player->GetUsername()},
+			{"score", player->GetScore()},
+			{"points", player->GetPoints()},
+			{"firerate", player->GetFireRate()},
+			{"upgrade_bs", player->GetBulletSpeedUpgrade()}
+		};
+		return crow::response(200, jsonPlayer);
+	}
+
+	// Player not found
+	return crow::response(404, "Player not found");
+}
+
 crow::response Routes::AddPlayerToDatabase(database::PlayerStorage& playerStorage, const crow::request& req) {
     crow::json::rvalue body = crow::json::load(req.body);
     if (!body) {

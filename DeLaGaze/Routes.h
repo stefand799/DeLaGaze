@@ -1,11 +1,15 @@
 #pragma once
 #include <crow.h>
 #include "DatabaseManager.h"
+#include <map>
+#include "Game.h"
+#include <mutex>
 class Routes
 {
 	public:
 		void Run(database::PlayerStorage& playerStorage);
 	private:
+		crow::response LoginPlayer(database::PlayerStorage& playerStorage, const std::string& username);
 		crow::response AddPlayerToDatabase(database::PlayerStorage& playerStorage, const crow::request& req);
 		crow::response UpdatePlayerFirerate(database::PlayerStorage& playerStorage, const crow::request& req,Player& player, int x);
 		crow::response UpdatePlayerBulletSpeed(database::PlayerStorage& playerStorage, Player& player, const crow::request& req);
@@ -20,6 +24,7 @@ class Routes
 		crow::response GetBulletsFromPlayer(Player& p, const crow::request& req);
 	private:
 		crow::SimpleApp m_app;
-
+		std::mutex m_mutex;
+		database::PlayerStorage& m_db;
 };
 
