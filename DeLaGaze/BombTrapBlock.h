@@ -9,6 +9,7 @@ public:
 	void Render() override;
 	void Print() const override;
 	void OnBreak() override;
+	bool HasExploded();
 	virtual crow::json::wvalue toJson() override;
 private:
 	// Methods

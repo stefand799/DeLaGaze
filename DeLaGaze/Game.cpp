@@ -270,7 +270,7 @@ void Game::RemoveDestroyedObjects()
 			continue;
 		}
 		if (BreakableBlock* breakable = dynamic_cast<BreakableBlock*>(obj)) {
-			auto [y, x] = breakable->GetPos();
+			auto [x, y] = breakable->GetPos();
 			breakable->OnBreak();
 			delete m_map[y][x];
 			m_map[y][x] = new Pathway{ {x,y} };
