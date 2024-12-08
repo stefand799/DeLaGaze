@@ -89,8 +89,8 @@ bool Map::Generate(const std::vector<uint8_t>& probabilities, uint32_t seed)
 
 	// Verifing if there are any isolated players and solving paths between players accordingly
 
-	BreakUnbreakableOnBestPath(FindBestPath({ 0,0 }, { m_mapHeight - 1,m_mapWidth - 1 }), { 0,0 }, { m_mapHeight - 1,m_mapWidth - 1 });
-	BreakUnbreakableOnBestPath(FindBestPath({ m_mapHeight - 1 ,0 }, { 0 ,m_mapWidth - 1 }), { m_mapHeight - 1 ,0 }, { 0 ,m_mapWidth - 1 });
+	BreakUnbreakableOnBestPath(FindBestPath({ 0,0 }, { m_mapWidth - 1,m_mapHeight - 1 }), { 0,0 }, { m_mapWidth - 1,m_mapHeight - 1 });
+	BreakUnbreakableOnBestPath(FindBestPath({ m_mapWidth - 1 ,0 }, { 0 ,m_mapHeight - 1 }), { m_mapWidth - 1 ,0 }, { 0 ,m_mapHeight - 1 });
 
 	m_alreadyGenerated = true;
 	return true;
@@ -232,20 +232,20 @@ std::vector<std::vector<std::pair<size_t, size_t>>> Map::FindBestPath(std::pair<
 	while (!openList.empty()) {
 		BestPathNode current = openList.top();
 		openList.pop();
-		auto [y, x] = current.GetPosition(); //Binding structure
+		auto [x, y] = current.GetPosition(); //Binding structure
 		for (int k = 0; k < 4; ++k) { //Looking for all 4 neighbours
 			size_t nextX = x + dx[k];
 			size_t nextY = y + dy[k];
 			if (nextX < 0 || nextY < 0 || nextX >= m_mapWidth || nextY >= m_mapHeight) continue; // invalid position
 			if (bestPath[nextY][nextX] != std::make_pair<size_t, size_t>(-1, -1)) continue; // position already visited
 			if (dynamic_cast<UnbreakableBlock*>(m_matrix[nextY][nextX])) {
-				openList.push(BestPathNode{ {nextY,nextX}, current.GetNormalBlocksCount(), current.GetUnbreakableBlocksCount() + 1 });
+				openList.push(BestPathNode{ {nextX,nextY}, current.GetNormalBlocksCount(), current.GetUnbreakableBlocksCount() + 1 });
 			}
 			else {
-				openList.push(BestPathNode{ {nextY,nextX}, current.GetNormalBlocksCount() + 1, current.GetUnbreakableBlocksCount() });
+				openList.push(BestPathNode{ {nextX,nextY}, current.GetNormalBlocksCount() + 1, current.GetUnbreakableBlocksCount() });
 			}
 			bestPath[nextY][nextX] = current.GetPosition();
-			if (std::pair<size_t, size_t>{nextY, nextX} == end) return bestPath;
+			if (std::pair<size_t, size_t>{nextX, nextY} == end) return bestPath;
 		}
 	}
 	return bestPath;
@@ -255,10 +255,10 @@ void Map::BreakUnbreakableOnBestPath(std::vector<std::vector<std::pair<size_t, s
 {
 	std::pair<size_t,size_t> curr = end;
 	while (curr != start) {
-		auto [y, x] = curr;
+		auto [x, y] = curr;
 		if (dynamic_cast<UnbreakableBlock*>(m_matrix[y][x])) {
 			delete m_matrix[y][x];
-			m_matrix[y][x] = new BreakableBlock{ {y,x} };
+			m_matrix[y][x] = new BreakableBlock{ {x,y} };
 		}
 		curr = path[y][x];
 	}

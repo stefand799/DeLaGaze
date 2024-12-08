@@ -41,15 +41,19 @@ crow::json::wvalue BombTrapBlock::toJson()
 
 void BombTrapBlock::Boom()
 {
-	size_t xBorderLeft = std::max((int)m_pos.first - m_boomRadius, 0);
-	size_t xBorderRight = std::min((int)m_pos.first + m_boomRadius, m_map->GetMapWidth() - 1);
-	size_t yBorderTop = std::max((int)m_pos.second - m_boomRadius, 0);
-	size_t yBorderBottom = std::min((int)m_pos.second + m_boomRadius, m_map->GetMapHeight() - 1);
+	size_t xBomb = m_pos.first;
+	size_t yBomb = m_pos.second;
+	size_t xBorderLeft = std::max((int)xBomb - (int)std::ceil(m_boomRadius), 0);
+	size_t xBorderRight = std::min((int)xBomb + (int)std::ceil(m_boomRadius), m_map->GetMapWidth() - 1);
+	size_t yBorderTop = std::max((int)yBomb - (int)std::ceil(m_boomRadius), 0);
+	size_t yBorderBottom = std::min((int)yBomb + (int)std::ceil(m_boomRadius), m_map->GetMapHeight() - 1);
 
 	for (size_t y = yBorderTop; y <= yBorderBottom; ++y) {
 		for (size_t x = xBorderLeft; x <= xBorderRight; ++x) {
 			if (x == m_pos.first && y == m_pos.second) continue;
 			if (!(*m_map)[y][x]) continue;
+			float distance = ((float)x - (float)xBomb) * ((float)x - (float)xBomb) + ((float)y - (float)yBomb) * ((float)y - (float)yBomb);
+			if (distance > m_boomRadius * m_boomRadius) continue;
 			if (BombTrapBlock* bomb = dynamic_cast<BombTrapBlock*>((*m_map)[y][x])) {
 				if (bomb->HasExploded()) continue;
 			}
@@ -57,6 +61,11 @@ void BombTrapBlock::Boom()
 				breakable->OnBreak();
 				if((*m_map)[y][x]) delete (*m_map)[y][x];
 				(*m_map)[y][x] = new Pathway{{x,y}};
+				continue;
+			}
+			if (Player* player = dynamic_cast<Player*>((*m_map)[y][x])) {
+				player->OnDeath();
+				continue;
 			}
 		}
 	}

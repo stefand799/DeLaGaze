@@ -72,6 +72,7 @@ public:
 	
 	// Functionalities
 	void Shoot(std::vector<Bullet*>& bullets);
+	void OnDeath();
 	void Respawn();
 
 	void Render() override;

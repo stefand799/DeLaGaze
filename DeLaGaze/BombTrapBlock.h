@@ -17,7 +17,7 @@ private:
 
 	// Atributes
 	Map* m_map;
-	int m_boomRadius = 3;
+	float m_boomRadius = 2.5;
 	bool m_hasExploded;
 
 };

@@ -13,10 +13,10 @@ Player::Player(Map* m, const std::pair<int, int>& pos, const int& id, const std:
 	m_hp{ hp },
 	m_x{ pos.first },
 	m_y{ pos.second },
+	m_spawnpoint{pos},
 	m_moveCooldown{ kDefaultMoveCooldown },
 	m_lastMovedTime{ Clock::now() },
 	m_lastShotTime{ Clock::now() }
-	//,Object{pos},
 {}
 //
 //Player::Player(const int& i, const int& j, const Map& m) : m_x{ i }, m_y{ j }, m_playerMap{ m } {};
@@ -68,7 +68,7 @@ void Player::MoveUp()
 		delete (*m_playerMap)[newY][newX];
 		(*m_playerMap)[newY][newX] = this;
 		(*m_playerMap)[m_y][m_x] = new Pathway{ {m_y,m_x} };
-		SetY(newY);
+		m_y = newY;
 	}
 	m_lastMovedTime = Clock::now();
 }
@@ -90,7 +90,7 @@ void Player::MoveDown()
 		delete (*m_playerMap)[newY][newX];
 		(*m_playerMap)[newY][newX] = this;
 		(*m_playerMap)[m_y][m_x] = new Pathway{ {m_y,m_x} };
-		SetY(newY);
+		m_y = newY;
 	}
 	m_lastMovedTime = Clock::now();
 }
@@ -112,7 +112,7 @@ void Player::MoveLeft()
 		delete (*m_playerMap)[newY][newX];
 		(*m_playerMap)[newY][newX] = this;
 		(*m_playerMap)[m_y][m_x] = new Pathway{ {m_y,m_x} };
-		SetX(newX);
+		m_x = newX;
 	}
 	m_lastMovedTime = Clock::now();
 }
@@ -134,7 +134,7 @@ void Player::MoveRight()
 		delete (*m_playerMap)[newY][newX];
 		(*m_playerMap)[newY][newX] = this;
 		(*m_playerMap)[m_y][m_x] = new Pathway{ {m_y,m_x} };
-		SetX(newX);
+		m_x = newX;
 	}
 	m_lastMovedTime = Clock::now();
 }
@@ -150,10 +150,25 @@ void Player::Shoot(std::vector<Bullet*>& bullets) {
 	uint8_t bulletSpeed = m_bulletSpeedUpgrade ? kBulletSpeeds[1] : kBulletSpeeds[0]; //Placeholder for bullet speeds
 	bullets.emplace_back(new Bullet(m_x, m_y, bulletSpeed, m_facing)); // set the position the bullet a little in the direction of the player facing
 	//bullets.push_back(std::make_unique<Bullet>(m_x, m_y, bulletSpeed, m_facing)); // set the position the bullet a little in the direction of the player facing
-};
+}
+void Player::OnDeath()
+{
+	m_hp--;
+	if (m_hp) {
+		Respawn();
+	}
+	else {
+		//TODO: Delete the player from the game
+	}
+}
+;
 void Player::Respawn() {
-	SetX(m_spawnpoint.first);
-	SetY(m_spawnpoint.second);
+	(*m_playerMap)[m_y][m_x] = new Pathway{ {m_x,m_y} };
+	m_x = m_spawnpoint.first;
+	m_y = m_spawnpoint.second;
+	//Check if there is a player or possition is accessible
+	delete (*m_playerMap)[m_y][m_x];
+	(*m_playerMap)[m_y][m_x] = this;
 }
 
 void Player::Render()
