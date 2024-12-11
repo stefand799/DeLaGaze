@@ -30,9 +30,7 @@ void DeLaGazeClient::initializeConnections(){
     connect(mainScreen, &MainScreen::selectedScreen, this, [&](MainScreen::Screen screen) {
         switch (screen)
         {
-       /* case MainScreen::PlayScreen:
-            stackedWidget->setCurrentWidget(playScreen);
-            break;*/
+       
         case MainScreen::Screen::UpgradesScreen:
             stackedWidget->setCurrentWidget(upgradesScreen);
             break;
@@ -53,4 +51,5 @@ void DeLaGazeClient::initializeConnections(){
             break;
         }
         });
+    //connect(upgradeScreen,&,this,)
 }

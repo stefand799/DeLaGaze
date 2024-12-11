@@ -97,6 +97,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="GameClientReqManager.cpp" />
     <ClCompile Include="LoginScreen.cpp" />
     <ClCompile Include="MainScreen.cpp" />
     <ClCompile Include="PlayScreen.cpp" />
@@ -116,6 +117,9 @@
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="UpgradesScreen.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="GameClientReqManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
