@@ -10,8 +10,9 @@ class LoginScreen :public QWidget {
 public:
 	LoginScreen(QWidget* parent = nullptr);
 	~LoginScreen();
+	void showServerError(const std::string& errorMessage);
 signals:
-	void loginSuccessful();
+	void loginRequest(const std::string& username);
 private slots:
 	void manageLogin();
 private:

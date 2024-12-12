@@ -27,10 +27,16 @@ LoginScreen::LoginScreen(QWidget *parent)
 LoginScreen::~LoginScreen()
 {}
 
+void LoginScreen::showServerError(const std::string& errorMessage)
+{
+	usernameLineEdit->clear();
+	usernameLineEdit->setPlaceholderText(QString::fromStdString(errorMessage));
+}
+
 void LoginScreen::manageLogin() {
 
 	if (std::regex_match(usernameLineEdit->text().toStdString(), m_validUsernamePattern))
-		emit loginSuccessful();
+		emit loginRequest(usernameLineEdit->text().toStdString());
 	else {
 		usernameLineEdit->clear();
 		usernameLineEdit->setPlaceholderText("Too short or illegal! Try again!");

@@ -7,6 +7,7 @@
 #include "LoginScreen.h"
 #include "PlayScreen.h"
 #include "UpgradesScreen.h"
+#include "GameClientReqManager.h"
 
 class DeLaGazeClient : public QMainWindow
 {
@@ -23,6 +24,8 @@ private:
     MainScreen* mainScreen;
     PlayScreen* playScreen;
     UpgradesScreen* upgradesScreen;
+
+    GameClientReqManager* reqManager;
 
     void initializeConnections();
 };

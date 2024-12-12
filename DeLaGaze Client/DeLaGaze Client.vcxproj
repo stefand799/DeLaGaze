@@ -119,7 +119,7 @@
     <QtMoc Include="UpgradesScreen.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GameClientReqManager.h" />
+    <QtMoc Include="GameClientReqManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

@@ -69,10 +69,8 @@
     <QtMoc Include="UpgradesScreen.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="GameClientReqManager.h">
+    <QtMoc Include="GameClientReqManager.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
+    </QtMoc>
   </ItemGroup>
 </Project>
