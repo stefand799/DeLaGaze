@@ -89,6 +89,10 @@ void Game::Update(){
 	//Handle bullets Update;
 	for (Bullet* bullet : m_bullets)
 		bullet->Move(m_deltaTime);
+
+	for (Player* player : m_players) {
+		player->Move(m_deltaTime);
+	}
 	//Handle collisions
 	//CheckCollisions();
 	HandleCollisions();
@@ -374,7 +378,14 @@ void Game::Run()
 		m_deltaTime = fSecDur(frameInitialTimePoint - m_lastFrameTime).count();
 		m_lastFrameTime = frameInitialTimePoint;
 
-		if (!m_playerInputs.empty() || !m_bullets.empty())
+		bool isAtleatOnePlayerMove = false;
+		for (Player* player : m_players) {
+			if (player->GetMovingState()) {
+				isAtleatOnePlayerMove = true;
+				break;
+			}
+		}
+		if (!m_playerInputs.empty() || !m_bullets.empty() || isAtleatOnePlayerMove)
 		{
 			Update();
 #ifdef DEBUG

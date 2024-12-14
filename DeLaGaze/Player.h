@@ -38,8 +38,9 @@ public:
 	uint8_t GetFireRate() const;
 	const bool GetBulletSpeedUpgrade() const;
 	uint8_t GetHp() const;
-	int GetX() const;
-	int GetY() const;
+	float GetX() const;
+	float GetY() const;
+	bool GetMovingState() const;
 	State GetPlayerState() const;	// This will be moved in client, maybe
 	Direction GetFacing() const;
 	Map* GetMap();
@@ -59,6 +60,7 @@ public:
 
 	// Movement
 	bool CanMoveHere(int i, int j) override;
+	void Move(float deltaTime);
 	void MoveUp();
 	void MoveDown();
 	void MoveLeft();
@@ -84,6 +86,7 @@ public:
 
 private:
 	using Clock = std::chrono::high_resolution_clock;
+	using fSecDur = std::chrono::duration<float>;
 	//Constants
 	const float kFireRates[4] = {
 		1.0,
@@ -95,7 +98,7 @@ private:
 		2.0f,
 		4.0f
 	};
-	const float kDefaultMoveCooldown = 0.0;
+	const float kDefaultMoveCooldown = 0.25;
 	//Atributes
 	int m_id;
 	std::string m_username;
@@ -104,7 +107,9 @@ private:
 	uint8_t m_score;
 	float m_bulletSpeed;
 	uint16_t m_points;
-	int m_x, m_y;
+	int m_mapX, m_mapY;
+	int m_previousMapX, m_previousMapY;
+	float m_x, m_y;
 	bool m_bulletSpeedUpgrade;
 	uint8_t m_fireRate;
 	Direction m_facing;
@@ -113,7 +118,9 @@ private:
 	float m_shootCooldown;
 	Clock::time_point m_lastShotTime;
 	float m_moveCooldown;
-	Clock::time_point m_lastMovedTime;
+	float m_playerSpeed;
+	bool m_isMoving;
+	Clock::time_point m_endOfMove;
 	std::pair<int, int> m_spawnpoint;
 	//TODO: Add float x and y
 };

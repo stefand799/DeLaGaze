@@ -11,11 +11,17 @@ Player::Player(Map* m, const std::pair<int, int>& pos, const int& id, const std:
 	m_facing{ facing },
 	m_score{ score },
 	m_hp{ hp },
-	m_x{ pos.first },
-	m_y{ pos.second },
-	m_spawnpoint{pos},
+	m_mapX{ pos.first },
+	m_mapY{ pos.second },
+	m_previousMapX{ pos.first },
+	m_previousMapY{ pos.second },
+	m_x{ pos.first + 0.5f },
+	m_y{ pos.second + 0.5f },
+	m_spawnpoint{ pos },
 	m_moveCooldown{ kDefaultMoveCooldown },
-	m_lastMovedTime{ Clock::now() },
+	m_playerSpeed{ 1.0f / m_moveCooldown },
+	m_isMoving{ false },
+	m_endOfMove{ Clock::now() },
 	m_lastShotTime{ Clock::now() }
 {}
 //
@@ -29,8 +35,9 @@ uint16_t Player::GetPoints() const { return m_points; }
 uint8_t Player::GetFireRate() const { return m_bulletSpeed; }
 const bool Player::GetBulletSpeedUpgrade() const { return m_bulletSpeedUpgrade; }
 uint8_t Player::GetHp() const{ return m_hp; }
-int Player::GetX() const { return m_x; }
-int Player::GetY() const { return m_y; }
+float Player::GetX() const { return m_x; }
+float Player::GetY() const { return m_y; }
+bool Player::GetMovingState() const { return m_isMoving; }
 State Player::GetPlayerState() const { return m_playerState; }
 Direction Player::GetFacing() const { return m_facing; }
 Map* Player::GetMap() { return m_playerMap; }
@@ -45,16 +52,42 @@ void Player::SetBulletSpeedUpgrade(bool bulletSpeedUpgrade) { m_bulletSpeedUpgra
 void Player::SetHp() { m_hp = GetHp() - 1; }
 void Player::SetFacing(const Direction& facing) { m_facing = facing; }
 void Player::SetPlayerState(const State& playerState) { m_playerState = playerState; }
-void Player::SetX(const int& x) { m_x = x; }
-void Player::SetY(const int& y) { m_y = y; }
+void Player::SetX(const int& x) { m_mapX = x; }
+void Player::SetY(const int& y) { m_mapY = y; }
 
 // Movement
 bool Player::CanMoveHere(int i, int j) { return false; }
+
+void Player::Move(float deltaTime)
+{
+	if (Clock::now() >= m_endOfMove) {
+		m_isMoving = false;
+		m_x = m_mapX + 0.5f;
+		m_y = m_mapY + 0.5f;
+		m_previousMapX = m_mapX;
+		m_previousMapY = m_mapY;
+		return;
+	}
+	if (m_previousMapX < m_mapX) {
+		m_x = std::min(m_x+ deltaTime * m_playerSpeed, m_mapX + 0.5f);
+	}
+	if (m_previousMapX > m_mapX) {
+		m_x = std::max(m_x - deltaTime * m_playerSpeed, m_mapX + 0.5f);
+	}
+	if (m_previousMapY < m_mapY) {
+		m_y = std::min(m_y + deltaTime * m_playerSpeed, m_mapY + 0.5f);
+	}
+	if (m_previousMapY > m_mapY) {
+		m_y = std::max(m_y - deltaTime * m_playerSpeed, m_mapY + 0.5f);;
+	}
+}
+
+//TODO: remember previous positions
 void Player::MoveUp()
 {
-	if (std::chrono::duration<float>(Clock::now() - m_lastMovedTime).count() < m_moveCooldown) return;
-	int newX = m_x;
-	int newY = m_y - 1;
+	if (Clock::now()<m_endOfMove) return;
+	int newX = m_mapX;
+	int newY = m_mapY - 1;
 	if (!m_playerMap->IsWithinBounds(newY, newX)) {
 		return;
 	}
@@ -67,16 +100,17 @@ void Player::MoveUp()
 	{
 		delete (*m_playerMap)[newY][newX];
 		(*m_playerMap)[newY][newX] = this;
-		(*m_playerMap)[m_y][m_x] = new Pathway{ {m_y,m_x} };
-		m_y = newY;
+		(*m_playerMap)[m_mapY][m_mapX] = new Pathway{ {m_mapY,m_mapX} };
+		m_mapY = newY;
 	}
-	m_lastMovedTime = Clock::now();
+	m_endOfMove = Clock::now() + std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::duration<float>(kDefaultMoveCooldown));
+	m_isMoving = true;
 }
 void Player::MoveDown()
 {
-	if (std::chrono::duration<float>(Clock::now() - m_lastMovedTime).count() < m_moveCooldown) return;
-	int newX = m_x;
-	int newY = m_y + 1;
+	if (Clock::now() < m_endOfMove) return;
+	int newX = m_mapX;
+	int newY = m_mapY + 1;
 	if (!(*m_playerMap).IsWithinBounds(newY, newX)) {
 		return;
 	}
@@ -89,16 +123,17 @@ void Player::MoveDown()
 	{
 		delete (*m_playerMap)[newY][newX];
 		(*m_playerMap)[newY][newX] = this;
-		(*m_playerMap)[m_y][m_x] = new Pathway{ {m_y,m_x} };
-		m_y = newY;
+		(*m_playerMap)[m_mapY][m_mapX] = new Pathway{ {m_mapY,m_mapX} };
+		m_mapY = newY;
 	}
-	m_lastMovedTime = Clock::now();
+	m_endOfMove = Clock::now() + std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::duration<float>(kDefaultMoveCooldown));
+	m_isMoving = true;
 }
 void Player::MoveLeft()
 {
-	if (std::chrono::duration<float>(Clock::now() - m_lastMovedTime).count() < m_moveCooldown) return;
-	int newX = m_x - 1;
-	int newY = m_y;
+	if (Clock::now() < m_endOfMove) return;
+	int newX = m_mapX - 1;
+	int newY = m_mapY;
 	if (!(*m_playerMap).IsWithinBounds(newY, newX)) {
 		return;
 	}
@@ -111,16 +146,17 @@ void Player::MoveLeft()
 	{
 		delete (*m_playerMap)[newY][newX];
 		(*m_playerMap)[newY][newX] = this;
-		(*m_playerMap)[m_y][m_x] = new Pathway{ {m_y,m_x} };
-		m_x = newX;
+		(*m_playerMap)[m_mapY][m_mapX] = new Pathway{ {m_mapY,m_mapX} };
+		m_mapX = newX;
 	}
-	m_lastMovedTime = Clock::now();
+	m_endOfMove = Clock::now() + std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::duration<float>(kDefaultMoveCooldown));
+	m_isMoving = true;
 }
 void Player::MoveRight()
 {
-	if (std::chrono::duration<float>(Clock::now() - m_lastMovedTime).count() < m_moveCooldown) return;
-	int newX = m_x + 1;
-	int newY = m_y;
+	if (Clock::now() < m_endOfMove) return;
+	int newX = m_mapX + 1;
+	int newY = m_mapY;
 	if (!(*m_playerMap).IsWithinBounds(newY, newX)) {
 		return;
 	}
@@ -133,10 +169,11 @@ void Player::MoveRight()
 	{
 		delete (*m_playerMap)[newY][newX];
 		(*m_playerMap)[newY][newX] = this;
-		(*m_playerMap)[m_y][m_x] = new Pathway{ {m_y,m_x} };
-		m_x = newX;
+		(*m_playerMap)[m_mapY][m_mapX] = new Pathway{ {m_mapY,m_mapX} };
+		m_mapX = newX;
 	}
-	m_lastMovedTime = Clock::now();
+	m_endOfMove = Clock::now() + std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::duration<float>(kDefaultMoveCooldown));
+	m_isMoving = true;
 }
 
 // Facing
@@ -148,7 +185,7 @@ void Player::FaceEast() { m_facing = Direction::East; }
 // Functionalities
 void Player::Shoot(std::vector<Bullet*>& bullets) {
 	uint8_t bulletSpeed = m_bulletSpeedUpgrade ? kBulletSpeeds[1] : kBulletSpeeds[0]; //Placeholder for bullet speeds
-	bullets.emplace_back(new Bullet(m_x, m_y, bulletSpeed, m_facing)); // set the position the bullet a little in the direction of the player facing
+	bullets.emplace_back(new Bullet(m_mapX, m_mapY, bulletSpeed, m_facing)); // set the position the bullet a little in the direction of the player facing
 	//bullets.push_back(std::make_unique<Bullet>(m_x, m_y, bulletSpeed, m_facing)); // set the position the bullet a little in the direction of the player facing
 }
 void Player::OnDeath()
@@ -163,12 +200,12 @@ void Player::OnDeath()
 }
 ;
 void Player::Respawn() {
-	(*m_playerMap)[m_y][m_x] = new Pathway{ {m_x,m_y} };
-	m_x = m_spawnpoint.first;
-	m_y = m_spawnpoint.second;
+	(*m_playerMap)[m_mapY][m_mapX] = new Pathway{ {m_mapX,m_mapY} };
+	m_mapX = m_spawnpoint.first;
+	m_mapY = m_spawnpoint.second;
 	//Check if there is a player or possition is accessible
-	delete (*m_playerMap)[m_y][m_x];
-	(*m_playerMap)[m_y][m_x] = this;
+	delete (*m_playerMap)[m_mapY][m_mapX];
+	(*m_playerMap)[m_mapY][m_mapX] = this;
 }
 
 void Player::Render()
@@ -219,8 +256,8 @@ crow::json::wvalue Player::toJson()
 	jsonPlayerObj["type"] = "Player";
 	jsonPlayerObj["id"] = m_id;
 	jsonPlayerObj["username"] = m_username;
-	jsonPlayerObj["x"] = m_x;
-	jsonPlayerObj["y"] = m_y;
+	jsonPlayerObj["x"] = m_mapX;
+	jsonPlayerObj["y"] = m_mapY;
 	jsonPlayerObj["facing"] = DirectionToString(m_facing);
 	jsonPlayerObj["state"] = StateToString(m_playerState);
 	jsonPlayerObj["spawnX"] = m_spawnpoint.first;
