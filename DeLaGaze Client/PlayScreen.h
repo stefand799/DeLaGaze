@@ -17,6 +17,7 @@ public:
 		TeamGameScreen,
 		MainScreen
 	};
+	std::vector<std::vector<std::string>> deserializeMapToGrid(const std::string& jsonString);
 signals:
 	void selectedScreen(PlayScreen::Screen);
 private slots:

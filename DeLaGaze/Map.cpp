@@ -20,7 +20,12 @@ crow::json::wvalue Map::toJson()
 		rowJson["y"] = i;
 		mapJson.push_back(rowJson);
 	}
-	return crow::json::wvalue(mapJson);
+	crow::json::wvalue mapData;
+	mapData["height"] = m_mapHeight;
+	mapData["width"] = m_mapWidth;
+	mapData["map"] = mapJson;
+
+	return mapData;
 }
 
 std::string Map::ObjectTypeToString(int i, int j)
