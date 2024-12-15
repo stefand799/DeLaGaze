@@ -3,7 +3,8 @@
 #include <QWidget>
 #include "qpushbutton.h"
 #include "qtextedit.h"
-
+#include "nlohmann/json.hpp"
+using json = nlohmann::json;
 class PlayScreen  : public QWidget
 {
 	Q_OBJECT

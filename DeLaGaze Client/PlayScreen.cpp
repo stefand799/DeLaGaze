@@ -71,6 +71,21 @@ PlayScreen::PlayScreen(QWidget* parent)
 
 }
 
+std::vector<std::vector<std::string>> deserializeMapToGrid(const std::string& jsonString, int mapHeight, int mapWidth) {
+	std::vector<std::vector<std::string>> grid(mapHeight, std::vector<std::string>(mapWidth, ""));
+
+		json jsonArray = json::parse(jsonString);
+		for (const auto& obj : jsonArray) {
+			int x = obj.at("x").get<int>();
+			int y = obj.at("y").get<int>();
+			std::string type = obj.at("type").get<std::string>();
+			if (x >= 0 && x < mapHeight && y >= 0 && y < mapWidth) {
+				grid[x][y] = type;
+			}
+		}
+	return grid;
+}
+
 PlayScreen::~PlayScreen()
 {}
 

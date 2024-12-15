@@ -1,5 +1,4 @@
 #include "delagazeclient.h"
-
 DeLaGazeClient::DeLaGazeClient(QWidget* parent)
     : QMainWindow(parent),
     stackedWidget(new QStackedWidget(this)),
