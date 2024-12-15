@@ -116,7 +116,6 @@ private:
 	uint8_t m_fireRate;
 	Direction m_facing;
 	State m_playerState;
-	std::vector<Bullet*> m_bullets;
 	float m_shootCooldown;
 	Clock::time_point m_lastShotTime;
 	float m_moveCooldown;

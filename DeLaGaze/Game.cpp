@@ -290,6 +290,16 @@ void Game::RemoveDestroyedObjects()
 
 
 
+crow::json::wvalue Game::BulletsToJson()
+{
+	std::vector<crow::json::wvalue> jsonBullets;
+	for (const auto& bullet : m_bullets)
+	{
+		jsonBullets.push_back(bullet->toJson());
+	}
+	return jsonBullets;
+}
+
 void Game::Run()
 {
 	while (m_isRunning) {

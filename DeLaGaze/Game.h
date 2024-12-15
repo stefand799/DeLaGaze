@@ -55,7 +55,7 @@ private:
 
 
 	//Methods
-	
+	crow::json::wvalue BulletsToJson();
 
 	void Run();
 	
