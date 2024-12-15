@@ -9,23 +9,23 @@ Bullet::Bullet(float x, float y, float speed, Direction direction) :
 	m_ySpeed {0}
 {
 	if (m_direction == Direction::North) {
-		//m_y -= 1;
+		m_y -= 0.5f;
 		m_ySpeed = -m_speed;
 	}
 	if (m_direction == Direction::South) {
-		m_y += 1;
+		m_y += 0.5f;
 		m_ySpeed = +m_speed;
 	}
 	if (m_direction == Direction::West) {
-		//m_x -= 1;
+		m_x -= 0.5f;
 		m_xSpeed = -m_speed;
 	}
 	if (m_direction == Direction::East) {
-		m_x += 1;
+		m_x += 0.5f;
 		m_xSpeed = +m_speed;
 	}
 }
-
+//TODO: store the person who shot the bullet for score count
 void Bullet::Render()
 {
 }

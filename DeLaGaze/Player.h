@@ -17,9 +17,9 @@ public:
 	
 	// Constructors
 	Player() = default;
-	Player(Map* m);
-	Player(const int& i, const int& j, Map& m);
-	Player(Map* m, const std::pair<int,int>& pos, const int& id, const std::string& username, uint8_t points, bool bulletSpeedUpgrade, Direction facing, State playerState, uint8_t score = 0, uint8_t hp = 3);
+	//Player(Map* m);
+	//Player(const int& i, const int& j, Map& m);
+	Player(Map* m, const std::pair<int,int>& pos, const int& id, const std::string& username, uint8_t points, uint8_t fireRate, bool bulletSpeedUpgrade, Direction facing, State playerState, uint8_t score = 0, uint8_t hp = 3);
 	Player(const int& id,const std::string& username, uint8_t score, uint16_t points, uint8_t bulletSpeed, bool bulletSpeedUpgrade)
 		: m_id(id),
 		m_username(username),
@@ -89,16 +89,16 @@ private:
 	using fSecDur = std::chrono::duration<float>;
 	//Constants
 	const float kFireRates[4] = {
-		1.0,
-		0.5,
-		0.25,
-		0.125
+		1.0f,
+		0.5f,
+		0.25f,
+		0.125f
 	};
 	const float kBulletSpeeds[2] = {
 		2.0f,
 		4.0f
 	};
-	const float kDefaultMoveCooldown = 0.25;
+	const float kDefaultMoveCooldown = 0.25f;
 	//Atributes
 	int m_id;
 	std::string m_username;
@@ -110,6 +110,7 @@ private:
 	int m_mapX, m_mapY;
 	int m_previousMapX, m_previousMapY;
 	float m_x, m_y;
+	float m_xSpeed, m_ySpeed;
 	bool m_bulletSpeedUpgrade;
 	uint8_t m_fireRate;
 	Direction m_facing;
@@ -122,6 +123,5 @@ private:
 	bool m_isMoving;
 	Clock::time_point m_endOfMove;
 	std::pair<int, int> m_spawnpoint;
-	//TODO: Add float x and y
 };
 

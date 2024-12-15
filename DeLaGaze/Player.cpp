@@ -1,12 +1,13 @@
 #include "Player.h"
 
 // Constructors
-Player::Player(Map* m) : m_playerMap{ m } {} //delete this later, only for early on testing. Leave only the constructor with all parameters.
-Player::Player(Map* m, const std::pair<int, int>& pos, const int& id, const std::string& username, uint8_t points, bool bulletSpeedUpgrade, Direction facing, State playerState, uint8_t score, uint8_t hp) :
+
+Player::Player(Map* m, const std::pair<int, int>& pos, const int& id, const std::string& username, uint8_t points, uint8_t fireRate, bool bulletSpeedUpgrade, Direction facing, State playerState, uint8_t score, uint8_t hp) :
 	m_playerMap{ m },
 	m_username{ username },
 	m_id{ id },
 	m_points{ points },
+	m_fireRate{ fireRate },
 	m_bulletSpeedUpgrade{ bulletSpeedUpgrade },
 	m_facing{ facing },
 	m_score{ score },
@@ -20,12 +21,13 @@ Player::Player(Map* m, const std::pair<int, int>& pos, const int& id, const std:
 	m_spawnpoint{ pos },
 	m_moveCooldown{ kDefaultMoveCooldown },
 	m_playerSpeed{ 1.0f / m_moveCooldown },
+	m_xSpeed{ 0.0f },
+	m_ySpeed{ 0.0f },
 	m_isMoving{ false },
 	m_endOfMove{ Clock::now() },
 	m_lastShotTime{ Clock::now() }
 {}
-//
-//Player::Player(const int& i, const int& j, const Map& m) : m_x{ i }, m_y{ j }, m_playerMap{ m } {};
+
 
 // Getteri
 const int Player::GetId() const{ return m_id; }
@@ -66,6 +68,8 @@ void Player::Move(float deltaTime)
 		m_y = m_mapY + 0.5f;
 		m_previousMapX = m_mapX;
 		m_previousMapY = m_mapY;
+		m_xSpeed = 0.0f;
+		m_ySpeed = 0.0f;
 		return;
 	}
 	if (m_previousMapX < m_mapX) {
@@ -82,7 +86,6 @@ void Player::Move(float deltaTime)
 	}
 }
 
-//TODO: remember previous positions
 void Player::MoveUp()
 {
 	if (Clock::now()<m_endOfMove) return;
@@ -103,8 +106,9 @@ void Player::MoveUp()
 		(*m_playerMap)[m_mapY][m_mapX] = new Pathway{ {m_mapY,m_mapX} };
 		m_mapY = newY;
 	}
-	m_endOfMove = Clock::now() + std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::duration<float>(kDefaultMoveCooldown));
+	m_ySpeed = -m_playerSpeed;
 	m_isMoving = true;
+	m_endOfMove = Clock::now() + std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::duration<float>(kDefaultMoveCooldown));
 }
 void Player::MoveDown()
 {
@@ -126,8 +130,9 @@ void Player::MoveDown()
 		(*m_playerMap)[m_mapY][m_mapX] = new Pathway{ {m_mapY,m_mapX} };
 		m_mapY = newY;
 	}
-	m_endOfMove = Clock::now() + std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::duration<float>(kDefaultMoveCooldown));
+	m_ySpeed = m_playerSpeed;
 	m_isMoving = true;
+	m_endOfMove = Clock::now() + std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::duration<float>(kDefaultMoveCooldown));
 }
 void Player::MoveLeft()
 {
@@ -149,8 +154,9 @@ void Player::MoveLeft()
 		(*m_playerMap)[m_mapY][m_mapX] = new Pathway{ {m_mapY,m_mapX} };
 		m_mapX = newX;
 	}
-	m_endOfMove = Clock::now() + std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::duration<float>(kDefaultMoveCooldown));
+	m_xSpeed = -m_playerSpeed;
 	m_isMoving = true;
+	m_endOfMove = Clock::now() + std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::duration<float>(kDefaultMoveCooldown));
 }
 void Player::MoveRight()
 {
@@ -172,8 +178,9 @@ void Player::MoveRight()
 		(*m_playerMap)[m_mapY][m_mapX] = new Pathway{ {m_mapY,m_mapX} };
 		m_mapX = newX;
 	}
-	m_endOfMove = Clock::now() + std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::duration<float>(kDefaultMoveCooldown));
+	m_xSpeed = m_playerSpeed;
 	m_isMoving = true;
+	m_endOfMove = Clock::now() + std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::duration<float>(kDefaultMoveCooldown));
 }
 
 // Facing
@@ -184,9 +191,29 @@ void Player::FaceEast() { m_facing = Direction::East; }
 
 // Functionalities
 void Player::Shoot(std::vector<Bullet*>& bullets) {
-	uint8_t bulletSpeed = m_bulletSpeedUpgrade ? kBulletSpeeds[1] : kBulletSpeeds[0]; //Placeholder for bullet speeds
-	bullets.emplace_back(new Bullet(m_mapX, m_mapY, bulletSpeed, m_facing)); // set the position the bullet a little in the direction of the player facing
+	if (fSecDur(Clock::now() - m_lastShotTime).count() < kFireRates[m_fireRate]) return;
+	float bulletSpeed = kBulletSpeeds[m_bulletSpeedUpgrade]; //Placeholder for bullet speeds
+	//uint8_t bulletSpeed = m_bulletSpeedUpgrade ? kBulletSpeeds[1] : kBulletSpeeds[0]; //Placeholder for bullet speeds
+	switch (m_facing)
+	{
+	case Direction::North:
+		bulletSpeed -= m_ySpeed < 0 ? m_ySpeed : 0.0f;
+		break;
+	case Direction::East:
+		bulletSpeed += m_xSpeed > 0 ? m_xSpeed : 0.0f;
+		break;
+	case Direction::South:
+		bulletSpeed += m_ySpeed > 0 ? m_ySpeed : 0.0f;
+		break;
+	case Direction::West:
+		bulletSpeed -= m_xSpeed < 0 ? m_xSpeed : 0.0f;
+		break;
+	default:
+		break;
+	}
+	bullets.emplace_back(new Bullet(m_x, m_y, bulletSpeed, m_facing)); // set the position the bullet a little in the direction of the player facing
 	//bullets.push_back(std::make_unique<Bullet>(m_x, m_y, bulletSpeed, m_facing)); // set the position the bullet a little in the direction of the player facing
+	m_lastShotTime = Clock::now();
 }
 void Player::OnDeath()
 {

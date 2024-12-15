@@ -47,7 +47,7 @@ void Game::Start()
 	//Creating players
 
 	delete m_map[0][0];
-	m_players.emplace_back(new Player(&m_map, { 0,0 }, 1, "Player1", 0, false, Direction::South, State::Idle));
+	m_players.emplace_back(new Player(&m_map, { 0,0 }, 1, "Player1", 0, 3, true, Direction::South, State::Idle));
 	m_map[0][0] = m_players[0];
 
 	//ONLY FOR TESTING
