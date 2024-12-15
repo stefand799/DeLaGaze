@@ -102,6 +102,7 @@ void Game::HandleCollisions()
 {
 	for (std::vector<Bullet*>::iterator it = m_bullets.begin(); it != m_bullets.end(); it++) {
 		if (*it == nullptr) continue;
+		HandleBulletToPlayerCollisions(*it);
 		HandleBulletToBorderCollisions(*it);
 		HandleBulletToWallCollisions(*it);
 		HandleBulletToBulletCollisions(it);
@@ -126,7 +127,7 @@ void Game::HandleBulletToWallCollisions(Bullet* bullet)
 		Object* collidedToObject = m_map[static_cast<int>(y)][static_cast<int>(x)];
 		Object::ObjectType type = collidedToObject->GetType();
 		if (type == Object::ObjectType::BombTrapBlock || type == Object::ObjectType::BreakableBlock || type == Object::ObjectType::UnbreakableBlock) 
-			m_collisions.push(ObjectCollision{ bullet, collidedToObject, 0 });
+			m_collisions.emplace(std::move(ObjectCollision{ bullet, collidedToObject, 0 }));
 	}
 
 	if (xSpeed < 0.0f) {
@@ -137,7 +138,7 @@ void Game::HandleBulletToWallCollisions(Bullet* bullet)
 				Object* collidedToObject = m_map[static_cast<int>(y)][nextBlockX];
 				Object::ObjectType type = collidedToObject->GetType();
 				if (type == Object::ObjectType::BombTrapBlock || type == Object::ObjectType::BreakableBlock || type == Object::ObjectType::UnbreakableBlock) 
-					m_collisions.push(ObjectCollision{ bullet, collidedToObject, t });
+					m_collisions.emplace(std::move(ObjectCollision{ bullet, collidedToObject, t }));
 			}
 			t = (nextBlockX-- -x + radius) / xSpeed;
 		} while (t < m_deltaTime && nextBlockX >= 0);
@@ -150,7 +151,7 @@ void Game::HandleBulletToWallCollisions(Bullet* bullet)
 				Object* collidedToObject = m_map[static_cast<int>(y)][nextBlockX];
 				Object::ObjectType type = collidedToObject->GetType();
 				if (type == Object::ObjectType::BombTrapBlock || type == Object::ObjectType::BreakableBlock || type == Object::ObjectType::UnbreakableBlock) 
-					m_collisions.push(ObjectCollision{ bullet, collidedToObject, t });
+					m_collisions.emplace(std::move(ObjectCollision{ bullet, collidedToObject, t }));
 			}
 			t = (++nextBlockX - x - radius) / xSpeed;
 		} while (t < m_deltaTime && nextBlockX < m_map.GetMapWidth());
@@ -164,7 +165,7 @@ void Game::HandleBulletToWallCollisions(Bullet* bullet)
 				Object* collidedToObject = m_map[nextBlockY][static_cast<int>(x)];
 				Object::ObjectType type = collidedToObject->GetType();
 				if (type == Object::ObjectType::BombTrapBlock || type == Object::ObjectType::BreakableBlock || type == Object::ObjectType::UnbreakableBlock) 
-					m_collisions.push(ObjectCollision{ bullet, collidedToObject, t });
+					m_collisions.emplace(std::move(ObjectCollision{ bullet, collidedToObject, t }));
 			}
 			t = (nextBlockY-- - y + radius) / ySpeed;
 		} while (t < m_deltaTime && nextBlockY >= 0);
@@ -177,7 +178,7 @@ void Game::HandleBulletToWallCollisions(Bullet* bullet)
 				Object* collidedToObject = m_map[nextBlockY][static_cast<int>(x)];
 				Object::ObjectType type = collidedToObject->GetType();
 				if (type == Object::ObjectType::BombTrapBlock || type == Object::ObjectType::BreakableBlock || type == Object::ObjectType::UnbreakableBlock) 
-					m_collisions.push(ObjectCollision{ bullet, collidedToObject, t });
+					m_collisions.emplace(std::move(ObjectCollision{ bullet, collidedToObject, t }));
 			}
 			t = (++nextBlockY - y - radius) / ySpeed;
 		} while (t < m_deltaTime && nextBlockY < m_map.GetMapHeight());
@@ -196,11 +197,11 @@ void Game::HandleBulletToBorderCollisions(Bullet* bullet)
 	float radius = bullet->GetRadius();
 
 	if (x < 0.0f || x > m_map.GetMapWidth()) {
-		m_collisions.push(ObjectCollision{ bullet, 0 });
+		m_collisions.emplace(std::move(ObjectCollision{ bullet, 0 }));
 		return;
 	}
 	if (y < 0.0f || y > m_map.GetMapHeight()) {
-		m_collisions.push(ObjectCollision{ bullet, 0 });
+		m_collisions.emplace(std::move(ObjectCollision{ bullet, 0 }));
 		return;
 	}
 
@@ -219,11 +220,11 @@ void Game::HandleBulletToBorderCollisions(Bullet* bullet)
 	
 
 	if (tx > 0 && tx <= m_deltaTime) {
-		m_collisions.push(ObjectCollision{ bullet,tx });
+		m_collisions.emplace(std::move(ObjectCollision{ bullet,tx }));
 		return;
 	}
 	if (ty > 0 && ty <= m_deltaTime) {
-		m_collisions.push(ObjectCollision{ bullet,ty });
+		m_collisions.emplace(std::move(ObjectCollision{ bullet,ty }));
 		return;
 	}
 }
@@ -234,13 +235,19 @@ void Game::HandleBulletToBulletCollisions(std::vector<Bullet*>::iterator& bullet
 	for (std::vector<Bullet*>::iterator it = bulletIterator + 1; it != m_bullets.end(); it++) {
 		Bullet* otherBullet = *it;
 		ObjectCollision collision{ GetBulletToBulletColision(bullet, otherBullet) };
-		if (collision.time > 0 && collision.time <= m_deltaTime) m_collisions.push(collision);
+		if (collision.time > 0 && collision.time <= m_deltaTime) 
+			m_collisions.emplace(std::move(collision));
 	}
 }
 
 void Game::HandleBulletToPlayerCollisions(Bullet* bullet)
 {
-
+	for (const Player* player : m_players) {
+		if (!player) continue;
+		//ObjectCollision collision{ GetBulletToPlayerColision(bullet, player) };
+		//if (collision.time > 0 && collision.time <= m_deltaTime)
+		//	m_collisions.push(std::move(collision));
+	}
 }
 
 void Game::RemoveDestroyedObjects()
@@ -262,6 +269,11 @@ void Game::RemoveDestroyedObjects()
 			if (destroyedObjects.find(currCollision.first) == destroyedObjects.end() && destroyedObjects.find(currCollision.second) == destroyedObjects.end()) {
 				destroyedObjects.insert(currCollision.first);
 				destroyedObjects.insert(currCollision.second);
+				if (Bullet* bullet = dynamic_cast<Bullet*>(currCollision.first)) 
+					if (Player* player = dynamic_cast<Player*>(currCollision.second)) {
+						Player* bulletOwner = bullet->GetOwner();
+						bulletOwner->SetScore(bulletOwner->GetScore() + 100);
+					}
 			}
 	}
 
@@ -283,6 +295,10 @@ void Game::RemoveDestroyedObjects()
 			breakable->OnBreak();
 			delete m_map[y][x];
 			m_map[y][x] = new Pathway{ {x,y} };
+			continue;
+		}
+		if (Player* player = dynamic_cast<Player*>(obj)) {
+			player->OnDeath();
 			continue;
 		}
 	}
