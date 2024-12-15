@@ -29,8 +29,44 @@ Player::Player(Map* m, const std::pair<int, int>& pos, const int& id, const std:
 	m_lastShotTime{ Clock::now() }
 {}
 
+// Operators
 
-// Getteri
+Player& Player::operator=(const Player& other) {
+	if (this == &other)
+
+	m_id = other.m_id;
+	m_username = other.m_username;
+	m_hp = other.m_hp;
+	m_score = other.m_score;
+	m_bulletSpeed = other.m_bulletSpeed;
+	m_points = other.m_points;
+	m_mapX = other.m_mapX;
+	m_mapY = other.m_mapY;
+	m_previousMapX = other.m_previousMapX;
+	m_previousMapY = other.m_previousMapY;
+	m_x = other.m_x;
+	m_y = other.m_y;
+	m_xSpeed = other.m_xSpeed;
+	m_ySpeed = other.m_ySpeed;
+	m_bulletSpeedUpgrade = other.m_bulletSpeedUpgrade;
+	m_fireRate = other.m_fireRate;
+	m_facing = other.m_facing;
+	m_playerState = other.m_playerState;
+	m_shootCooldown = other.m_shootCooldown;
+	m_lastShotTime = other.m_lastShotTime;
+	m_moveCooldown = other.m_moveCooldown;
+	m_playerSpeed = other.m_playerSpeed;
+	m_isMoving = other.m_isMoving;
+	m_endOfMove = other.m_endOfMove;
+	m_spawnpoint = other.m_spawnpoint;
+
+	m_playerMap = other.m_playerMap;
+
+	return *this;
+}
+
+
+// Getters
 const int Player::GetId() const{ return m_id; }
 const std::string Player::GetUsername() const { return m_username; }
 uint8_t Player::GetScore() const { return m_score; }
@@ -45,7 +81,7 @@ State Player::GetPlayerState() const { return m_playerState; }
 Direction Player::GetFacing() const { return m_facing; }
 Map* Player::GetMap() { return m_playerMap; }
 
-// Setteri
+// Setters
 void Player::SetId(int id) { m_id = id; }
 void Player::SetUsername(const std::string& username) { m_username = username; }
 void Player::SetScore(uint8_t score) { m_score = score; }
@@ -229,7 +265,6 @@ void Player::OnDeath()
 		//TODO: Delete the player from the game
 	}
 }
-;
 void Player::Respawn() {
 	(*m_playerMap)[m_mapY][m_mapX] = new Pathway{ {m_mapX,m_mapY} };
 	m_mapX = m_spawnpoint.first;

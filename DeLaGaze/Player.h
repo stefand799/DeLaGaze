@@ -31,6 +31,8 @@ public:
 
 	~Player() = default;
 
+	// Operators
+	Player& operator=(const Player& other);
 	// Getters
 	const int GetId() const;
 	const std::string GetUsername() const;
