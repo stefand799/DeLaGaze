@@ -23,7 +23,6 @@ class Routes
 		crow::response PlayerMoveLeft(Player& p, const crow::request& req);
 		crow::response PlayerMoveRight(Player& p, const crow::request& req);
 		crow::response PlayerShoot (Player& p, const crow::request& req);
-		crow::response GetBulletsFromPlayer(Player& p, const crow::request& req);
 	private:
 		crow::SimpleApp m_app;
 		std::mutex m_mutex;

@@ -151,8 +151,3 @@ crow::response Routes::PlayerMoveRight(Player& p, const crow::request& req) {
 	mapJson = map->toJson();
 	return mapJson;
 }
-crow::response Routes::GetBulletsFromPlayer(Player& p, const crow::request& req)
-{
-	crow::json::wvalue bulletsJson = p.BulletsToJson();
-	return bulletsJson;
-}
