@@ -7,6 +7,8 @@
 class Routes
 {
 	public:
+		Routes() = default;
+		Routes(database::PlayerStorage& db) : m_db(db) {}
 		void Run(database::PlayerStorage& playerStorage);
 	private:
 		crow::response LoginPlayer(database::PlayerStorage& playerStorage, const std::string& username);

@@ -145,6 +145,7 @@
     <ClCompile Include="BreakableBlock.cpp" />
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="DatabaseManager.cpp" />
+    <ClCompile Include="DeadlyBlock.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Map.cpp" />
@@ -161,6 +162,7 @@
     <ClInclude Include="BreakableBlock.h" />
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="DatabaseManager.h" />
+    <ClInclude Include="DeadlyBlock.h" />
     <ClInclude Include="Direction.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Map.h" />

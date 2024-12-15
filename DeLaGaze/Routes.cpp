@@ -42,6 +42,7 @@ void Routes::Run(database::PlayerStorage& playerStorage)
 			Player* player = playerStorage.GetPlayerByName(playerStorage.GetAllPlayers(), req.url_params.get("username"));
 			return PlayerMoveRight(*player, req);
 		});
+	m_app.port(18080).multithreaded().run();
 }
 	
 crow::response Routes::LoginPlayer(database::PlayerStorage& playerStorage, const std::string& username) {
