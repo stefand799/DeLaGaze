@@ -2,6 +2,10 @@
 
 void Routes::Run(database::PlayerStorage& playerStorage)
 {
+	CROW_ROUTE(m_app, "/map")([this](const crow::request& req) {
+		return GetMapAsJson(req);
+		});
+
 	CROW_ROUTE(m_app, "/login/<string>")([&, this](const crow::request& req, const std::string& username) {
 		return LoginPlayer(playerStorage, username);
 		});
@@ -149,5 +153,11 @@ crow::response Routes::PlayerMoveRight(Player& p, const crow::request& req) {
 	crow::json::wvalue mapJson;
 	Map* map = p.GetMap();
 	mapJson = map->toJson();
+	return mapJson;
+}
+
+crow::response Routes::GetMapAsJson(const crow::request& req) {
+	std::lock_guard<std::mutex> lock(m_mutex);
+	crow::json::wvalue mapJson = gameInstance.GetMap().toJson();
 	return mapJson;
 }

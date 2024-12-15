@@ -24,6 +24,7 @@ public:
 
 	//Getter
 	const std::vector<Object*>& operator[](size_t line) const;
+	
 	//Getter and/or setter
 	std::vector<Object*>& operator[](size_t line);
 

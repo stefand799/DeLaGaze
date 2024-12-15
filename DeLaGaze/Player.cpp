@@ -59,7 +59,6 @@ Player& Player::operator=(const Player& other) {
 	m_isMoving = other.m_isMoving;
 	m_endOfMove = other.m_endOfMove;
 	m_spawnpoint = other.m_spawnpoint;
-
 	m_playerMap = other.m_playerMap;
 
 	return *this;

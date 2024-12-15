@@ -399,3 +399,7 @@ void Game::__DEBUG_PRINT_MAP__()
 		std::cout << "\n";
 	}
 }
+
+Map& Game::GetMap() {
+	return m_map;
+}

@@ -32,7 +32,7 @@ public:
 	void RemovePlayer(const Player& player);
 
 
-
+	Map& GetMap();
 	void Start();
 
 
