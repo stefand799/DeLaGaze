@@ -1,4 +1,5 @@
 #include "Player.h"
+#include "Bullet.h"
 
 // Constructors
 
@@ -106,6 +107,7 @@ void Player::MoveUp()
 		(*m_playerMap)[m_mapY][m_mapX] = new Pathway{ {m_mapY,m_mapX} };
 		m_mapY = newY;
 	}
+
 	m_ySpeed = -m_playerSpeed;
 	m_isMoving = true;
 	m_endOfMove = Clock::now() + std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::duration<float>(kDefaultMoveCooldown));
@@ -130,6 +132,7 @@ void Player::MoveDown()
 		(*m_playerMap)[m_mapY][m_mapX] = new Pathway{ {m_mapY,m_mapX} };
 		m_mapY = newY;
 	}
+
 	m_ySpeed = m_playerSpeed;
 	m_isMoving = true;
 	m_endOfMove = Clock::now() + std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::duration<float>(kDefaultMoveCooldown));
@@ -154,6 +157,7 @@ void Player::MoveLeft()
 		(*m_playerMap)[m_mapY][m_mapX] = new Pathway{ {m_mapY,m_mapX} };
 		m_mapX = newX;
 	}
+
 	m_xSpeed = -m_playerSpeed;
 	m_isMoving = true;
 	m_endOfMove = Clock::now() + std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::duration<float>(kDefaultMoveCooldown));
@@ -178,6 +182,7 @@ void Player::MoveRight()
 		(*m_playerMap)[m_mapY][m_mapX] = new Pathway{ {m_mapY,m_mapX} };
 		m_mapX = newX;
 	}
+
 	m_xSpeed = m_playerSpeed;
 	m_isMoving = true;
 	m_endOfMove = Clock::now() + std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::duration<float>(kDefaultMoveCooldown));
@@ -192,8 +197,7 @@ void Player::FaceEast() { m_facing = Direction::East; }
 // Functionalities
 void Player::Shoot(std::vector<Bullet*>& bullets) {
 	if (fSecDur(Clock::now() - m_lastShotTime).count() < kFireRates[m_fireRate]) return;
-	float bulletSpeed = kBulletSpeeds[m_bulletSpeedUpgrade]; //Placeholder for bullet speeds
-	//uint8_t bulletSpeed = m_bulletSpeedUpgrade ? kBulletSpeeds[1] : kBulletSpeeds[0]; //Placeholder for bullet speeds
+	float bulletSpeed = kBulletSpeeds[m_bulletSpeedUpgrade];
 	switch (m_facing)
 	{
 	case Direction::North:
@@ -211,7 +215,7 @@ void Player::Shoot(std::vector<Bullet*>& bullets) {
 	default:
 		break;
 	}
-	bullets.emplace_back(new Bullet(m_x, m_y, bulletSpeed, m_facing)); // set the position the bullet a little in the direction of the player facing
+	bullets.emplace_back(new Bullet(this, m_x, m_y, bulletSpeed, m_facing)); 
 	//bullets.push_back(std::make_unique<Bullet>(m_x, m_y, bulletSpeed, m_facing)); // set the position the bullet a little in the direction of the player facing
 	m_lastShotTime = Clock::now();
 }
@@ -283,8 +287,8 @@ crow::json::wvalue Player::toJson()
 	jsonPlayerObj["type"] = "Player";
 	jsonPlayerObj["id"] = m_id;
 	jsonPlayerObj["username"] = m_username;
-	jsonPlayerObj["x"] = m_mapX;
-	jsonPlayerObj["y"] = m_mapY;
+	jsonPlayerObj["x"] = m_x;
+	jsonPlayerObj["y"] = m_y;
 	jsonPlayerObj["facing"] = DirectionToString(m_facing);
 	jsonPlayerObj["state"] = StateToString(m_playerState);
 	jsonPlayerObj["spawnX"] = m_spawnpoint.first;

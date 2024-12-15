@@ -238,6 +238,11 @@ void Game::HandleBulletToBulletCollisions(std::vector<Bullet*>::iterator& bullet
 	}
 }
 
+void Game::HandleBulletToPlayerCollisions(Bullet* bullet)
+{
+
+}
+
 void Game::RemoveDestroyedObjects()
 {
 	std::unordered_set<Object*> destroyedObjects;
@@ -285,92 +290,8 @@ void Game::RemoveDestroyedObjects()
 
 
 
-
-
-
-
-//void Game::CheckCollisions(){
-//	uint8_t mapWidth = m_map.GetMapWidth();
-//	uint8_t mapHeight = m_map.GetMapHeight();
-//
-//	for (auto& bullet : m_bullets) {
-//		int i = bullet->GetY();
-//		int j = bullet->GetX();
-//
-//		if (i >= 0 && i < mapWidth && j >= 0 && j < mapHeight) {
-//			auto& target = m_map[i][j];
-//			if (target->GetType() == Object::ObjectType::Pathway)
-//				continue; 
-//			else{
-//				if (target->GetType() == Object::ObjectType::BreakableBlock) {
-//					delete target;
-//					delete bullet;
-//					m_map[i][j] = new Pathway;
-//					/*TODO: properly push bullet out of bullets vector*/
-//				}
-//				else if (target->GetType() == Object::ObjectType::UnbreakableBlock) {
-//					delete bullet;
-//				}
-//				else if (target->GetType() == Object::ObjectType::Player) {
-//					Player* player = dynamic_cast<Player*>(target);
-//					if (player->GetHp() > 1) {
-//						player->SetHp();
-//						player->Respawn();
-//					}
-//					else {
-//						delete player;
-//						m_map[i][j] = new Pathway;
-//					}
-//				}
-//				else if (target->GetType() == Object::ObjectType::Bullet) {
-//					delete target;
-//					delete bullet;
-//					m_map[i][j] = new Pathway;
-//				}
-//				else if (target->GetType() == Object::ObjectType::BombTrapBlock) {
-//					
-//					for (int sI = -1; sI <= 1; ++sI) {
-//						for (int sJ = -1; sJ <= 1; ++sJ) {
-//							int gridI = i + sI;
-//							int gridJ = j + sJ;
-//							if (gridI >= 0 && gridI < mapWidth && gridJ >= 0 && gridJ < mapHeight) {
-//								auto& gridCell = m_map[gridI][gridJ];
-//								if (gridCell->GetType() == Object::ObjectType::UnbreakableBlock||gridCell->GetType()==Object::ObjectType::Pathway)
-//									continue;
-//								if (gridCell->GetType() == Object::ObjectType::Player)
-//								{
-//									Player* player = dynamic_cast<Player*>(gridCell);
-//									if (player->GetHp() > 1) {
-//										player->SetHp();
-//										player->Respawn();
-//									}
-//									else {
-//										delete player;
-//										m_map[gridI][gridJ] = new Pathway;
-//									}
-//								}
-//								if (gridCell->GetType() == Object::ObjectType::Bullet) {
-//									delete gridCell;
-//									m_map[gridI][gridJ] = new Pathway;
-//								}
-//
-//							}
-//						}
-//					}
-//					
-//				}
-//			}
-//		}
-//	}
-//}
-
-
-
 void Game::Run()
 {
-	//Clock::time_point lastSecond = Clock::now();
-	//int x = 0;
-
 	while (m_isRunning) {
 
 		Clock::time_point frameInitialTimePoint = Clock::now();

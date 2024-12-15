@@ -6,11 +6,12 @@
 #include "Object.h"
 #include "Direction.h"
 #include "State.h"
-#include "Bullet.h"
 #include "Map.h"
 #include "Pathway.h"
 
-//TODO: ADD PLAYER MOVEMENT COOLDOWN
+
+class Bullet;
+
 class Player: public Object {
 public:
 	ObjectType GetType() const override { return ObjectType::Player; };

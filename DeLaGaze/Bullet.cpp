@@ -1,12 +1,13 @@
 #include "Bullet.h"
 
-Bullet::Bullet(float x, float y, float speed, Direction direction) :
-	m_x{x},
-	m_y{y},
-	m_speed{speed},
+Bullet::Bullet(Player* owner, float x, float y, float speed, Direction direction) :
+	m_owner{ owner },
+	m_x{ x },
+	m_y{ y },
+	m_speed{ speed },
 	m_direction{ direction },
-	m_xSpeed {0},
-	m_ySpeed {0}
+	m_xSpeed{ 0 },
+	m_ySpeed{ 0 }
 {
 	if (m_direction == Direction::North) {
 		m_y -= 0.5f;
@@ -25,7 +26,7 @@ Bullet::Bullet(float x, float y, float speed, Direction direction) :
 		m_xSpeed = +m_speed;
 	}
 }
-//TODO: store the person who shot the bullet for score count
+
 void Bullet::Render()
 {
 }
@@ -44,10 +45,14 @@ bool Bullet::CanMoveHere(int i,int j) {
 
 void Bullet::Move(float deltaTime)
 {
-	/*TODO: Implement alongside QT*/
 	if (deltaTime < 0.0f) return;
 	m_x = m_x + m_xSpeed * deltaTime;
 	m_y = m_y + m_ySpeed * deltaTime;
+}
+
+Player* Bullet::GetOwner() const
+{
+	return m_owner;
 }
 
 float Bullet::GetX() const

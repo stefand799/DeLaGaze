@@ -6,6 +6,7 @@
 #include "Pathway.h"
 #include "BombTrapBlock.h"
 #include "Player.h"
+#include "Bullet.h"
 #include "Map.h"
 #include <vector>
 #include <unordered_set>
@@ -40,7 +41,7 @@ public:
 	void HandleBulletToWallCollisions(Bullet* bullet);
 	void HandleBulletToBorderCollisions(Bullet* bullet);
 	void HandleBulletToBulletCollisions(std::vector<Bullet*>::iterator& bulletIterator);
-	void HandleBulletToPlayerCollisions(const Bullet* bullet);
+	void HandleBulletToPlayerCollisions(Bullet* bullet);
 
 	//void CheckCollisions();
 	//void MarkForDestruction(Object* object);
