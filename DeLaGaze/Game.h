@@ -27,7 +27,6 @@ class Game {
 public:
 	Game();
 	~Game();
-	void BreakBlock(int i, int j);
 	void AddPlayer(const Player& player);
 	void RemovePlayer(const Player& player);
 
@@ -43,8 +42,6 @@ public:
 	void HandleBulletToBulletCollisions(std::vector<Bullet*>::iterator& bulletIterator);
 	void HandleBulletToPlayerCollisions(Bullet* bullet);
 
-	//void CheckCollisions();
-	//void MarkForDestruction(Object* object);
 	void RemoveDestroyedObjects();
 
 private:

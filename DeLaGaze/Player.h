@@ -46,7 +46,8 @@ public:
 	bool GetMovingState() const;
 	State GetPlayerState() const;	// This will be moved in client, maybe
 	Direction GetFacing() const;
-	Map* GetMap();
+	Map* GetMap() const;
+	std::tuple<Object*, Object*, float> GetBulletToPlayerColision(Bullet* bullet);
 
 	// Setteri
 	void SetId(int id);
@@ -101,6 +102,7 @@ private:
 		4.0f
 	};
 	const float kDefaultMoveCooldown = 0.25f;
+	const float kPlayerHitBoxRadius = 0.3f;
 	//Atributes
 	int m_id;
 	std::string m_username;

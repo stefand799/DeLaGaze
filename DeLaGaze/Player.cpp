@@ -78,7 +78,51 @@ float Player::GetY() const { return m_y; }
 bool Player::GetMovingState() const { return m_isMoving; }
 State Player::GetPlayerState() const { return m_playerState; }
 Direction Player::GetFacing() const { return m_facing; }
-Map* Player::GetMap() { return m_playerMap; }
+Map* Player::GetMap() const { return m_playerMap; }
+
+std::tuple<Object*, Object*, float> Player::GetBulletToPlayerColision(Bullet* bullet)
+{
+	float bulletX = bullet->GetX();
+	float bulletY = bullet->GetY();
+
+	float bulletXSpeed = bullet->GetXSpeed();
+	float bulletYSpeed = bullet->GetYSpeed();
+	float bulletRadius = bullet->GetRadius();
+
+	float collisionDistance = kPlayerHitBoxRadius + bulletRadius;
+
+	float x12 = m_x - bulletX;
+	float y12 = m_y - bulletY;
+
+	//////////////////
+	float vx12 = m_xSpeed - bulletXSpeed;
+	float vy12 = m_ySpeed - bulletYSpeed;
+
+	float a = vx12 * vx12 + vy12 * vy12;
+	float b = 2 * (x12 * vx12 + y12 * vy12);
+	float c = x12 * x12 + y12 * y12 - collisionDistance * collisionDistance;
+	if (c <= 0.0f) return { this, bullet, 0.0f };
+
+	float delta = (b * b) - (4 * a * c);
+
+	if (delta < 0 || a == 0.0f ) return { this,bullet,NAN };
+
+	float sqrtDelta = sqrt(delta);
+	float t1 = (-b - sqrtDelta) / (2 * a);
+	float t2 = (-b + sqrtDelta) / (2 * a);
+
+	if (t1 < 0 && t2 < 0) return { this,bullet , NAN };
+
+	float T = 0.0f;
+
+	if (t1 < 0) T = t2;
+	else if (t2 < 0) T = t1;
+	else T = std::min(t1, t2);
+
+	if (m_isMoving && Clock::now() + fSecDur(T) > m_endOfMove) T = NAN;
+
+	return { this, bullet, T };
+}
 
 // Setters
 void Player::SetId(int id) { m_id = id; }
@@ -257,7 +301,7 @@ void Player::Shoot(std::vector<Bullet*>& bullets) {
 void Player::OnDeath()
 {
 	m_hp--;
-	if (m_hp) {
+	if (m_hp > 0) {
 		Respawn();
 	}
 	else {
@@ -268,6 +312,9 @@ void Player::Respawn() {
 	(*m_playerMap)[m_mapY][m_mapX] = new Pathway{ {m_mapX,m_mapY} };
 	m_mapX = m_spawnpoint.first;
 	m_mapY = m_spawnpoint.second;
+	m_x = m_mapX + 0.5f;
+	m_y = m_mapY + 0.5f;
+	m_endOfMove = Clock::now();
 	//Check if there is a player or possition is accessible
 	delete (*m_playerMap)[m_mapY][m_mapX];
 	(*m_playerMap)[m_mapY][m_mapX] = this;

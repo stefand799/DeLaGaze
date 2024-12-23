@@ -114,18 +114,18 @@ std::tuple<Object*, Object*, float> GetBulletToBulletColision(Bullet* first, Bul
 	float a = vx12 * vx12 + vy12 * vy12;
 	float b = 2 * (x12 * vx12 + y12 * vy12);
 	float c = x12 * x12 + y12 * y12 - (first->kRadius + second->kRadius)*(first->kRadius + second->kRadius);
-
+	if (c <= 0.0f) return { first, second, 0.0f };
 	float delta = (b * b) - (4 * a * c);
 
-	if (delta < 0) return { first,second,0 };
+	if (delta < 0.0f || a == 0.0f) return { first,second,NAN };
 
 	float sqrtDelta = sqrt(delta);
 	float t1 = (-b - sqrtDelta) / (2 * a);
 	float t2 = (-b + sqrtDelta) / (2 * a);
 
-	if (t1 < 0 && t2 < 0) return { first,second,0 };
+	if (t1 < 0.0f && t2 < 0.0f) return { first,second, NAN };
 
-	if (t1 < 0) return { first, second, t2 };
-	if (t2 < 0) return { first, second, t1 };
+	if (t1 < 0.0f) return { first, second, t2 };
+	if (t2 < 0.0f) return { first, second, t1 };
 	return { first, second, std::min(t1,t2) };
 }
