@@ -1,6 +1,6 @@
 #include "Bullet.h"
 
-Bullet::Bullet(Player* owner, float x, float y, float speed, Direction direction) :
+Bullet::Bullet(std::shared_ptr<Player> owner, float x, float y, float speed, Direction direction) :
 	m_owner{ owner },
 	m_x{ x },
 	m_y{ y },
@@ -50,7 +50,7 @@ void Bullet::Move(float deltaTime)
 	m_y = m_y + m_ySpeed * deltaTime;
 }
 
-Player* Bullet::GetOwner() const
+std::shared_ptr<Player> Bullet::GetOwner() const
 {
 	return m_owner;
 }
@@ -104,7 +104,7 @@ float Bullet::GetRadius() const
 
 inline Object::ObjectType Bullet::GetType() const { return ObjectType::Bullet; }
 
-std::tuple<Object*, Object*, float> GetBulletToBulletColision(Bullet* first, Bullet* second)
+std::tuple<std::shared_ptr<Object>, std::shared_ptr<Object>, float> GetBulletToBulletColision(std::shared_ptr<Bullet> first, std::shared_ptr<Bullet> second)
 {
 	float x12 = first->m_x - second->m_x;
 	float y12 = first->m_y - second->m_y;
