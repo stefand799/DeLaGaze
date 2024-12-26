@@ -47,7 +47,7 @@ public:
 	State GetPlayerState() const;	// This will be moved in client, maybe
 	Direction GetFacing() const;
 	Map* GetMap() const;
-	std::tuple<Object*, Object*, float> GetBulletToPlayerColision(Bullet* bullet);
+	std::tuple<std::shared_ptr<Object>, std::shared_ptr<Object>, float> GetBulletToPlayerColision(std::shared_ptr<Bullet> bullet);
 
 	// Setteri
 	void SetId(int id);
@@ -77,7 +77,7 @@ public:
 	void FaceEast();
 	
 	// Functionalities
-	void Shoot(std::vector<Bullet*>& bullets);
+	void Shoot(std::vector<std::shared_ptr<Bullet>>& bullets);
 	void OnDeath();
 	void Respawn();
 
