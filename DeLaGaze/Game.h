@@ -37,10 +37,10 @@ public:
 
 	void Update();
 	void HandleCollisions();
-	void HandleBulletToWallCollisions(Bullet* bullet);
-	void HandleBulletToBorderCollisions(Bullet* bullet);
-	void HandleBulletToBulletCollisions(std::vector<Bullet*>::iterator& bulletIterator);
-	void HandleBulletToPlayerCollisions(Bullet* bullet);
+	void HandleBulletToWallCollisions(std::shared_ptr<Bullet>& bullet);
+	void HandleBulletToBorderCollisions(std::shared_ptr<Bullet>& bullet);
+	void HandleBulletToBulletCollisions(std::vector<std::shared_ptr<Bullet>>::iterator& bulletIterator);
+	void HandleBulletToPlayerCollisions(std::shared_ptr<Bullet>& bullet);
 
 	void RemoveDestroyedObjects();
 
@@ -68,32 +68,32 @@ private:
 
 	//Atributes
 	Map m_map;
-	std::vector<Player*> m_players;
-	std::vector<Bullet*> m_bullets; //We could probably use shared_ptr so the bullets get deleted immediately when they go out of scope
+	std::vector<std::shared_ptr<Player>> m_players;
+	std::vector<std::shared_ptr<Bullet>> m_bullets; //We could probably use shared_ptr so the bullets get deleted immediately when they go out of scope
 	//std::vector<Object*> m_markedForDestruction; //Object*, because currently I have no clue if we're going to alter additional logic and would be optimal not to immediately delete them when they get out of scope
 	
 	struct ObjectCollision {
-		ObjectCollision(Object* obj1, Object* obj2, float collisionTime) :
+		ObjectCollision(std::shared_ptr<Object> obj1, std::shared_ptr<Object> obj2, float collisionTime) :
 			first{ obj1 },
 			second{ obj2 },
 			time{ collisionTime },
 			isBorderCollision{ false }
 		{}
-		ObjectCollision(std::tuple<Object*,Object*,float>&& values) :
+		ObjectCollision(std::tuple<std::shared_ptr<Object>,std::shared_ptr<Object>,float>&& values) :
 			first{ std::get<0>(values)},
 			second{ std::get<1>(values) },
 			time{ std::get<2>(values) },
 			isBorderCollision{ false }
 		{}
-		ObjectCollision(Object* obj, float collisionTime) :
+		ObjectCollision(std::shared_ptr<Object> obj, float collisionTime) :
 			first{ obj },
 			second{ nullptr },
 			time{ collisionTime },
 			isBorderCollision{ true }
 		{}
 
-		Object* first;
-		Object* second;
+		std::shared_ptr<Object> first;
+		std::shared_ptr<Object> second;
 		float time;
 		bool isBorderCollision;
 		bool operator<(const ObjectCollision& other) const {
@@ -102,7 +102,6 @@ private:
 	};
 
 	std::priority_queue<ObjectCollision> m_collisions;
-	//also I'm inadequately educated so I can't call the shots here yet
 	float m_deltaTime; //The time from the last frame
 	Clock::time_point m_lastFrameTime;
 
@@ -110,7 +109,7 @@ private:
 
 	bool m_isRunning;
 	
-	std::queue<std::pair<Player*,char>> m_playerInputs;
+	std::queue<std::pair<std::shared_ptr<Player>,char>> m_playerInputs;
 
 	//DEBUG METHODS:
 	

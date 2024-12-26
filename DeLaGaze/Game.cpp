@@ -14,12 +14,7 @@ Game::Game() :
 
 Game::~Game()
 {
-	for (Bullet* bullet : m_bullets) {
-		if (bullet) delete bullet;
-	}
-	for (Player* player : m_players) {
-		if (player) delete player;
-	}
+
 }
 
 void Game::Start()
@@ -27,8 +22,7 @@ void Game::Start()
 	if(!m_map.Generate()) return;
 	//Creating players
 
-	delete m_map[0][0];
-	m_players.emplace_back(new Player(&m_map, { 0,0 }, 1, "Player1", 0, 3, true, Direction::South, State::Idle));
+	m_players.emplace_back(std::move(std::make_shared<Player>(&m_map, std::pair<int, int>{ 0, 0 }, 1, "Player1", 0, 3, true, Direction::South, State::Idle)));
 	m_map[0][0] = m_players[0];
 
 	//ONLY FOR TESTING
@@ -68,10 +62,10 @@ void Game::Update(){
 	}
 
 	//Handle bullets Update;
-	for (Bullet* bullet : m_bullets)
+	for (std::shared_ptr<Bullet>& bullet : m_bullets)
 		bullet->Move(m_deltaTime);
 
-	for (Player* player : m_players) {
+	for (std::shared_ptr<Player>& player : m_players) {
 		player->Move(m_deltaTime);
 	}
 	HandleCollisions();
@@ -79,7 +73,7 @@ void Game::Update(){
 
 void Game::HandleCollisions()
 {
-	for (std::vector<Bullet*>::iterator it = m_bullets.begin(); it != m_bullets.end(); it++) {
+	for (std::vector<std::shared_ptr<Bullet>>::iterator it = m_bullets.begin(); it != m_bullets.end(); it++) {
 		if (*it == nullptr) continue;
 		HandleBulletToPlayerCollisions(*it);
 		HandleBulletToBorderCollisions(*it);
@@ -90,7 +84,7 @@ void Game::HandleCollisions()
 }
 
 
-void Game::HandleBulletToWallCollisions(Bullet* bullet)
+void Game::HandleBulletToWallCollisions(std::shared_ptr<Bullet>& bullet)
 {
 	float x = bullet->GetX();
 	float y = bullet->GetY();
@@ -103,7 +97,7 @@ void Game::HandleBulletToWallCollisions(Bullet* bullet)
 	}
 	else
 	{
-		Object* collidedToObject = m_map[static_cast<int>(y)][static_cast<int>(x)];
+		std::shared_ptr<Object> collidedToObject = m_map[static_cast<int>(y)][static_cast<int>(x)];
 		Object::ObjectType type = collidedToObject->GetType();
 		if (type == Object::ObjectType::BombTrapBlock || type == Object::ObjectType::BreakableBlock || type == Object::ObjectType::UnbreakableBlock) 
 			m_collisions.emplace(std::move(ObjectCollision{ bullet, collidedToObject, 0 }));
@@ -114,7 +108,7 @@ void Game::HandleBulletToWallCollisions(Bullet* bullet)
 		float t = -1;
 		do {
 			if (t > 0.0f) {
-				Object* collidedToObject = m_map[static_cast<int>(y)][nextBlockX];
+				std::shared_ptr<Object> collidedToObject = m_map[static_cast<int>(y)][nextBlockX];
 				Object::ObjectType type = collidedToObject->GetType();
 				if (type == Object::ObjectType::BombTrapBlock || type == Object::ObjectType::BreakableBlock || type == Object::ObjectType::UnbreakableBlock) 
 					m_collisions.emplace(std::move(ObjectCollision{ bullet, collidedToObject, t }));
@@ -127,7 +121,7 @@ void Game::HandleBulletToWallCollisions(Bullet* bullet)
 		float t = -1;
 		do {
 			if (t > 0.0f) {
-				Object* collidedToObject = m_map[static_cast<int>(y)][nextBlockX];
+				std::shared_ptr<Object> collidedToObject = m_map[static_cast<int>(y)][nextBlockX];
 				Object::ObjectType type = collidedToObject->GetType();
 				if (type == Object::ObjectType::BombTrapBlock || type == Object::ObjectType::BreakableBlock || type == Object::ObjectType::UnbreakableBlock) 
 					m_collisions.emplace(std::move(ObjectCollision{ bullet, collidedToObject, t }));
@@ -141,7 +135,7 @@ void Game::HandleBulletToWallCollisions(Bullet* bullet)
 		float t = -1;
 		do {
 			if (t > 0.0f) {
-				Object* collidedToObject = m_map[nextBlockY][static_cast<int>(x)];
+				std::shared_ptr<Object> collidedToObject = m_map[nextBlockY][static_cast<int>(x)];
 				Object::ObjectType type = collidedToObject->GetType();
 				if (type == Object::ObjectType::BombTrapBlock || type == Object::ObjectType::BreakableBlock || type == Object::ObjectType::UnbreakableBlock) 
 					m_collisions.emplace(std::move(ObjectCollision{ bullet, collidedToObject, t }));
@@ -154,7 +148,7 @@ void Game::HandleBulletToWallCollisions(Bullet* bullet)
 		float t = -1;
 		do {
 			if (t > 0.0f) {
-				Object* collidedToObject = m_map[nextBlockY][static_cast<int>(x)];
+				std::shared_ptr<Object> collidedToObject = m_map[nextBlockY][static_cast<int>(x)];
 				Object::ObjectType type = collidedToObject->GetType();
 				if (type == Object::ObjectType::BombTrapBlock || type == Object::ObjectType::BreakableBlock || type == Object::ObjectType::UnbreakableBlock) 
 					m_collisions.emplace(std::move(ObjectCollision{ bullet, collidedToObject, t }));
@@ -167,7 +161,7 @@ void Game::HandleBulletToWallCollisions(Bullet* bullet)
 
 
 
-void Game::HandleBulletToBorderCollisions(Bullet* bullet)
+void Game::HandleBulletToBorderCollisions(std::shared_ptr<Bullet>& bullet)
 {
 	float x = bullet->GetX();
 	float y = bullet->GetY();
@@ -208,20 +202,20 @@ void Game::HandleBulletToBorderCollisions(Bullet* bullet)
 	}
 }
 
-void Game::HandleBulletToBulletCollisions(std::vector<Bullet*>::iterator& bulletIterator)
+void Game::HandleBulletToBulletCollisions(std::vector<std::shared_ptr<Bullet>>::iterator& bulletIterator)
 {
-	Bullet* bullet = *bulletIterator;
-	for (std::vector<Bullet*>::iterator it = bulletIterator + 1; it != m_bullets.end(); it++) {
-		Bullet* otherBullet = *it;
+	std::shared_ptr<Bullet> bullet = *bulletIterator;
+	for (std::vector<std::shared_ptr<Bullet>>::iterator it = bulletIterator + 1; it != m_bullets.end(); it++) {
+		std::shared_ptr<Bullet> otherBullet = *it;
 		ObjectCollision collision{ GetBulletToBulletColision(bullet, otherBullet) };
 		if (collision.time >= 0 && collision.time <= m_deltaTime) 
 			m_collisions.emplace(std::move(collision));
 	}
 }
 
-void Game::HandleBulletToPlayerCollisions(Bullet* bullet)
+void Game::HandleBulletToPlayerCollisions(std::shared_ptr<Bullet>& bullet)
 {
-	for (Player* player : m_players) {
+	for (std::shared_ptr<Player>& player : m_players) {
 		if (!player) continue;
 		ObjectCollision collision{ player->GetBulletToPlayerColision(bullet) };
 		if (collision.time >= 0 && collision.time <= m_deltaTime)
@@ -231,7 +225,7 @@ void Game::HandleBulletToPlayerCollisions(Bullet* bullet)
 
 void Game::RemoveDestroyedObjects()
 {
-	std::unordered_set<Object*> destroyedObjects;
+	std::unordered_set<std::shared_ptr<Object>> destroyedObjects;
 	while (!m_collisions.empty()) {
 		ObjectCollision currCollision = m_collisions.top();
 		m_collisions.pop();
@@ -249,34 +243,32 @@ void Game::RemoveDestroyedObjects()
 			if (destroyedObjects.find(currCollision.first) == destroyedObjects.end() && destroyedObjects.find(currCollision.second) == destroyedObjects.end()) {
 				destroyedObjects.insert(currCollision.first);
 				destroyedObjects.insert(currCollision.second);
-				if (Bullet* bullet = dynamic_cast<Bullet*>(currCollision.second)) 
-					if (Player* player = dynamic_cast<Player*>(currCollision.first)) {
-						Player* bulletOwner = bullet->GetOwner();
+				if (std::shared_ptr<Bullet> bullet = std::dynamic_pointer_cast<Bullet>(currCollision.second)) 
+					if (std::shared_ptr<Player> player = std::dynamic_pointer_cast<Player>(currCollision.first)) {
+						std::shared_ptr<Player> bulletOwner = bullet->GetOwner();
 						bulletOwner->SetScore(bulletOwner->GetScore() + 100);
 					}
 			}
 	}
 
-	for (Object* obj : destroyedObjects) {
+	for (std::shared_ptr<Object> obj : destroyedObjects) {
 		if (!obj) continue;
 		Object::ObjectType type = obj->GetType();
 		if (type == Object::ObjectType::Bullet) {
 			auto it = std::find(m_bullets.begin(), m_bullets.end(), obj);
 			if (it != m_bullets.end()) m_bullets.erase(it);
-			delete obj;
 			continue;
 		}
 		if (type == Object::ObjectType::UnbreakableBlock) {
 			continue;
 		}
-		if (BreakableBlock* breakable = dynamic_cast<BreakableBlock*>(obj)) {
+		if (std::shared_ptr<BreakableBlock> breakable = std::dynamic_pointer_cast<BreakableBlock>(obj)) {
 			auto [x, y] = breakable->GetPos();
 			breakable->OnBreak();
-			delete m_map[y][x];
-			m_map[y][x] = new Pathway{ {x,y} };
+			m_map[y][x] = std::make_shared<Pathway>(std::pair<size_t,size_t>{x,y});
 			continue;
 		}
-		if (Player* player = dynamic_cast<Player*>(obj)) {
+		if (std::shared_ptr<Player> player = std::dynamic_pointer_cast<Player>(obj)) {
 			player->OnDeath();
 			continue;
 		}
@@ -305,7 +297,7 @@ void Game::Run()
 		m_lastFrameTime = frameInitialTimePoint;
 
 		bool isAtleatOnePlayerMove = false;
-		for (Player* player : m_players) {
+		for (std::shared_ptr<Player>& player : m_players) {
 			if (player->GetMovingState()) {
 				isAtleatOnePlayerMove = true;
 				break;
@@ -366,7 +358,7 @@ void Game::__DEBUG_PRINT_MAP__()
 	for (size_t line = 0; line < m_map.GetMapHeight(); ++line) {
 		for (size_t column = 0; column < m_map.GetMapWidth(); ++column) {
 			bool isBulletHere = false;
-			for (const Bullet* currBullet : m_bullets) {
+			for (const std::shared_ptr<Bullet>& currBullet : m_bullets) {
 				if ((int)currBullet->GetY() == line && (int)currBullet->GetX() == column) {
 					currBullet->Print();
 					isBulletHere = true;
