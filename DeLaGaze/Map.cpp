@@ -30,9 +30,9 @@ crow::json::wvalue Map::toJson()
 
 std::string Map::ObjectTypeToString(int i, int j)
 {
-	Object* obj = m_matrix[i][j];
+	std::shared_ptr<Object> obj = m_matrix[i][j];
 	Object::ObjectType type = obj->GetType();
-	switch (obj->GetType()) {
+	switch (type) {
 	case Object::ObjectType::Player:
 		return "Player";
 	case Object::ObjectType::Bullet:
@@ -50,23 +50,13 @@ std::string Map::ObjectTypeToString(int i, int j)
 	}
 }
 
-Map::~Map()
-{
-	for (std::vector<Object*>& line : m_matrix) {
-		for (Object* object : line) {
-			if (object != nullptr) delete object;
-			object = nullptr;
-		}
-	}
-}
-
-const std::vector<Object*>& Map::operator[](size_t line) const
+const std::vector<std::shared_ptr<Object>>& Map::operator[](size_t line) const
 {
 	return m_matrix[line];
 }
 
 
-std::vector<Object*>& Map::operator[](size_t line)
+std::vector<std::shared_ptr<Object>>& Map::operator[](size_t line)
 {
 	return m_matrix[line];
 }
@@ -124,20 +114,20 @@ void Map::GenerateDimensions() {
 	m_mapHeight = heightDist(m_generator);
 
 	// Resize and initialize the matrix
-	m_matrix.resize(m_mapHeight, std::vector<Object*>(m_mapWidth));
+	m_matrix.resize(m_mapHeight, std::vector<std::shared_ptr<Object>>(m_mapWidth));
 }
 
 bool Map::GenerateStructures() {
 	// Defining a vector for all breakable blocks for the future generation of bombtraps
-	std::vector<BreakableBlock**> breakableBlocksVector;
+	std::vector<std::shared_ptr<Object>*> breakableBlocksVector;
 
 	// Defining distrubutions for random object generation
 	std::uniform_int_distribution<> objectRandomNumber(0, 99);
 	// Generating random objects according to probabilities
 	for (size_t y = 0; y < m_matrix.size(); ++y) {
-		std::vector<Object*>& line = m_matrix[y];
+		std::vector<std::shared_ptr<Object>>& line = m_matrix[y];
 		for (size_t x = 0; x < m_matrix[0].size(); ++x) {
-			Object*& object = line[x];
+			std::shared_ptr<Object>& object = line[x];
 			uint8_t sum = 0;
 			uint8_t current = 0;
 			uint8_t randomNumber = objectRandomNumber(m_generator);
@@ -145,14 +135,15 @@ bool Map::GenerateStructures() {
 				if (randomNumber >= sum && randomNumber < sum + m_probabilities[current]) {
 					switch (current) {
 					case 0:
-						object = new Pathway{ {x,y} };
+						object = std::make_shared<Pathway>(std::pair<size_t, size_t>{x, y});
 						break;
 					case 1:
-						object = new UnbreakableBlock{ {x,y} };
+						object = std::make_shared<UnbreakableBlock>(std::pair<size_t, size_t>{x, y});
 						break;
 					case 2:
-						object = new BreakableBlock{ {x,y} };
-						breakableBlocksVector.push_back(reinterpret_cast<BreakableBlock**>(&object));
+						object = std::make_shared<BreakableBlock>(std::pair<size_t, size_t>{x, y});
+						breakableBlocksVector.push_back(&object); //TODO:::::::::::::::::::::MAKE THIS AS WEAK_PTR(OBJECT)?
+						//breakableBlocksVector.push_back(reinterpret_cast<BreakableBlock**>(&object));////////////////////////////////////////////////////////////
 
 						break;
 					default:
@@ -179,37 +170,36 @@ bool Map::GenerateStructures() {
 	return true;
 }
 
-void Map::MakeCornerPathway(size_t x, size_t y, std::vector<BreakableBlock**>& breakableBlocksVector) {
-	if (!dynamic_cast<Pathway*>(m_matrix[y][x])) {
-		auto it = std::find(breakableBlocksVector.begin(), breakableBlocksVector.end(), reinterpret_cast<BreakableBlock**>(&m_matrix[y][x]));
+void Map::MakeCornerPathway(size_t x, size_t y, std::vector<std::shared_ptr<Object>*>& breakableBlocksVector) {
+	if (!std::dynamic_pointer_cast<Pathway>(m_matrix[y][x])) {
+		auto it = std::find(breakableBlocksVector.begin(), breakableBlocksVector.end(), &(m_matrix[y][x]));
 		if (it != breakableBlocksVector.end()) {
 			breakableBlocksVector.erase(it);
 		}
-		delete m_matrix[y][x];
-		m_matrix[y][x] = new Pathway{ {x,y} };
+		m_matrix[y][x] = std::make_shared<Pathway>(std::pair<size_t, size_t>{x, y});
 	}
 }
 
-void Map::PlaceBombs(std::vector<BreakableBlock**>& breakableBlocksVector)
+void Map::PlaceBombs(std::vector<std::shared_ptr<Object>*>& breakableBlocksVector)
 {
 	// Defining distrubutions for random bombtrap generation
 	std::uniform_int_distribution<> bombRandomNumber(1, kTotalBombCount);
 	size_t bombCount = bombRandomNumber(m_generator);
 	if (bombCount >= breakableBlocksVector.size()) {
-		for (BreakableBlock** curr : breakableBlocksVector) {
-			auto [x, y] = (*curr)->GetPos();
-			delete* curr;
-			*curr = new BombTrapBlock{ {x,y}, this };
+		for (std::shared_ptr<Object>* curr : breakableBlocksVector) {
+			std::shared_ptr<BreakableBlock> breakableBlock = std::static_pointer_cast<BreakableBlock>(*curr);
+			auto [x, y] = breakableBlock->GetPos();
+			(*curr) = std::make_shared<BombTrapBlock>( std::pair<size_t,size_t>{x,y}, this );
 		}
 	}
 	else {
 		std::uniform_int_distribution<> bombRandomPosition(0, breakableBlocksVector.size() - 1);
 		while (bombCount > 0) {
 			size_t bombPos = bombRandomPosition(m_generator);
-			if (!dynamic_cast<BombTrapBlock*>(*(breakableBlocksVector[bombPos]))) {
-				auto [x, y] = (*(breakableBlocksVector[bombPos]))->GetPos();
-				delete* (breakableBlocksVector[bombPos]);
-				*(breakableBlocksVector[bombPos]) = new BombTrapBlock{ {x,y}, this };
+			if (!std::dynamic_pointer_cast<BombTrapBlock>(*(breakableBlocksVector[bombPos]))) {
+				std::shared_ptr<BreakableBlock> breakableBlock = std::static_pointer_cast<BreakableBlock>(*(breakableBlocksVector[bombPos]));
+				auto [x, y] = breakableBlock->GetPos();
+				*(breakableBlocksVector[bombPos]) = std::make_shared<BombTrapBlock>(std::pair<size_t,size_t>{x,y}, this);
 				--bombCount;
 			}
 		}
@@ -243,7 +233,7 @@ std::vector<std::vector<std::pair<size_t, size_t>>> Map::FindBestPath(std::pair<
 			size_t nextY = y + dy[k];
 			if (nextX < 0 || nextY < 0 || nextX >= m_mapWidth || nextY >= m_mapHeight) continue; // invalid position
 			if (bestPath[nextY][nextX] != std::make_pair<size_t, size_t>(-1, -1)) continue; // position already visited
-			if (dynamic_cast<UnbreakableBlock*>(m_matrix[nextY][nextX])) {
+			if (std::dynamic_pointer_cast<UnbreakableBlock>(m_matrix[nextY][nextX])) {
 				openList.push(BestPathNode{ {nextX,nextY}, current.GetNormalBlocksCount(), current.GetUnbreakableBlocksCount() + 1 });
 			}
 			else {
@@ -261,9 +251,8 @@ void Map::BreakUnbreakableOnBestPath(std::vector<std::vector<std::pair<size_t, s
 	std::pair<size_t,size_t> curr = end;
 	while (curr != start) {
 		auto [x, y] = curr;
-		if (dynamic_cast<UnbreakableBlock*>(m_matrix[y][x])) {
-			delete m_matrix[y][x];
-			m_matrix[y][x] = new BreakableBlock{ {x,y} };
+		if (std::dynamic_pointer_cast<UnbreakableBlock>(m_matrix[y][x])) {
+			m_matrix[y][x] = std::make_shared<BreakableBlock>( std::pair<size_t,size_t>{x,y} );
 		}
 		curr = path[y][x];
 	}
@@ -272,9 +261,7 @@ void Map::BreakUnbreakableOnBestPath(std::vector<std::vector<std::pair<size_t, s
 
 bool Map::IsWithinBounds(const int& i, const int& j) const
 {
-	if (i + 1 > GetMapHeight() or j + 1 > GetMapWidth() or i < 0 or j < 0)
-		return false;
-	return true;
+	return i >= 0 && j >= 0 && i < m_mapHeight && j < m_mapWidth;
 }
 
 
@@ -291,8 +278,8 @@ void Map::__DEBUG_MAP_SEED__() {
 }
 
 void Map::__DEBUG_MAP_PRINT__() {
-	for (std::vector<Object*>& line : m_matrix) {
-		for (Object*& object : line) {
+	for (std::vector<std::shared_ptr<Object>>& line : m_matrix) {
+		for (std::shared_ptr<Object>& object : line) {
 			object->Print();
 			std::cout << " ";
 		}

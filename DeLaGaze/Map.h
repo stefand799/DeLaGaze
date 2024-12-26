@@ -20,13 +20,13 @@ public:
 	Map(Map&&) = delete;
 	crow::json::wvalue toJson();
 	std::string ObjectTypeToString(int i, int j);
-	~Map();
+	~Map() = default;
 
 	//Getter
-	const std::vector<Object*>& operator[](size_t line) const;
+	const std::vector<std::shared_ptr<Object>>& operator[](size_t line) const;
 	
 	//Getter and/or setter
-	std::vector<Object*>& operator[](size_t line);
+	std::vector<std::shared_ptr<Object>>& operator[](size_t line);
 
 	uint8_t GetMapWidth() const { return m_mapWidth; };
 	uint8_t GetMapHeight() const { return m_mapHeight; };
@@ -52,8 +52,8 @@ private:
 	bool VerifyProbabilities();
 	void GenerateDimensions();
 	bool GenerateStructures();
-	void MakeCornerPathway(size_t x, size_t y, std::vector<BreakableBlock**>& breakableBlocksVector);
-	void PlaceBombs(std::vector<BreakableBlock**>& breakableBlocksVector);
+	void MakeCornerPathway(size_t x, size_t y, std::vector<std::shared_ptr<Object>*>& breakableBlocksVector);
+	void PlaceBombs(std::vector<std::shared_ptr<Object>*>& breakableBlocksVector);
 
 	
 
@@ -97,7 +97,7 @@ private:
 	//Atributes
 private:
 	/*TODO: change matrix to shared_ptr, and all pertaining methods to accomodate for the new usage (matrix.get().Method())*/
-	std::vector<std::vector<Object*>> m_matrix;
+	std::vector<std::vector<std::shared_ptr<Object>>> m_matrix;
 	std::vector<uint8_t> m_probabilities;
 	uint8_t m_mapWidth, m_mapHeight;
 	uint32_t m_seed;
