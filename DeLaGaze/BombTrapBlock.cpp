@@ -54,16 +54,15 @@ void BombTrapBlock::Boom()
 			if (!(*m_map)[y][x]) continue;
 			float distance = ((float)x - (float)xBomb) * ((float)x - (float)xBomb) + ((float)y - (float)yBomb) * ((float)y - (float)yBomb);
 			if (distance > m_boomRadius * m_boomRadius) continue;
-			if (BombTrapBlock* bomb = dynamic_cast<BombTrapBlock*>((*m_map)[y][x])) {
+			if (std::shared_ptr<BombTrapBlock> bomb = std::dynamic_pointer_cast<BombTrapBlock>((*m_map)[y][x])) {
 				if (bomb->HasExploded()) continue;
 			}
-			if (BreakableBlock* breakable = dynamic_cast<BreakableBlock*>((*m_map)[y][x])) {
+			if (std::shared_ptr<BreakableBlock> breakable = std::dynamic_pointer_cast<BreakableBlock>((*m_map)[y][x])) {
 				breakable->OnBreak();
-				if((*m_map)[y][x]) delete (*m_map)[y][x];
-				(*m_map)[y][x] = new Pathway{{x,y}};
+				(*m_map)[y][x] = std::make_shared<Pathway>(std::pair<size_t,size_t>{x,y});
 				continue;
 			}
-			if (Player* player = dynamic_cast<Player*>((*m_map)[y][x])) {
+			if (std::shared_ptr<Player> player = std::dynamic_pointer_cast<Player>((*m_map)[y][x])) {
 				player->OnDeath();
 				continue;
 			}
