@@ -27,10 +27,6 @@ Bullet::Bullet(std::shared_ptr<Player> owner, float x, float y, float speed, Dir
 	}
 }
 
-void Bullet::Render()
-{
-}
-
 void Bullet::Print() const
 {
 	if (m_direction == Direction::North) std::cout << "\033[37;42m" << "^" << "\033[0m";
@@ -39,7 +35,7 @@ void Bullet::Print() const
 	if (m_direction == Direction::East) std::cout << "\033[37;42m" << ">" << "\033[0m";
 }
 
-bool Bullet::CanMoveHere(int i,int j) {
+bool Bullet::CanMoveHere() {
 	return true;
 }
 

@@ -63,7 +63,7 @@ public:
 	void SetY(const int& y);
 
 	// Movement
-	bool CanMoveHere(int i, int j) override;
+	bool CanMoveHere() override;
 	void Move(float deltaTime);
 	void MoveUp();
 	void MoveDown();
@@ -81,7 +81,6 @@ public:
 	void OnDeath();
 	void Respawn();
 
-	void Render() override;
 	void Print() const override;
 	virtual crow::json::wvalue toJson() override;
 	std::string DirectionToString(Direction direction);

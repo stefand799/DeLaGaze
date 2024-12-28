@@ -137,7 +137,7 @@ void Player::SetX(const int& x) { m_mapX = x; }
 void Player::SetY(const int& y) { m_mapY = y; }
 
 // Movement
-bool Player::CanMoveHere(int i, int j) { return false; }
+bool Player::CanMoveHere() { return false; }
 
 void Player::Move(float deltaTime)
 {
@@ -174,7 +174,7 @@ void Player::MoveUp()
 		return;
 	}
 
-	if (!(*m_playerMap)[newY][newX]->CanMoveHere(newY, newX)) {
+	if (!(*m_playerMap)[newY][newX]->CanMoveHere()) {
 		return;
 	}
 
@@ -198,7 +198,7 @@ void Player::MoveDown()
 		return;
 	}
 
-	if (!(*m_playerMap)[newY][newX]->CanMoveHere(newY, newX)) {
+	if (!(*m_playerMap)[newY][newX]->CanMoveHere()) {
 		return;
 	}
 
@@ -222,7 +222,7 @@ void Player::MoveLeft()
 		return;
 	}
 
-	if (!(*m_playerMap)[newY][newX]->CanMoveHere(newY, newX)) {
+	if (!(*m_playerMap)[newY][newX]->CanMoveHere()) {
 		return;
 	}
 
@@ -246,7 +246,7 @@ void Player::MoveRight()
 		return;
 	}
 
-	if (!(*m_playerMap)[newY][newX]->CanMoveHere(newY, newX)) {
+	if (!(*m_playerMap)[newY][newX]->CanMoveHere()) {
 		return;
 	}
 
@@ -313,10 +313,6 @@ void Player::Respawn() {
 	//TODO: Check if there is a player or possition is accessible
 }
 
-void Player::Render()
-{
-
-}
 void Player::Print() const
 {
 	if (m_facing == Direction::North) std::cout << "\033[37;41m" << "^" << "\033[0m";

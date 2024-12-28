@@ -6,7 +6,6 @@ class BombTrapBlock: public BreakableBlock{
 public:
 	BombTrapBlock(std::pair<size_t, size_t> pos, Map* map);
 	ObjectType GetType() const override { return ObjectType::BombTrapBlock; };
-	void Render() override;
 	void Print() const override;
 	void OnBreak() override;
 	bool HasExploded();

@@ -9,9 +9,8 @@ public:
 	Bullet(std::shared_ptr<Player> owner, float x, float y, float speed, Direction direction);
 	~Bullet() = default;
 	ObjectType GetType() const override;
-	void Render() override;
 	void Print() const override;
-	bool CanMoveHere(int i, int j) override;
+	bool CanMoveHere() override;
 	void Move(float deltaTime);
 	std::shared_ptr<Player> GetOwner() const;
 	float GetX() const;

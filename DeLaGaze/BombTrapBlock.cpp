@@ -10,9 +10,6 @@ BombTrapBlock::BombTrapBlock(std::pair<size_t, size_t> pos, Map* map) :
 {
 }
 
-void BombTrapBlock::Render() {
-}
-
 void BombTrapBlock::Print() const {
 	std::cout << "\033[30;43m" << "*" << "\033[0m"; //X
 }

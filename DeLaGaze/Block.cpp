@@ -5,10 +5,6 @@ Block::Block(std::pair<size_t, size_t> pos) :
 {
 }
 
-void Block::Render() {
-	//Should default block have a render?
-}
-
 std::pair<int, int> Block::GetPos()
 {
 	return m_pos;

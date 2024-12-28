@@ -4,10 +4,6 @@ DeadlyBlock::DeadlyBlock(std::pair<size_t, size_t> pos) : Block{ pos }
 {
 }
 
-void DeadlyBlock::Render()
-{
-}
-
 void DeadlyBlock::Print() const
 {
 	std::cout << "\033[37;46m" << " " << "\033[0m"; //B
@@ -22,7 +18,7 @@ crow::json::wvalue DeadlyBlock::toJson()
 	return jsonObj;
 }
 
-bool DeadlyBlock::CanMoveHere(int i, int j)
+bool DeadlyBlock::CanMoveHere()
 {
     return true;
 }

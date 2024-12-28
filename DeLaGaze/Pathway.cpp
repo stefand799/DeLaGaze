@@ -5,9 +5,6 @@ Pathway::Pathway(std::pair<size_t, size_t> pos) :
 {
 }
 
-void Pathway::Render(){
-}
-
 void Pathway::Print() const{
 	std::cout << "\033[37;42m" << " " << "\033[0m"; //P
 }
@@ -21,6 +18,6 @@ crow::json::wvalue Pathway::toJson()
 	return jsonObj;
 }
 
-bool Pathway::CanMoveHere(int i, int j){
+bool Pathway::CanMoveHere(){
 	return true;
 }
