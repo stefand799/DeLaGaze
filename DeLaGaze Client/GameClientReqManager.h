@@ -11,11 +11,16 @@ public:
 	 */
 	GameClientReqManager(const std::string& serverUrl, QObject* parent = nullptr);
 	void loginOrCreatePlayer(const std::string& username);
-
+	void upgradeFireRate();
+	void upgradeBulletSpeed();
 signals:
 	void loginSuccess(const std::string& username, int score, int points, int fireRate, bool upgradeBS);
 	void loginFailed(const std::string& errorMessage);
 	void addPlayerFailed(const std::string& errorMessage);
+	void upgradeFireRateSuccess();
+	void upgradeFireRateFailed();
+	void upgradeBulletSpeedSuccess();
+	void upgradeBulletSpeedFailed();
 private:
 	std::string serverUrl;
 };

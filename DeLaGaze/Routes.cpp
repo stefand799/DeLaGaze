@@ -6,14 +6,14 @@ void Routes::Run(database::PlayerStorage& playerStorage)
 		return GetMapAsJson(req);
 		});
 
-	CROW_ROUTE(m_app, "/login/<string>")([&, this](const crow::request& req, const std::string& username) {
+	CROW_ROUTE(m_app, "/login/<string>").methods("GET"_method)([&, this](const crow::request& req, const std::string& username) {
 		return LoginPlayer(playerStorage, username);
 		});
 
     CROW_ROUTE(m_app,"/players")([&]() {
 		return GetPlayersFromDatabase(playerStorage);
     });
-    CROW_ROUTE(m_app, "/players/add")([&,this](const crow::request& req) {
+    CROW_ROUTE(m_app, "/players/add").methods("POST"_method)([&,this](const crow::request& req) {
 		return AddPlayerToDatabase(playerStorage, req);
         });
 	CROW_ROUTE(m_app, "/players/update_firerate/<string>/<int>")([&,this](const crow::request& req, const std::string& username, const int& x)
@@ -66,7 +66,7 @@ crow::response Routes::LoginPlayer(database::PlayerStorage& playerStorage, const
 	}
 
 	// Player not found
-	return crow::response(404, "Player not found");
+	return AddPlayerToDatabase(playerStorage, crow::request{});
 }
 
 crow::response Routes::AddPlayerToDatabase(database::PlayerStorage& playerStorage, const crow::request& req) {
@@ -75,9 +75,9 @@ crow::response Routes::AddPlayerToDatabase(database::PlayerStorage& playerStorag
         return crow::response(400, "Invalid JSON body");
     }
 	//de stabilit ce facem in caz ca avem deja un player cu acelasi username
-	if (playerStorage.GetPlayer(body["username"].s())) {
+	/*if (playerStorage.GetPlayer(body["username"].s())) {
 		return crow::response(400, "Player already exists");
-	}
+	}*/
     Player p;
 	p.SetUsername(body["username"].s());
 	p.SetScore(0);
@@ -85,6 +85,13 @@ crow::response Routes::AddPlayerToDatabase(database::PlayerStorage& playerStorag
 	p.SetFireRate(1);
 	p.SetBulletSpeedUpgrade(false);
 	if (playerStorage.AddPlayer(p)) {
+		crow::json::wvalue responseJson;
+		responseJson["id"] = p.GetId();
+		responseJson["username"] = p.GetUsername();
+		responseJson["score"] = p.GetScore();
+		responseJson["points"] = p.GetPoints();
+		responseJson["firerate"] = p.GetFireRate();
+		responseJson["upgrade_bs"] = p.GetBulletSpeedUpgrade();
 		return crow::response(201, "Player added successfully");
 	}
 	else {

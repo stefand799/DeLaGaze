@@ -6,7 +6,7 @@ DeLaGazeClient::DeLaGazeClient(QWidget* parent)
     mainScreen(new MainScreen(this)),
     playScreen(new PlayScreen(this)),
 	upgradesScreen(new UpgradesScreen(this)),
-	reqManager(new GameClientReqManager("SERVER_URL_PLS",this))
+	reqManager(new GameClientReqManager("http://localhost:18080",this))
 {
     ui.setupUi(this);
 
@@ -30,6 +30,8 @@ void DeLaGazeClient::initializeConnections(){
     connect(loginScreen, &LoginScreen::loginRequest, reqManager, &GameClientReqManager::loginOrCreatePlayer);
     connect(reqManager, &GameClientReqManager::loginSuccess, this, [&](const std::string& username, int score, int points, int fireRate, bool upgradeBS)
         {
+            std::cout << "Login successful for username: " << username << std::endl;
+
         /*TODO: SET functions for screens which will display them (upgrades, and maybe main too)*/
             stackedWidget->setCurrentWidget(mainScreen);
         });

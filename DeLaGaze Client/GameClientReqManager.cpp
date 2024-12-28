@@ -9,7 +9,7 @@ GameClientReqManager::GameClientReqManager(const std::string& serverUrl, QObject
 
 void GameClientReqManager::loginOrCreatePlayer(const std::string& username) {
 	auto response = cpr::Get(cpr::Url{ serverUrl + "/login/" + username });
-	if (response.status_code = 200)
+	if (response.status_code == 200)
 	{
 		auto jsonResponse = crow::json::load(response.text);
 		if (!jsonResponse)
@@ -25,13 +25,14 @@ void GameClientReqManager::loginOrCreatePlayer(const std::string& username) {
 			jsonResponse["upgrade_bs"].b()
 		);
 	}
-	else if (response.status_code = 404)
+	else if (response.status_code == 400)
 	{
+
 		crow::json::wvalue newPlayerJson;
 		newPlayerJson["username"] = username;
 
 		auto createResponse = cpr::Post(
-			cpr::Url{ serverUrl + "/addPlayer" },
+			cpr::Url{ serverUrl + "/players/add" },
 			cpr::Body{ newPlayerJson.dump() },
 			cpr::Header{ {"Content-Type","application/json"} }
 		);
@@ -49,4 +50,8 @@ void GameClientReqManager::loginOrCreatePlayer(const std::string& username) {
 	{
 		emit loginFailed(response.text);
 	}
+}
+
+void GameClientReqManager::upgradeBulletSpeed()
+{
 }
