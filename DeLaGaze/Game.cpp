@@ -22,8 +22,12 @@ void Game::Start()
 	if(!m_map.Generate()) return;
 	//Creating players
 
-	m_players.emplace_back(std::move(std::make_shared<Player>(&m_map, std::pair<int, int>{ 0, 0 }, 1, "Player1", 0, 3, true, Direction::South, State::Idle)));
+	m_players.emplace_back(std::move(std::make_shared<Player>(&m_map, std::pair<int, int>{ 0, 0 }, 1, "Player1", 0, 3, true, Direction::South, State::Idle, 0 ,0 ,3)));
 	m_map[0][0] = m_players[0];
+
+	//testing with another player!
+	//m_players.emplace_back(std::move(std::make_shared<Player>(&m_map, std::pair<int, int>{ m_map.GetMapWidth() - 1, 0 }, 1, "Player1", 0, 3, true, Direction::South, State::Idle, 0 ,1, 3)));
+	//m_map[0][m_map.GetMapWidth() - 1] = m_players[1];
 
 	//ONLY FOR TESTING
 #ifdef DEBUG
@@ -68,7 +72,12 @@ void Game::Update(){
 	for (std::shared_ptr<Player>& player : m_players) {
 		player->Move(m_deltaTime);
 	}
+
 	HandleCollisions();
+
+	if (CheckEndCondition()) {
+		m_isRunning = false;
+	}
 }
 
 void Game::HandleCollisions()
@@ -246,7 +255,7 @@ void Game::RemoveDestroyedObjects()
 				if (std::shared_ptr<Bullet> bullet = std::dynamic_pointer_cast<Bullet>(currCollision.second)) 
 					if (std::shared_ptr<Player> player = std::dynamic_pointer_cast<Player>(currCollision.first)) {
 						std::shared_ptr<Player> bulletOwner = bullet->GetOwner();
-						bulletOwner->SetScore(bulletOwner->GetScore() + 100);
+						if(player->GetTeamId() != bulletOwner->GetTeamId()) bulletOwner->SetScore(bulletOwner->GetScore() + 100);
 					}
 			}
 	}
@@ -327,6 +336,35 @@ void Game::Run()
 
 
 	}
+}
+
+bool Game::CheckEndCondition()
+{
+	std::unordered_map<uint8_t, int> teamHps;
+	for (std::shared_ptr<Player>& player : m_players) {
+		teamHps[player->GetTeamId()] += player->GetHp();
+	}
+	size_t eliminatedTeamsCount = 0;
+	size_t currPos = m_teamLeaderboard.size();
+	for (auto [id, hp] : teamHps) {
+		if (hp == 0) {
+			eliminatedTeamsCount++;
+			if (m_teamLeaderboard.size() == currPos)
+				m_teamLeaderboard.push_back({ id });
+			else 
+				m_teamLeaderboard[currPos].push_back(id);
+		}
+	}
+	if (eliminatedTeamsCount >= teamHps.size() - 1) {
+		for (auto [id, hp] : teamHps) {
+			if (hp != 0) {
+				m_teamLeaderboard.push_back({ id });
+				break;
+			}
+		}
+		return true;
+	}
+	return false;
 }
 
 //for now only for testing with one player but in the future may collect input data from players as part of the server part

@@ -18,9 +18,7 @@ public:
 	
 	// Constructors
 	Player() = default;
-	//Player(Map* m);
-	//Player(const int& i, const int& j, Map& m);
-	Player(Map* m, const std::pair<int,int>& pos, const int& id, const std::string& username, uint8_t points, uint8_t fireRate, bool bulletSpeedUpgrade, Direction facing, State playerState, uint8_t score = 0, uint8_t hp = 3);
+	Player(Map* m, const std::pair<int,int>& pos, const int& id, const std::string& username, uint8_t points, uint8_t fireRate, bool bulletSpeedUpgrade, Direction facing, State playerState, uint8_t score = 0, uint8_t teamid = 0, uint8_t hp = 3);
 	Player(const int& id,const std::string& username, uint8_t score, uint16_t points, uint8_t bulletSpeed, bool bulletSpeedUpgrade)
 		: m_id(id),
 		m_username(username),
@@ -47,6 +45,7 @@ public:
 	State GetPlayerState() const;	// This will be moved in client, maybe
 	Direction GetFacing() const;
 	Map* GetMap() const;
+	uint8_t GetTeamId() const;
 	std::tuple<std::shared_ptr<Object>, std::shared_ptr<Object>, float> GetBulletToPlayerColision(std::shared_ptr<Bullet> bullet);
 
 	// Setteri
@@ -125,5 +124,7 @@ private:
 	bool m_isMoving;
 	Clock::time_point m_endOfMove;
 	std::pair<int, int> m_spawnpoint;
+
+	uint8_t m_teamId;
 };
 

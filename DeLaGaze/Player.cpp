@@ -3,7 +3,7 @@
 
 // Constructors
 
-Player::Player(Map* m, const std::pair<int, int>& pos, const int& id, const std::string& username, uint8_t points, uint8_t fireRate, bool bulletSpeedUpgrade, Direction facing, State playerState, uint8_t score, uint8_t hp) :
+Player::Player(Map* m, const std::pair<int, int>& pos, const int& id, const std::string& username, uint8_t points, uint8_t fireRate, bool bulletSpeedUpgrade, Direction facing, State playerState, uint8_t score, uint8_t teamid, uint8_t hp) :
 	m_playerMap{ m },
 	m_username{ username },
 	m_id{ id },
@@ -13,6 +13,7 @@ Player::Player(Map* m, const std::pair<int, int>& pos, const int& id, const std:
 	m_facing{ facing },
 	m_score{ score },
 	m_hp{ hp },
+	m_teamId{ teamid },
 	m_mapX{ pos.first },
 	m_mapY{ pos.second },
 	m_previousMapX{ pos.first },
@@ -79,6 +80,7 @@ bool Player::GetMovingState() const { return m_isMoving; }
 State Player::GetPlayerState() const { return m_playerState; }
 Direction Player::GetFacing() const { return m_facing; }
 Map* Player::GetMap() const { return m_playerMap; }
+uint8_t Player::GetTeamId() const { return m_teamId; }
 
 std::tuple<std::shared_ptr<Object>, std::shared_ptr<Object>, float> Player::GetBulletToPlayerColision(std::shared_ptr<Bullet> bullet)
 {
@@ -167,6 +169,7 @@ void Player::Move(float deltaTime)
 
 void Player::MoveUp()
 {
+	if (m_hp == 0) return;
 	if (Clock::now()<m_endOfMove) return;
 	int newX = m_mapX;
 	int newY = m_mapY - 1;
@@ -191,6 +194,7 @@ void Player::MoveUp()
 }
 void Player::MoveDown()
 {
+	if (m_hp == 0) return;
 	if (Clock::now() < m_endOfMove) return;
 	int newX = m_mapX;
 	int newY = m_mapY + 1;
@@ -215,6 +219,7 @@ void Player::MoveDown()
 }
 void Player::MoveLeft()
 {
+	if (m_hp == 0) return;
 	if (Clock::now() < m_endOfMove) return;
 	int newX = m_mapX - 1;
 	int newY = m_mapY;
@@ -239,6 +244,7 @@ void Player::MoveLeft()
 }
 void Player::MoveRight()
 {
+	if (m_hp == 0) return;
 	if (Clock::now() < m_endOfMove) return;
 	int newX = m_mapX + 1;
 	int newY = m_mapY;
@@ -270,6 +276,7 @@ void Player::FaceEast() { m_facing = Direction::East; }
 
 // Functionalities
 void Player::Shoot(std::vector<std::shared_ptr<Bullet>>& bullets) {
+	if (m_hp == 0) return;
 	if (fSecDur(Clock::now() - m_lastShotTime).count() < kFireRates[m_fireRate]) return;
 	float bulletSpeed = kBulletSpeeds[m_bulletSpeedUpgrade];
 	switch (m_facing)
@@ -300,6 +307,7 @@ void Player::OnDeath()
 	}
 	else {
 		//TODO: Delete the player from the game
+		(*m_playerMap)[m_mapY][m_mapX] = std::make_shared<Pathway>(std::pair<size_t, size_t>{m_mapY, m_mapX});
 	}
 }
 void Player::Respawn() {
