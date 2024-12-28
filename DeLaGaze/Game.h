@@ -48,6 +48,7 @@ private:
 
 	void Run();
 	bool CheckEndCondition();
+	void HandleEndOfGameActions();
 	
 	void Update();
 	void HandleCollisions();

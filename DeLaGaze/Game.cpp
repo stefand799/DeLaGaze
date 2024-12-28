@@ -44,7 +44,6 @@ void Game::Start()
 
 	if (playerInputThread.joinable())
 		playerInputThread.join();
-	//TODO: Method that does end of game actions...
 }
 
 void Game::Update(){
@@ -336,6 +335,9 @@ void Game::Run()
 
 
 	}
+
+	HandleEndOfGameActions();
+
 }
 
 bool Game::CheckEndCondition()
@@ -365,6 +367,29 @@ bool Game::CheckEndCondition()
 		return true;
 	}
 	return false;
+}
+
+void Game::HandleEndOfGameActions()
+{
+	size_t leaderboardSize = m_teamLeaderboard.size();
+	if (leaderboardSize >= 1) {
+		for (std::shared_ptr<Player>& player : m_players) {
+			uint8_t playerTeamId = player->GetTeamId();
+			if (std::find(m_teamLeaderboard[leaderboardSize - 1].begin(), m_teamLeaderboard[leaderboardSize - 1].end(), playerTeamId) != m_teamLeaderboard[leaderboardSize - 1].end()) {
+				player->SetPoints(player->GetPoints() + 2);
+				//Maybe print winners if we have time left for this :(
+			}
+		}
+	}
+	if (leaderboardSize >= 2) {
+		for (std::shared_ptr<Player>& player : m_players) {
+			uint8_t playerTeamId = player->GetTeamId();
+			if (std::find(m_teamLeaderboard[leaderboardSize - 2].begin(), m_teamLeaderboard[leaderboardSize - 2].end(), playerTeamId) != m_teamLeaderboard[leaderboardSize - 2].end()) {
+				player->SetPoints(player->GetPoints() + 1);
+			}
+		}
+	}
+	// TODO: SAVE SCORE AND POINTS TO DATABASE
 }
 
 //for now only for testing with one player but in the future may collect input data from players as part of the server part
