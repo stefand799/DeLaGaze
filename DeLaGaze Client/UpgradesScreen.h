@@ -12,6 +12,9 @@ public:
 	UpgradesScreen(QWidget *parent);
 	~UpgradesScreen();
 
+signals:
+	void bulletSpeedUpgradeRequest();
+
 private slots:
 	void buyButtonClicked();
 private:

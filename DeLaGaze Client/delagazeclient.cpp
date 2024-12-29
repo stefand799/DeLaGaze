@@ -28,7 +28,9 @@ DeLaGazeClient::~DeLaGazeClient()
 void DeLaGazeClient::initializeConnections(){
     //server components
     connect(loginScreen, &LoginScreen::loginRequest, reqManager, &GameClientReqManager::loginOrCreatePlayer);
-    connect(reqManager, &GameClientReqManager::loginSuccess, this, [&](const std::string& username, int score, int points, int fireRate, bool upgradeBS)
+    connect(upgradesScreen, &UpgradesScreen::bulletSpeedUpgradeRequest, reqManager, &GameClientReqManager::upgradeBulletSpeed);
+
+	connect(reqManager, &GameClientReqManager::loginSuccess, this, [&](const std::string& username, int score, int points, int fireRate, bool upgradeBS)
         {
             std::cout << "Login successful for username: " << username << std::endl;
 
@@ -45,6 +47,15 @@ void DeLaGazeClient::initializeConnections(){
         /*lmbd function for lambdas that identically handle SERVER ERRORS*/
             loginScreen->showServerError(errorMessage);
             stackedWidget->setCurrentWidget(loginScreen);
+        });
+
+    connect(reqManager, &GameClientReqManager::upgradeBulletSpeedSuccess, this, [&]()
+        {
+            qDebug() << "Bullet speed UPGRADED!\n";
+        });
+    connect(reqManager, &GameClientReqManager::upgradeBulletSpeedSuccess, this, [&]()
+        {
+            qDebug() << "Bullet speed FAILED!\n";
         });
 
 

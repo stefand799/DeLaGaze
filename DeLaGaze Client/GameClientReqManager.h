@@ -23,4 +23,5 @@ signals:
 	void upgradeBulletSpeedFailed();
 private:
 	std::string serverUrl;
+	std::string m_username;
 };

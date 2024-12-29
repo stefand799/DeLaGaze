@@ -17,7 +17,9 @@ void GameClientReqManager::loginOrCreatePlayer(const std::string& username) {
 			emit loginFailed("Invalid JSON from server.");
 			return;
 		}
+		m_username = username;
 		emit loginSuccess(
+			//jsonResponse["id"].i(),
 			jsonResponse["username"].s(),
 			jsonResponse["score"].i(),
 			jsonResponse["points"].i(),
@@ -36,9 +38,10 @@ void GameClientReqManager::loginOrCreatePlayer(const std::string& username) {
 			cpr::Body{ newPlayerJson.dump() },
 			cpr::Header{ {"Content-Type","application/json"} }
 		);
-
+		/*TODO: After refactoring, send the json instead of default values; also, think of the id*/
 		if (createResponse.status_code == 201)
 		{
+			m_username = username;
 			emit loginSuccess(username, 0, 0, 1, false);
 		}
 		else
@@ -54,4 +57,13 @@ void GameClientReqManager::loginOrCreatePlayer(const std::string& username) {
 
 void GameClientReqManager::upgradeBulletSpeed()
 {
+	auto response = cpr::Post(
+		cpr::Url{ serverUrl + "/player/update_bullet_speed/"+m_username },
+		cpr::Header{ {"Content-Type","application/json"} }
+	);
+
+	if (response.status_code == 200)
+		emit upgradeBulletSpeedSuccess();
+	else
+		emit upgradeBulletSpeedFailed();
 }

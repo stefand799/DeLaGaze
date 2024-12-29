@@ -1,6 +1,9 @@
 #include "UpgradesScreen.h"
 
 #include "qformlayout.h"
+#include <cpr/cpr.h>
+#include <crow/json.h>
+
 UpgradesScreen::UpgradesScreen(QWidget* parent)
 	: QWidget(parent),
 	fireRateLabel(new QLabel("Fire Rate", this)),
@@ -44,6 +47,14 @@ UpgradesScreen::UpgradesScreen(QWidget* parent)
 UpgradesScreen::~UpgradesScreen()
 {}
 
-void UpgradesScreen::buyButtonClicked(){
+void UpgradesScreen::buyButtonClicked() {
 	/*TODO: Server requests!!!!!*/
+	QPushButton* clickedButton = qobject_cast<QPushButton*>(sender());
+	if (clickedButton == nullptr) {
+		qWarning() << "Sender does not belong to the known buttons!";
+	}
+	else if (clickedButton==bulletSpeedBuyButton)
+	{
+		emit bulletSpeedUpgradeRequest();
+	}
 }
