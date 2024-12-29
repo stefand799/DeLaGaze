@@ -5,6 +5,27 @@ namespace database
     PlayerStorage::PlayerStorage()
     {
         m_db.sync_schema();
+        PopulateStorage();
+    }
+    void PlayerStorage::PopulateStorage()
+    {
+        try {
+
+            if (m_db.count<Player>() == 0) {
+                m_db.insert(Player(1, "Player1", 0, 0, 1, false));
+                m_db.insert(Player(2, "Player2", 0, 0, 1, false));
+                m_db.insert(Player(3, "Player3", 0, 0, 1, false));
+                m_db.insert(Player(4, "Player4", 0, 0, 1, false));
+            
+                std::cout << "Database populated with default players." << std::endl;
+            }
+            else {
+                std::cout << "Database already contains players. Skipping population." << std::endl;
+            }
+        }
+        catch (const std::exception& e) {
+            std::cerr << "Error populating databse: " << e.what() << std::endl;
+        }
     }
 
     bool PlayerStorage::AddPlayer(const std::shared_ptr<Player>& player)
@@ -80,6 +101,7 @@ namespace database
             return {};
         }
     }
+
     std::shared_ptr<Player> PlayerStorage::GetPlayerByName(const std::vector<std::shared_ptr<Player>>& playersVector, const std::string& name) {
         for (const auto& player : playersVector) {
                 if (player && player->GetUsername() == name) {

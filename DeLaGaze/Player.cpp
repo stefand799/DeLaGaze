@@ -29,6 +29,13 @@ Player::Player(Map* m, const std::pair<int, int>& pos, const int& id, const std:
 	m_endOfMove{ Clock::now() },
 	m_lastShotTime{ Clock::now() }
 {}
+Player::Player(const int& id, const std::string& username, uint8_t score, uint16_t points, uint8_t bulletSpeed, bool bulletSpeedUpgrade)
+	: m_id(id),
+	m_username(username),
+	m_score(score),
+	m_points(points),
+	m_bulletSpeed(bulletSpeed),
+	m_bulletSpeedUpgrade(bulletSpeedUpgrade) {}
 
 // Operators
 
