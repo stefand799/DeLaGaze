@@ -57,4 +57,8 @@ void UpgradesScreen::buyButtonClicked() {
 	{
 		emit bulletSpeedUpgradeRequest();
 	}
+	else if (clickedButton==fireRateBuyButton)
+	{
+		emit fireRateUpgradeRequest();
+	}
 }

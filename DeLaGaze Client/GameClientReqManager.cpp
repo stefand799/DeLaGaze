@@ -55,6 +55,19 @@ void GameClientReqManager::loginOrCreatePlayer(const std::string& username) {
 	}
 }
 
+void GameClientReqManager::upgradeFireRate()
+{
+	auto response = cpr::Post(
+		cpr::Url{ serverUrl + "/player/update_firerate/" + m_username },
+		cpr::Header{ {"Content-Type","application/json"} }
+	);
+
+	if (response.status_code == 200)
+		emit upgradeFireRateSuccess();
+	else
+		emit upgradeFireRateFailed(response.text);
+}
+
 void GameClientReqManager::upgradeBulletSpeed()
 {
 	auto response = cpr::Post(
@@ -65,5 +78,5 @@ void GameClientReqManager::upgradeBulletSpeed()
 	if (response.status_code == 200)
 		emit upgradeBulletSpeedSuccess();
 	else
-		emit upgradeBulletSpeedFailed();
+		emit upgradeBulletSpeedFailed(response.text);
 }

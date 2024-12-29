@@ -18,9 +18,9 @@ signals:
 	void loginFailed(const std::string& errorMessage);
 	void addPlayerFailed(const std::string& errorMessage);
 	void upgradeFireRateSuccess();
-	void upgradeFireRateFailed();
+	void upgradeFireRateFailed(const std::string& errorMessage);
 	void upgradeBulletSpeedSuccess();
-	void upgradeBulletSpeedFailed();
+	void upgradeBulletSpeedFailed(const std::string& errorMessage);
 private:
 	std::string serverUrl;
 	std::string m_username;

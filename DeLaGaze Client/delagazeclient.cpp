@@ -29,6 +29,7 @@ void DeLaGazeClient::initializeConnections(){
     //server components
     connect(loginScreen, &LoginScreen::loginRequest, reqManager, &GameClientReqManager::loginOrCreatePlayer);
     connect(upgradesScreen, &UpgradesScreen::bulletSpeedUpgradeRequest, reqManager, &GameClientReqManager::upgradeBulletSpeed);
+    connect(upgradesScreen, &UpgradesScreen::fireRateUpgradeRequest, reqManager, &GameClientReqManager::upgradeFireRate);
 
 	connect(reqManager, &GameClientReqManager::loginSuccess, this, [&](const std::string& username, int score, int points, int fireRate, bool upgradeBS)
         {
@@ -51,11 +52,20 @@ void DeLaGazeClient::initializeConnections(){
 
     connect(reqManager, &GameClientReqManager::upgradeBulletSpeedSuccess, this, [&]()
         {
+        /*TODO: display UI changes, accordingly. Also add the setters for the displayed values when the player is logged in*/
             qDebug() << "Bullet speed UPGRADED!\n";
         });
     connect(reqManager, &GameClientReqManager::upgradeBulletSpeedSuccess, this, [&]()
         {
             qDebug() << "Bullet speed FAILED!\n";
+        });
+    connect(reqManager, &GameClientReqManager::upgradeBulletSpeedSuccess, this, [&]()
+        {
+            qDebug() << "FireRate UPGRADED!\n";
+        });
+    connect(reqManager, &GameClientReqManager::upgradeBulletSpeedSuccess, this, [&]()
+        {
+            qDebug() << "FireRate FAILED!\n";
         });
 
 

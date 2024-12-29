@@ -14,7 +14,7 @@ public:
 
 signals:
 	void bulletSpeedUpgradeRequest();
-
+	void fireRateUpgradeRequest();
 private slots:
 	void buyButtonClicked();
 private:
