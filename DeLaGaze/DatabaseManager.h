@@ -35,12 +35,13 @@ namespace database
         PlayerStorage();
 
         // Metode CRUD pentru tabela Players
-        bool AddPlayer(const Player& player);
-        std::optional<Player> GetPlayer(const std::string& username);
-        bool UpdatePlayer(const Player& player);
+        bool AddPlayer(const std::shared_ptr<Player>& player);
+        std::shared_ptr<Player> GetPlayer(const std::string& username);
+        bool UpdatePlayer(const std::shared_ptr<Player>& player);
         bool DeletePlayer(const std::string& username);
-        std::vector<Player> GetAllPlayers();
-        Player* GetPlayerByName(const std::vector<Player>& playersVector, const std::string& name);
+        std::vector<std::shared_ptr<Player>> GetAllPlayers();
+        std::shared_ptr<Player> GetPlayerByName(const std::vector<std::shared_ptr<Player>>& playersVector,
+            const std::string& name);
     private:
         void PopulateStorage();
 

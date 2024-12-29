@@ -26,7 +26,6 @@ public:
 		m_points(points),
 		m_bulletSpeed(bulletSpeed),
 		m_bulletSpeedUpgrade(bulletSpeedUpgrade) {}
-
 	~Player() = default;
 
 	// Operators

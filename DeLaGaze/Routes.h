@@ -13,16 +13,16 @@ class Routes
 	private:
 		crow::response LoginPlayer(database::PlayerStorage& playerStorage, const std::string& username);
 		crow::response AddPlayerToDatabase(database::PlayerStorage& playerStorage, const crow::request& req);
-		crow::response UpdatePlayerFirerate(database::PlayerStorage& playerStorage, const crow::request& req,Player& player, int x);
-		crow::response UpdatePlayerBulletSpeed(database::PlayerStorage& playerStorage, Player& player, const crow::request& req);
+		crow::response UpdatePlayerFirerate(database::PlayerStorage& playerStorage, const crow::request& req, std::shared_ptr<Player>& player, int x);
+		crow::response UpdatePlayerBulletSpeed(database::PlayerStorage& playerStorage, std::shared_ptr<Player>& player, const crow::request& req);
 		crow::response GetPlayersFromDatabase(database::PlayerStorage& playerStorage);
 		crow::response FinishGame(database::PlayerStorage& playerStorage, const crow::request& req, std::vector<Player>& Players);
 		crow::response JoinGame(database::PlayerStorage& playerStorage, const crow::request& req, Player& Players);
-		crow::response PlayerMoveUp(Player& p, const crow::request& req);
-		crow::response PlayerMoveDown(Player& p, const crow::request& req);
-		crow::response PlayerMoveLeft(Player& p, const crow::request& req);
-		crow::response PlayerMoveRight(Player& p, const crow::request& req);
-		crow::response PlayerShoot (Player& p, const crow::request& req);
+		crow::response PlayerMoveUp(std::shared_ptr<Player>& p, const crow::request& req);
+		crow::response PlayerMoveDown(std::shared_ptr<Player>& p, const crow::request& req);
+		crow::response PlayerMoveLeft(std::shared_ptr<Player>& p, const crow::request& req);
+		crow::response PlayerMoveRight(std::shared_ptr<Player>& p, const crow::request& req);
+		crow::response PlayerShoot (std::shared_ptr<Player>& p, const crow::request& req);
 		crow::response GetMapAsJson(const crow::request& req);
 private:
 		crow::SimpleApp m_app;

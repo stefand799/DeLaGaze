@@ -7,15 +7,17 @@ namespace database
         m_db.sync_schema();
     }
 
-    bool PlayerStorage::AddPlayer(const Player& player)
+    bool PlayerStorage::AddPlayer(const std::shared_ptr<Player>& player)
     {
         try {
-            m_db.insert(Player{ player.GetId(),
-                player.GetUsername(),
-                player.GetScore(),
-                player.GetPoints(),
-                player.GetFireRate()
-                ,player.GetBulletSpeedUpgrade() });
+            m_db.insert(Player{
+                player->GetId(),
+                player->GetUsername(),
+                player->GetScore(),
+                player->GetPoints(),
+                player->GetFireRate(),
+                player->GetBulletSpeedUpgrade()
+                });
             return true;
         }
         catch (const std::exception& e) {
@@ -24,22 +26,22 @@ namespace database
         }
     }
 
-    std::optional<Player> PlayerStorage::GetPlayer(const std::string& username)
+    std::shared_ptr<Player> PlayerStorage::GetPlayer(const std::string& username)
     {
         try {
             auto player = m_db.get_optional<Player>(username);
-            return player;
+            return  std::make_shared<Player>(*player);
         }
         catch (const std::exception& e) {
             std::cerr << "Error getting player: " << e.what() << std::endl;
-            return std::nullopt;
+            return nullptr;
         }
     }
 
-    bool PlayerStorage::UpdatePlayer(const Player& player)
+    bool PlayerStorage::UpdatePlayer(const std::shared_ptr<Player>& player)
     {
         try {
-            m_db.update(player);
+            m_db.update(*player);
             return true;
         }
         catch (const std::exception& e) {
@@ -60,22 +62,30 @@ namespace database
         }
     }
 
-    std::vector<Player> PlayerStorage::GetAllPlayers()
+    std::vector<std::shared_ptr<Player>> PlayerStorage::GetAllPlayers()
     {
         try {
-            return m_db.get_all<Player>();
+            auto players = m_db.get_all<Player>();
+            std::vector<std::shared_ptr<Player>> playerPtrs;
+            playerPtrs.reserve(players.size());
+
+            for (const auto& player : players) {
+                playerPtrs.emplace_back(std::make_shared<Player>(player));
+            }
+
+            return playerPtrs;
         }
         catch (const std::exception& e) {
             std::cerr << "Error getting all players: " << e.what() << std::endl;
             return {};
         }
     }
-    Player* PlayerStorage::GetPlayerByName(const std::vector<Player>& playersVector, const std::string& name) {
+    std::shared_ptr<Player> PlayerStorage::GetPlayerByName(const std::vector<std::shared_ptr<Player>>& playersVector, const std::string& name) {
         for (const auto& player : playersVector) {
-            if (player.GetUsername() == name) {
-                return const_cast<Player*>(&player);  // Return a pointer to the player
-            }
+                if (player && player->GetUsername() == name) {
+                    return player;
+                }
         }
-        return nullptr;  // If no player was found, return nullptr
+        return nullptr;
     }
 }

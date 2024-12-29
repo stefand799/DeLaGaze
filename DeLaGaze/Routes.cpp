@@ -5,7 +5,6 @@ void Routes::Run(database::PlayerStorage& playerStorage)
 	CROW_ROUTE(m_app, "/map")([this](const crow::request& req) {
 		return GetMapAsJson(req);
 		});
-
 	CROW_ROUTE(m_app, "/login/<string>").methods("GET"_method)([&, this](const crow::request& req, const std::string& username) {
 		return LoginPlayer(playerStorage, username);
 		});
@@ -18,39 +17,39 @@ void Routes::Run(database::PlayerStorage& playerStorage)
         });
 	CROW_ROUTE(m_app, "/players/update_firerate/<string>/<int>")([&,this](const crow::request& req, const std::string& username, const int& x)
 		{
-			Player* player = playerStorage.GetPlayerByName(playerStorage.GetAllPlayers(), req.url_params.get("username"));
-			return UpdatePlayerFirerate(playerStorage, req,*player,x);
+			auto player = playerStorage.GetPlayerByName(playerStorage.GetAllPlayers(), req.url_params.get("username"));
+			return UpdatePlayerFirerate(playerStorage, req,player,x);
 		});
 	CROW_ROUTE(m_app, "/players/update_bullet_speed/<string>")([&, this](const crow::request& req, const std::string& username)
 		{
-			Player* player = playerStorage.GetPlayerByName(playerStorage.GetAllPlayers(), req.url_params.get("username"));
-			return UpdatePlayerBulletSpeed(playerStorage, *player, req);
+			auto player = playerStorage.GetPlayerByName(playerStorage.GetAllPlayers(), req.url_params.get("username"));
+			return UpdatePlayerBulletSpeed(playerStorage, player, req);
 		});
 	CROW_ROUTE(m_app, "/player/move_up")([&, this](const crow::request& req)
 		{
-			Player* player = playerStorage.GetPlayerByName(playerStorage.GetAllPlayers(), req.url_params.get("username"));
-			return PlayerMoveUp(*player, req);
+			auto player = playerStorage.GetPlayerByName(playerStorage.GetAllPlayers(), req.url_params.get("username"));
+			return PlayerMoveUp(player, req);
 		});
 	CROW_ROUTE(m_app, "/player/move_down")([&, this](const crow::request& req)
 		{
-			Player* player = playerStorage.GetPlayerByName(playerStorage.GetAllPlayers(), req.url_params.get("username"));
-			return PlayerMoveDown(*player, req);
+			auto player = playerStorage.GetPlayerByName(playerStorage.GetAllPlayers(), req.url_params.get("username"));
+			return PlayerMoveDown(player, req);
 		});
 	CROW_ROUTE(m_app, "/player/move_left")([&, this](const crow::request& req)
 		{
-			Player* player = playerStorage.GetPlayerByName(playerStorage.GetAllPlayers(), req.url_params.get("username"));
-			return PlayerMoveLeft(*player, req);
+			auto player = playerStorage.GetPlayerByName(playerStorage.GetAllPlayers(), req.url_params.get("username"));
+			return PlayerMoveLeft(player, req);
 		});
 	CROW_ROUTE(m_app, "/player/move_right")([&, this](const crow::request& req)
 		{
-			Player* player = playerStorage.GetPlayerByName(playerStorage.GetAllPlayers(), req.url_params.get("username"));
-			return PlayerMoveRight(*player, req);
+			auto player = playerStorage.GetPlayerByName(playerStorage.GetAllPlayers(), req.url_params.get("username"));
+			return PlayerMoveRight(player, req);
 		});
 	m_app.port(18080).multithreaded().run();
 }
 	
 crow::response Routes::LoginPlayer(database::PlayerStorage& playerStorage, const std::string& username) {
-	Player* player = playerStorage.GetPlayerByName(playerStorage.GetAllPlayers(), username);
+	auto player = playerStorage.GetPlayerByName(playerStorage.GetAllPlayers(), username);
 
 	if (player != nullptr) {
 		// Create a JSON response with player details
@@ -78,29 +77,31 @@ crow::response Routes::AddPlayerToDatabase(database::PlayerStorage& playerStorag
 	/*if (playerStorage.GetPlayer(body["username"].s())) {
 		return crow::response(400, "Player already exists");
 	}*/
-    Player p;
-	p.SetUsername(body["username"].s());
-	p.SetScore(0);
-	p.SetPoints(0);
-	p.SetFireRate(1);
-	p.SetBulletSpeedUpgrade(false);
+	auto p = std::make_shared<Player>(
+		0,                            
+		body["username"].s(),          
+		0,                             
+		0,                            
+		1,                             
+		false                         
+	);
 	if (playerStorage.AddPlayer(p)) {
 		crow::json::wvalue responseJson;
-		responseJson["id"] = p.GetId();
-		responseJson["username"] = p.GetUsername();
-		responseJson["score"] = p.GetScore();
-		responseJson["points"] = p.GetPoints();
-		responseJson["firerate"] = p.GetFireRate();
-		responseJson["upgrade_bs"] = p.GetBulletSpeedUpgrade();
+		responseJson["id"] = p->GetId();
+		responseJson["username"] = p->GetUsername();
+		responseJson["score"] = p->GetScore();
+		responseJson["points"] = p->GetPoints();
+		responseJson["firerate"] = p->GetFireRate();
+		responseJson["upgrade_bs"] = p->GetBulletSpeedUpgrade();
 		return crow::response(201, "Player added successfully");
 	}
 	else {
 		return crow::response(500, "Error adding player");
 	}
 }
-crow::response Routes::UpdatePlayerFirerate(database::PlayerStorage& playerStorage, const crow::request& req,Player& player, int x)
+crow::response Routes::UpdatePlayerFirerate(database::PlayerStorage& playerStorage, const crow::request& req, std::shared_ptr<Player>& player, int x)
 {
-	player.SetFireRate(x);
+	player->SetFireRate(x);
 	if (playerStorage.UpdatePlayer(player)) {
 		return crow::response(200, "Player updated successfully");
 	}
@@ -108,15 +109,17 @@ crow::response Routes::UpdatePlayerFirerate(database::PlayerStorage& playerStora
 		return crow::response(500, "Error updating player");
 	}
 }
-crow::response Routes::UpdatePlayerBulletSpeed(database::PlayerStorage& playerStorage,Player& player, const crow::request& req)
-{
-    player.SetBulletSpeedUpgrade(true);
-	if (playerStorage.UpdatePlayer(player)) {
-		return crow::response(200, "Player updated successfully");
-	}
-	else {
-		return crow::response(500, "Error updating player");
-	}
+crow::response Routes::UpdatePlayerBulletSpeed(database::PlayerStorage& playerStorage, std::shared_ptr<Player>& player, const crow::request& req) {
+    if (!player) {
+        return crow::response(400, "Player not found");
+    }
+
+    player->SetBulletSpeedUpgrade(true);
+    if (playerStorage.UpdatePlayer(player)) {
+        return crow::response(200, "Player updated successfully");
+    } else {
+        return crow::response(500, "Error updating player");
+    }
 }
 crow::response Routes::GetPlayersFromDatabase(database::PlayerStorage& playerStorage) 
 {
@@ -124,41 +127,41 @@ crow::response Routes::GetPlayersFromDatabase(database::PlayerStorage& playerSto
 	for (const auto& player : playerStorage.GetAllPlayers())
 	{
 		players_json.push_back(crow::json::wvalue{
-			{"username", player.GetUsername()},
-			{"score", player.GetScore()},
-			{"points", player.GetPoints()},
-			{"firerate", player.GetFireRate()},
-			{"upgrade_bs", player.GetBulletSpeedUpgrade()}
+			{"username", player->GetUsername()},
+			{"score", player->GetScore()},
+			{"points", player->GetPoints()},
+			{"firerate", player->GetFireRate()},
+			{"upgrade_bs", player->GetBulletSpeedUpgrade()}
 			});
 	}
 	return crow::json::wvalue{ players_json };
 }
-crow::response Routes::PlayerMoveUp(Player& p, const crow::request& req)
+crow::response Routes::PlayerMoveUp(std::shared_ptr<Player>& p, const crow::request& req)
 {
-	p.MoveUp();
+	p->MoveUp();
 	crow::json::wvalue mapJson;
-	Map* map = p.GetMap();
+	Map* map = p->GetMap();
 	mapJson = map->toJson();
 	return mapJson;
 }
-crow::response Routes::PlayerMoveDown(Player& p, const crow::request& req) {
-	p.MoveDown();
+crow::response Routes::PlayerMoveDown(std::shared_ptr<Player>& p, const crow::request& req) {
+	p->MoveDown();
 	crow::json::wvalue mapJson;
-	Map* map = p.GetMap();
+	Map* map = p->GetMap();
 	mapJson = map->toJson();
 	return mapJson;
 }
-crow::response Routes::PlayerMoveLeft(Player& p, const crow::request& req) {
-	p.MoveLeft();
+crow::response Routes::PlayerMoveLeft(std::shared_ptr<Player>& p, const crow::request& req) {
+	p->MoveLeft();
 	crow::json::wvalue mapJson;
-	Map* map = p.GetMap();
+	Map* map = p->GetMap();
 	mapJson = map->toJson();
 	return mapJson;
 }
-crow::response Routes::PlayerMoveRight(Player& p, const crow::request& req) {
-	p.MoveRight();
+crow::response Routes::PlayerMoveRight(std::shared_ptr<Player>& p, const crow::request& req) {
+	p->MoveRight();
 	crow::json::wvalue mapJson;
-	Map* map = p.GetMap();
+	Map* map = p->GetMap();
 	mapJson = map->toJson();
 	return mapJson;
 }
