@@ -5,7 +5,7 @@
 #include <crow/json.h>
 
 UpgradesScreen::UpgradesScreen(QWidget* parent)
-	: QWidget(parent),
+	:MiauScreen(":/DeLaGazeClient/images/miau_main.png", parent),
 	fireRateLabel(new QLabel("Fire Rate", this)),
 	bulletSpeedLabel(new QLabel("Bullet Speed", this)),
 	fireRateBuyButton(new QPushButton("Buy\n(X points)", this)),

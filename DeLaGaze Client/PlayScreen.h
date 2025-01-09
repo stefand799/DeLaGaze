@@ -1,11 +1,13 @@
 #pragma once
 
 #include <QWidget>
+
+#include "MiauScreen.h"
 #include "qpushbutton.h"
 #include "qtextedit.h"
 #include "nlohmann/json.hpp"
 using json = nlohmann::json;
-class PlayScreen  : public QWidget
+class PlayScreen  : public MiauScreen
 {
 	Q_OBJECT
 public:

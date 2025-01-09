@@ -2,7 +2,7 @@
 #include "qformlayout.h"
 
 PlayScreen::PlayScreen(QWidget* parent)
-	: QWidget(parent),
+	:MiauScreen(":/DeLaGazeClient/images/miau_main.png", parent),
 	/*TODO: stop hardcoding strings. Create a separate file for them, akin to the android strings.xml ( gotta be the .qrc here i think)*/
 	ffaGameDescription("An all out feline mayhem, where everyone must fend for themselves!\n\n * 2-4 players"),
 	teamGameDescription("A collaborative feline showdown,where everyone must fend for themselves, and their teammate!\n\n *2 teams of 2 players each \n* This gamemode does NOT offer any points\n "),
