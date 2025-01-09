@@ -4,8 +4,9 @@
 #include "qlineedit.h"
 #include "qpushbutton.h"
 #include <regex>
+#include "MiauScreen.h"
 
-class LoginScreen :public QWidget {
+class LoginScreen :public MiauScreen {
 	Q_OBJECT
 public:
 	LoginScreen(QWidget* parent = nullptr);

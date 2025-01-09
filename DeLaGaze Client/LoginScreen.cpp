@@ -1,13 +1,13 @@
 #include "LoginScreen.h"
 #include "qboxlayout.h"
+#include "qpainter.h"
 
 LoginScreen::LoginScreen(QWidget *parent)
-	: QWidget(parent),
+	: MiauScreen(":/DeLaGazeClient/images/miau_login.png",parent),
 	usernameLineEdit(new QLineEdit(this)),
 	loginButton(new QPushButton("LOGIN",this)),
 	m_validUsernamePattern(R"(^\S{3,}$)") {
-	
-	
+
 	auto groupLayout = new QVBoxLayout();
 	groupLayout->addWidget(usernameLineEdit, 0, Qt::AlignHCenter);
 	usernameLineEdit->setPlaceholderText("Insert your username!");	usernameLineEdit->setFixedSize(200, 40);
@@ -42,3 +42,5 @@ void LoginScreen::manageLogin() {
 		usernameLineEdit->setPlaceholderText("Too short or illegal! Try again!");
 	}
 }
+
+

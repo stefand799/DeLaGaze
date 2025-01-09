@@ -1,8 +1,9 @@
 #pragma once
+#include "MiauScreen.h"
 #include "qwidget.h"
 #include "qpushbutton.h"
 
-class MainScreen:public QWidget{
+class MainScreen:public MiauScreen{
 	Q_OBJECT
 public:
 	MainScreen(QWidget* parent = nullptr);

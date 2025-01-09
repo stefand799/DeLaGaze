@@ -2,7 +2,7 @@
 #include "qboxlayout.h"
 
 MainScreen::MainScreen(QWidget* parent)
-	:QWidget(parent),
+	:MiauScreen(":/images/miau_main.png",parent),
 	 playButton(new QPushButton("Play",this)),
 	 upgradesButton(new QPushButton("Upgrades",this)),
 	 optionsButton(new QPushButton("Options",this)),

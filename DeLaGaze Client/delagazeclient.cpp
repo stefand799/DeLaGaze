@@ -10,6 +10,9 @@ DeLaGazeClient::DeLaGazeClient(QWidget* parent)
 {
     ui.setupUi(this);
 
+    this->resize(1920, 1080);
+    //this->setFixedSize(1920, 1080);
+
     setCentralWidget(stackedWidget);
 
     stackedWidget->addWidget(loginScreen);
