@@ -58,15 +58,15 @@ void DeLaGazeClient::initializeConnections(){
         /*TODO: display UI changes, accordingly. Also add the setters for the displayed values when the player is logged in*/
             qDebug() << "Bullet speed UPGRADED!\n";
         });
-    connect(reqManager, &GameClientReqManager::upgradeBulletSpeedSuccess, this, [&]()
+    connect(reqManager, &GameClientReqManager::upgradeBulletSpeedFailed, this, [&]()
         {
             qDebug() << "Bullet speed FAILED!\n";
         });
-    connect(reqManager, &GameClientReqManager::upgradeBulletSpeedSuccess, this, [&]()
+    connect(reqManager, &GameClientReqManager::upgradeFireRateSuccess, this, [&]()
         {
             qDebug() << "FireRate UPGRADED!\n";
         });
-    connect(reqManager, &GameClientReqManager::upgradeBulletSpeedSuccess, this, [&]()
+    connect(reqManager, &GameClientReqManager::upgradeFireRateFailed, this, [&]()
         {
             qDebug() << "FireRate FAILED!\n";
         });
@@ -97,5 +97,8 @@ void DeLaGazeClient::initializeConnections(){
             break;
         }
         });
-    //connect(upgradeScreen,&,this,)
+    connect(upgradesScreen, &UpgradesScreen::backButtonClicked, this, [&]()
+        {
+            stackedWidget->setCurrentWidget(mainScreen);
+        });
 }

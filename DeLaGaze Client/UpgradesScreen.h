@@ -17,11 +17,13 @@ public:
 signals:
 	void bulletSpeedUpgradeRequest();
 	void fireRateUpgradeRequest();
+	void backButtonClicked();
 private slots:
-	void buyButtonClicked();
+	void buttonClicked();
 private:
 	QLabel* fireRateLabel;
 	QLabel* bulletSpeedLabel;
 	QPushButton* fireRateBuyButton;
 	QPushButton* bulletSpeedBuyButton;
+	QPushButton* backButton;
 };

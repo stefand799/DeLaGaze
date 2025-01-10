@@ -9,7 +9,8 @@ UpgradesScreen::UpgradesScreen(QWidget* parent)
 	fireRateLabel(new QLabel("Fire Rate", this)),
 	bulletSpeedLabel(new QLabel("Bullet Speed", this)),
 	fireRateBuyButton(new QPushButton("Buy\n(X points)", this)),
-	bulletSpeedBuyButton(new QPushButton("Buy\n(Y score)", this))
+	bulletSpeedBuyButton(new QPushButton("Buy\n(Y score)", this)),
+	backButton(new QPushButton("Back", this))
 {
 	int pointsPlaceholder = 3000;
 	int scorePlaceholder = 900;
@@ -34,7 +35,7 @@ UpgradesScreen::UpgradesScreen(QWidget* parent)
 		button->setFixedSize(300, 100);
 		button->setFont(buttonFont);
 
-		connect(button, &QPushButton::clicked, this, &UpgradesScreen::buyButtonClicked);
+		connect(button, &QPushButton::clicked, this, &UpgradesScreen::buttonClicked);
 		groupLayout->addRow(label, button);
 
 	}
@@ -42,16 +43,29 @@ UpgradesScreen::UpgradesScreen(QWidget* parent)
 	mainLayout->addLayout(groupLayout);
 	mainLayout->setAlignment(Qt::AlignCenter);
 	setLayout(mainLayout);
+
+	QFont backButtonFont;
+	backButtonFont.setPointSize(15);
+	backButton->setFixedSize(200, 50);
+	backButton->setFont(backButtonFont);
+	connect(backButton, &QPushButton::clicked, this, &UpgradesScreen::buttonClicked);
+
+	auto topLayout = new QHBoxLayout;
+	topLayout->addWidget(backButton);
+	topLayout->addStretch();
 }
 
 UpgradesScreen::~UpgradesScreen()
 {}
 
-void UpgradesScreen::buyButtonClicked() {
-	/*TODO: Server requests!!!!!*/
+void UpgradesScreen::buttonClicked() {
 	QPushButton* clickedButton = qobject_cast<QPushButton*>(sender());
 	if (clickedButton == nullptr) {
 		qWarning() << "Sender does not belong to the known buttons!";
+	}
+	else if (clickedButton==backButton)
+	{
+		emit backButtonClicked();
 	}
 	else if (clickedButton==bulletSpeedBuyButton)
 	{
