@@ -14,7 +14,7 @@ namespace database
             if (m_db.count<Player>() > 0) {
                 m_db.insert(Player(1, "ppp1", 1000, 1000, 1, false));
                 m_db.insert(Player(2, "ppp2", 1000, 1000, 1, false));
-            
+
                 std::cout << "Database populated with default players." << std::endl;
             }
             else {
@@ -100,12 +100,17 @@ namespace database
         }
     }
 
-    std::shared_ptr<Player> PlayerStorage::GetPlayerByName(const std::vector<std::shared_ptr<Player>>& playersVector, const std::string& name) {
-        for (const auto& player : playersVector) {
-                if (player && player->GetUsername() == name) {
-                    return player;
-                }
+    std::shared_ptr<Player> PlayerStorage::GetPlayerByName(const std::string& username) {
+        try {
+            auto player = m_db.get_all<Player>(sql::where(sql::c(&Player::GetUsername) == username));
+            if (!player.empty()) {
+                return std::make_shared<Player>(player.front());
+            }
+            return nullptr;
         }
-        return nullptr;
+        catch (const std::exception& e) {
+            std::cerr << "Error fetching player by name: " << e.what() << std::endl;
+            return nullptr;
+        }
     }
 }

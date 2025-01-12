@@ -40,8 +40,10 @@ namespace database
         bool UpdatePlayer(const std::shared_ptr<Player>& player);
         bool DeletePlayer(const std::string& username);
         std::vector<std::shared_ptr<Player>> GetAllPlayers();
-        std::shared_ptr<Player> GetPlayerByName(const std::vector<std::shared_ptr<Player>>& playersVector,
-            const std::string& name);
+        //std::shared_ptr<Player> GetPlayerByName(const std::vector<std::shared_ptr<Player>>& playersVector,
+        //    const std::string& name);
+        std::shared_ptr<Player> GetPlayerByName(const std::string& username);
+
     private:
         void PopulateStorage();
 

@@ -25,29 +25,29 @@ void Routes::Run(database::PlayerStorage& playerStorage)
 		});
 	CROW_ROUTE(m_app, "/player/move_up")([&, this](const crow::request& req)
 		{
-			auto player = playerStorage.GetPlayerByName(playerStorage.GetAllPlayers(), req.url_params.get("username"));
+			auto player = playerStorage.GetPlayerByName(req.url_params.get("username"));
 			return PlayerMoveUp(player, req);
 		});
 	CROW_ROUTE(m_app, "/player/move_down")([&, this](const crow::request& req)
 		{
-			auto player = playerStorage.GetPlayerByName(playerStorage.GetAllPlayers(), req.url_params.get("username"));
+			auto player = playerStorage.GetPlayerByName(req.url_params.get("username"));
 			return PlayerMoveDown(player, req);
 		});
 	CROW_ROUTE(m_app, "/player/move_left")([&, this](const crow::request& req)
 		{
-			auto player = playerStorage.GetPlayerByName(playerStorage.GetAllPlayers(), req.url_params.get("username"));
+			auto player = playerStorage.GetPlayerByName(req.url_params.get("username"));
 			return PlayerMoveLeft(player, req);
 		});
 	CROW_ROUTE(m_app, "/player/move_right")([&, this](const crow::request& req)
 		{
-			auto player = playerStorage.GetPlayerByName(playerStorage.GetAllPlayers(), req.url_params.get("username"));
+			auto player = playerStorage.GetPlayerByName(req.url_params.get("username"));
 			return PlayerMoveRight(player, req);
 		});
 	m_app.port(18080).multithreaded().run();
 }
 	
 crow::response Routes::LoginPlayer(database::PlayerStorage& playerStorage, const std::string& username) {
-	auto player = playerStorage.GetPlayerByName(playerStorage.GetAllPlayers(), username);
+	auto player = playerStorage.GetPlayerByName(username);
 
 	if (player != nullptr) {
 		// Create a JSON response with player details
@@ -99,7 +99,7 @@ crow::response Routes::AddPlayerToDatabase(database::PlayerStorage& playerStorag
 }
 crow::response Routes::UpdatePlayerFirerate(database::PlayerStorage& playerStorage, const crow::request& req, const std::string& username)
 {
-	auto player = playerStorage.GetPlayerByName(playerStorage.GetAllPlayers(),username);
+	auto player = playerStorage.GetPlayerByName(username);
 
 	if (player->GetPoints() >= 500) {
 		player->SetFireRate(player->GetFireRate() + 1);
@@ -116,7 +116,7 @@ crow::response Routes::UpdatePlayerFirerate(database::PlayerStorage& playerStora
 	}
 }
 crow::response Routes::UpdatePlayerBulletSpeed(database::PlayerStorage& playerStorage,  const crow::request& req,const std::string& username) {
-	auto player = playerStorage.GetPlayerByName(playerStorage.GetAllPlayers(), username);
+	auto player = playerStorage.GetPlayerByName(username);
 
 	if (!player) {
 		return crow::response(400, "Player not found");
