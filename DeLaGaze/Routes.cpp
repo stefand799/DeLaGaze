@@ -101,25 +101,36 @@ crow::response Routes::AddPlayerToDatabase(database::PlayerStorage& playerStorag
 }
 crow::response Routes::UpdatePlayerFirerate(database::PlayerStorage& playerStorage, const crow::request& req, std::shared_ptr<Player>& player, int x)
 {
-	player->SetFireRate(x);
-	if (playerStorage.UpdatePlayer(player)) {
-		return crow::response(200, "Player updated successfully");
+	if (player->GetPoints() >= 500) {
+		player->SetFireRate(player->GetFireRate() + 1);
+		player->SetPoints(player->GetPoints() - 500);
+		if (playerStorage.UpdatePlayer(player)) {
+			return crow::response(200, "Player updated successfully");
+		}
+		else {
+			return crow::response(500, "Error updating player");
+		}
 	}
 	else {
-		return crow::response(500, "Error updating player");
+		return crow::response(400, "Not enough points");
 	}
 }
 crow::response Routes::UpdatePlayerBulletSpeed(database::PlayerStorage& playerStorage, std::shared_ptr<Player>& player, const crow::request& req) {
-    if (!player) {
-        return crow::response(400, "Player not found");
-    }
-
-    player->SetBulletSpeedUpgrade(true);
-    if (playerStorage.UpdatePlayer(player)) {
-        return crow::response(200, "Player updated successfully");
-    } else {
-        return crow::response(500, "Error updating player");
-    }
+	if (!player) {
+		return crow::response(400, "Player not found");
+	}
+	if (player->GetScore() >= 10) {
+		player->SetBulletSpeedUpgrade(true);
+		if (playerStorage.UpdatePlayer(player)) {
+			return crow::response(200, "Player updated successfully");
+		}
+		else {
+			return crow::response(500, "Error updating player");
+		}
+	}
+	else {
+		return crow::response(400, "Your score is not high enough");
+	}
 }
 crow::response Routes::GetPlayersFromDatabase(database::PlayerStorage& playerStorage) 
 {
