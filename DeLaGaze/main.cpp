@@ -4,7 +4,7 @@
 
 int main() {
     Game game;
-    game.Start();
+    //game.Start();
     database::PlayerStorage playerStorage;
     Routes routes(playerStorage, game);
     std::vector<std::shared_ptr<Player>> p = playerStorage.GetAllPlayers();

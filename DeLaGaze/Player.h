@@ -48,7 +48,7 @@ public:
 	void SetPoints(uint16_t points);
 	void SetFireRate(uint8_t fireRate);
 	void SetBulletSpeedUpgrade(bool bulletSpeedUpgrade);
-	void SetHp(); //no parameter since we will use GetHp()-1
+	void SetHp(uint8_t hp);
 	void SetFacing(const Direction& facing);
 	void SetPlayerState(const State& playerState);
 	void SetX(const int& x);

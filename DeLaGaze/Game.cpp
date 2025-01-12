@@ -3,7 +3,8 @@
 
 Game::Game() :
 	m_isRunning{false},
-	m_targetFrameDuration{ std::chrono::nanoseconds(1000000000 / m_maxFps) }
+	m_targetFrameDuration{ std::chrono::nanoseconds(1000000000 / kMaxFps) },
+	m_startGameTime{Clock::now()}
 {
 #if defined(_WIN32) || defined(_WIN64) || defined(WIN32) || defined(WIN64)
 	m_shortestSleepTime = Nsec(1000000 / 64);
@@ -40,6 +41,9 @@ void Game::Start()
 	std::thread playerInputThread([this]() {
 		GetPlayerInputs();
 		});
+
+	m_startGameTime = Clock::now();
+
 	this->Run();
 
 	if (playerInputThread.joinable())
@@ -76,7 +80,11 @@ void Game::Update(){
 
 	if (CheckEndCondition()) {
 		m_isRunning = false;
+		return;
 	}
+
+	if (!m_hasDeathmatchStarted)
+		CheckDeathmatchCondition();
 }
 
 void Game::HandleCollisions()
@@ -304,23 +312,25 @@ void Game::Run()
 		m_deltaTime = fSecDur(frameInitialTimePoint - m_lastFrameTime).count();
 		m_lastFrameTime = frameInitialTimePoint;
 
-		bool isAtleatOnePlayerMove = false;
-		for (std::shared_ptr<Player>& player : m_players) {
-			if (player->GetMovingState()) {
-				isAtleatOnePlayerMove = true;
-				break;
-			}
-		}
-		if (!m_playerInputs.empty() || !m_bullets.empty() || isAtleatOnePlayerMove)
-		{
-			Update();
-#ifdef DEBUG
-			//HERE ONLY FOR MOMENTARY DISPLAY OF MAP FOR TESTING
-			__DEBUG_PRINT_MAP__();
-#endif // DEBUG
-
-
-		}
+		Update();
+		__DEBUG_PRINT_MAP__();
+//		bool isAtleatOnePlayerMove = false;
+//		for (std::shared_ptr<Player>& player : m_players) {
+//			if (player->GetMovingState()) {
+//				isAtleatOnePlayerMove = true;
+//				break;
+//			}
+//		}
+//		if (!m_playerInputs.empty() || !m_bullets.empty() || isAtleatOnePlayerMove)
+//		{
+//			Update();
+//#ifdef DEBUG
+//			//HERE ONLY FOR MOMENTARY DISPLAY OF MAP FOR TESTING
+//			__DEBUG_PRINT_MAP__();
+//#endif // DEBUG
+//
+//
+//		}
 
 		Clock::time_point frameFinalTimePoint = std::chrono::high_resolution_clock::now();
 		Nsec frameTime = std::chrono::duration_cast<Nsec>(frameFinalTimePoint - frameInitialTimePoint);
@@ -338,6 +348,31 @@ void Game::Run()
 
 	HandleEndOfGameActions();
 
+}
+
+void Game::CheckDeathmatchCondition()
+{
+	if (std::chrono::duration(Clock::now() - m_startGameTime) > kTimeUntilDeathmatch) {
+		m_hasDeathmatchStarted = true;
+	}
+
+	uint16_t playersAlive = 0;
+	for (std::shared_ptr<Player>& player : m_players) {
+		if (player->GetHp() > 0) {
+			playersAlive++;
+		}
+	}
+	if (playersAlive <= 2) {
+		m_hasDeathmatchStarted = true;
+	}
+
+	if (m_hasDeathmatchStarted) {
+		for (std::shared_ptr<Player>& player : m_players) {
+			if (player->GetHp() > 0) {
+				player->SetHp(1);
+			}
+		}
+	}
 }
 
 bool Game::CheckEndCondition()
