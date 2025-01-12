@@ -15,7 +15,6 @@ void BombTrapBlock::Print() const {
 }
 
 void BombTrapBlock::OnBreak() {
-	//Possibly add boom animation
 	if (!m_hasExploded) {
 		m_hasExploded = true;
 		Boom();

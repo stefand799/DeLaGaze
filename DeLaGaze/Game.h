@@ -14,13 +14,6 @@
 #include <chrono>
 #include <thread>
 
-#define DEBUG
-
-//These are included only for the command-line UI for testing and will be removed after ui can be done in QT
-#include <WinSock2.h>
-#include<Windows.h>
-#include <conio.h>
-
 
 
 class Game {
@@ -40,7 +33,7 @@ private:
 	//Usings
 	using Clock = std::chrono::high_resolution_clock;
 	using Nsec = std::chrono::nanoseconds;
-	using fSecDur = std::chrono::duration<float>; //floating point second
+	using fSecDur = std::chrono::duration<float>;
 
 
 	//Methods
@@ -60,10 +53,11 @@ private:
 
 	void RemoveDestroyedObjects();
 
-	void GetPlayerInputs();
+	
+	//void GetPlayerInputs();
 
 	//Constants
-	const uint16_t kMaxFps = 30; //for windows as of now the maximum fps achievable with the hybrid sleep and busy-waiting method in use is 64hz
+	const uint16_t kMaxFps = 30;
 
 	const std::chrono::seconds kTimeUntilDeathmatch = std::chrono::seconds(177);
 
@@ -75,8 +69,7 @@ private:
 	//Atributes
 	Map m_map;
 	std::vector<std::shared_ptr<Player>> m_players;
-	std::vector<std::shared_ptr<Bullet>> m_bullets; //We could probably use shared_ptr so the bullets get deleted immediately when they go out of scope
-	//std::vector<Object*> m_markedForDestruction; //Object*, because currently I have no clue if we're going to alter additional logic and would be optimal not to immediately delete them when they get out of scope
+	std::vector<std::shared_ptr<Bullet>> m_bullets; 
 	
 	struct ObjectCollision {
 		ObjectCollision(std::shared_ptr<Object> obj1, std::shared_ptr<Object> obj2, float collisionTime) :
@@ -108,7 +101,7 @@ private:
 	};
 
 	std::priority_queue<ObjectCollision> m_collisions;
-	float m_deltaTime; //The time from the last frame
+	float m_deltaTime;
 	Clock::time_point m_lastFrameTime;
 
 	Nsec m_targetFrameDuration;
@@ -123,9 +116,5 @@ private:
 	std::queue<std::pair<std::shared_ptr<Player>,char>> m_playerInputs;
 
 	std::vector<std::vector<uint8_t>> m_teamLeaderboard;
-
-	//DEBUG METHODS:
-	
-	void __DEBUG_PRINT_MAP__();
 
 };

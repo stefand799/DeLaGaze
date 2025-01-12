@@ -21,7 +21,6 @@ public:
 	friend std::tuple<std::shared_ptr<Object>, std::shared_ptr<Object>, float> GetBulletToBulletColision(std::shared_ptr<Bullet> first, std::shared_ptr<Bullet> second);
 	virtual crow::json::wvalue toJson() override;
 	std::string DirectionToString(Direction direction);
-	//std::pair<int, int> GetPosition() const { return {(int)m_x,(int)m_y}; };
 private:
 	//Constants
 	const float kRadius = 0.15f;

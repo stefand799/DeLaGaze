@@ -21,10 +21,10 @@ Game::~Game()
 void Game::Start()
 {
 	if(!m_map.Generate()) return;
-	//Creating players
+	//Creating players EXAMPLE
 
-	m_players.emplace_back(std::move(std::make_shared<Player>(&m_map, std::pair<int, int>{ 0, 0 }, 1, "Player1", 0, 3, true, Direction::South, State::Idle, 0 ,0 ,3)));
-	m_map[0][0] = m_players[0];
+	//m_players.emplace_back(std::move(std::make_shared<Player>(&m_map, std::pair<int, int>{ 0, 0 }, 1, "Player1", 0, 3, true, Direction::South, State::Idle, 0 ,0 ,3)));
+	//m_map[0][0] = m_players[0];
 
 	//testing with another player!
 	//m_players.emplace_back(std::move(std::make_shared<Player>(&m_map, std::pair<int, int>{ m_map.GetMapWidth() - 1, 0 }, 1, "Player2", 0, 3, true, Direction::South, State::Idle, 0 ,1, 3)));
@@ -32,45 +32,47 @@ void Game::Start()
 	//m_players.emplace_back(std::move(std::make_shared<Player>(&m_map, std::pair<int, int>{ m_map.GetMapWidth() - 1, m_map.GetMapHeight() - 1 }, 1, "Player3", 0, 3, true, Direction::South, State::Idle, 0, 2, 3)));
 	//m_map[m_map.GetMapHeight()-1][m_map.GetMapWidth() - 1] = m_players[2];
 
-	//ONLY FOR TESTING
-#ifdef DEBUG
-	__DEBUG_PRINT_MAP__();
-#endif // DEBUG
-
-
 	m_isRunning = true;
 	m_lastFrameTime = std::chrono::high_resolution_clock::now();
-	std::thread playerInputThread([this]() {
-		GetPlayerInputs();
-		});
+
+	//EXAMPLE PLAYER INPUT ON OTHER THREAD
+	// shouldn't be needed since routes are multithreaded, but I left it here for example and refference
+	//std::thread playerInputThread([this]() {
+	//	GetPlayerInputs();
+	//	});
 
 	m_startGameTime = Clock::now();
 
 	this->Run();
 
-	if (playerInputThread.joinable())
-		playerInputThread.join();
+	//Part of the example for thread use for input from above
+	//if (playerInputThread.joinable())
+	//	playerInputThread.join();
 }
 
 void Game::Update(){
 	//Handle player input
-	//for now only one player
-	while (!m_playerInputs.empty()) {
-		auto [currPlayer,currInput] = m_playerInputs.front();
-		m_playerInputs.pop();
-		if (currInput == 27) m_isRunning = false; //escape
-		if (currInput == 'w' || currInput == 'W') currPlayer->MoveUp();
-		if (currInput == 'a' || currInput == 'A') currPlayer->MoveLeft();
-		if (currInput == 's' || currInput == 'S') currPlayer->MoveDown();
-		if (currInput == 'd' || currInput == 'D') currPlayer->MoveRight();
-		if (currInput == 1) currPlayer->FaceNorth();
-		if (currInput == 2) currPlayer->FaceSouth();
-		if (currInput == 3) currPlayer->FaceWest();
-		if (currInput == 4) currPlayer->FaceEast();
-		if (currInput == ' ') currPlayer->Shoot(m_bullets);
-	}
+	//for now only one player EXAMPLE
+	
 
-	//Handle bullets Update;
+
+	//while (!m_playerInputs.empty()) {
+	//	auto [currPlayer,currInput] = m_playerInputs.front();
+	//	m_playerInputs.pop();
+	//	if (currInput == 27) m_isRunning = false; //escape
+	//	if (currInput == 'w' || currInput == 'W') currPlayer->MoveUp();
+	//	if (currInput == 'a' || currInput == 'A') currPlayer->MoveLeft();
+	//	if (currInput == 's' || currInput == 'S') currPlayer->MoveDown();
+	//	if (currInput == 'd' || currInput == 'D') currPlayer->MoveRight();
+	//	if (currInput == 1) currPlayer->FaceNorth();
+	//	if (currInput == 2) currPlayer->FaceSouth();
+	//	if (currInput == 3) currPlayer->FaceWest();
+	//	if (currInput == 4) currPlayer->FaceEast();
+	//	if (currInput == ' ') currPlayer->Shoot(m_bullets);
+	//}
+
+
+
 	for (std::shared_ptr<Bullet>& bullet : m_bullets)
 		bullet->Move(m_deltaTime);
 
@@ -317,34 +319,14 @@ void Game::Run()
 		m_lastFrameTime = frameInitialTimePoint;
 
 		Update();
-		__DEBUG_PRINT_MAP__();
-//		bool isAtleatOnePlayerMove = false;
-//		for (std::shared_ptr<Player>& player : m_players) {
-//			if (player->GetMovingState()) {
-//				isAtleatOnePlayerMove = true;
-//				break;
-//			}
-//		}
-//		if (!m_playerInputs.empty() || !m_bullets.empty() || isAtleatOnePlayerMove)
-//		{
-//			Update();
-//#ifdef DEBUG
-//			//HERE ONLY FOR MOMENTARY DISPLAY OF MAP FOR TESTING
-//			__DEBUG_PRINT_MAP__();
-//#endif // DEBUG
-//
-//
-//		}
 
 		Clock::time_point frameFinalTimePoint = std::chrono::high_resolution_clock::now();
 		Nsec frameTime = std::chrono::duration_cast<Nsec>(frameFinalTimePoint - frameInitialTimePoint);
 		Nsec sleepTime{ m_targetFrameDuration - frameTime };
 		if (frameTime < m_targetFrameDuration) {
 			Nsec remainingSleepTime = sleepTime;
-			//TODO: add hybrid frame limiter using std::this_thread::sleep_for(SLEEPTIME_OR_SOME_DURATION) before the current busy-waiting
-			// but find a way to work around or with the windows 64hz resolution clock that limits the sleep precision without overexagerating context switching
-			if(sleepTime >= Nsec((1000000/64)*2)) std::this_thread::sleep_for(sleepTime / 2); //the 64 comes from the 64hz windows clock
-			while (Clock::now() < frameFinalTimePoint + sleepTime); //busy waiting
+			if(sleepTime >= Nsec((1000000/64)*2)) std::this_thread::sleep_for(sleepTime / 2);
+			while (Clock::now() < frameFinalTimePoint + sleepTime);
 		}
 
 
@@ -386,6 +368,7 @@ bool Game::CheckEndCondition()
 	for (std::shared_ptr<Player>& player : m_players) {
 		teamHps[player->GetTeamId()] += player->GetHp();
 	}
+	if (teamHps.size() == 0) return true;
 	size_t eliminatedTeamsCount = 0;
 	size_t currPos = m_teamLeaderboard.size();
 	for (auto [id, hp] : teamHps) {
@@ -417,7 +400,6 @@ void Game::HandleEndOfGameActions()
 			uint8_t playerTeamId = player->GetTeamId();
 			if (std::find(m_teamLeaderboard[leaderboardSize - 1].begin(), m_teamLeaderboard[leaderboardSize - 1].end(), playerTeamId) != m_teamLeaderboard[leaderboardSize - 1].end()) {
 				player->SetPoints(player->GetPoints() + 2);
-				//Maybe print winners if we have time left for this :(
 			}
 		}
 	}
@@ -432,48 +414,30 @@ void Game::HandleEndOfGameActions()
 	// TODO: SAVE SCORE AND POINTS TO DATABASE
 }
 
-//for now only for testing with one player but in the future may collect input data from players as part of the server part
-void Game::GetPlayerInputs()
-{
-	while(m_isRunning) {
-		char keyboardInput = _getch();
-
-		if (keyboardInput == -32) { //Arrow input
-			char arrowKey = _getch();
-			if(arrowKey == 'H') //up
-				m_playerInputs.push({ m_players[0], 1});
-			if(arrowKey == 'P') //down
-				m_playerInputs.push({ m_players[0], 2 });
-			if (arrowKey == 'K') //left
-				m_playerInputs.push({ m_players[0], 3 });
-			if (arrowKey == 'M') //right
-				m_playerInputs.push({ m_players[0], 4 });
-		}
-		else 
-			m_playerInputs.push({ m_players[0],keyboardInput});
-		if (keyboardInput == 27) break; // ESCAPE, to ensure that the loop is not run again before the other thread changes m_isRunning to false
-	}
-}
-
-void Game::__DEBUG_PRINT_MAP__()
-{
-	system("cls");
-	for (size_t line = 0; line < m_map.GetMapHeight(); ++line) {
-		for (size_t column = 0; column < m_map.GetMapWidth(); ++column) {
-			bool isBulletHere = false;
-			for (const std::shared_ptr<Bullet>& currBullet : m_bullets) {
-				if ((int)currBullet->GetY() == line && (int)currBullet->GetX() == column) {
-					currBullet->Print();
-					isBulletHere = true;
-					break;
-				}
-			}
-			if(!isBulletHere) m_map[line][column]->Print();
-		}
-		std::cout << "\n";
-	}
-}
-
 Map& Game::GetMap() {
 	return m_map;
 }
+
+//for now only for testing with one player but in the future may collect input data from players as part of the server part
+// EXAMPLE
+//void Game::GetPlayerInputs()
+//{
+//	while(m_isRunning) {
+//		char keyboardInput = _getch();
+//
+//		if (keyboardInput == -32) { //Arrow input
+//			char arrowKey = _getch();
+//			if(arrowKey == 'H') //up
+//				m_playerInputs.push({ m_players[0], 1});
+//			if(arrowKey == 'P') //down
+//				m_playerInputs.push({ m_players[0], 2 });
+//			if (arrowKey == 'K') //left
+//				m_playerInputs.push({ m_players[0], 3 });
+//			if (arrowKey == 'M') //right
+//				m_playerInputs.push({ m_players[0], 4 });
+//		}
+//		else 
+//			m_playerInputs.push({ m_players[0],keyboardInput});
+//		if (keyboardInput == 27) break; // ESCAPE, to ensure that the loop is not run again before the other thread changes m_isRunning to false
+//	}
+//}
