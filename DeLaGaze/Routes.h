@@ -14,7 +14,7 @@ class Routes
 		crow::response LoginPlayer(database::PlayerStorage& playerStorage, const std::string& username);
 		crow::response AddPlayerToDatabase(database::PlayerStorage& playerStorage, const crow::request& req);
 		crow::response UpdatePlayerFirerate(database::PlayerStorage& playerStorage, const crow::request& req, const std::string& username);
-		crow::response UpdatePlayerBulletSpeed(database::PlayerStorage& playerStorage, std::shared_ptr<Player>& player, const crow::request& req);
+		crow::response UpdatePlayerBulletSpeed(database::PlayerStorage& playerStorage, const crow::request& req,const std::string& username);
 		crow::response GetPlayersFromDatabase(database::PlayerStorage& playerStorage);
 		crow::response FinishGame(database::PlayerStorage& playerStorage, const crow::request& req, std::vector<Player>& Players);
 		crow::response JoinGame(database::PlayerStorage& playerStorage, const crow::request& req, Player& Players);

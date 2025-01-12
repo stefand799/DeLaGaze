@@ -21,8 +21,7 @@ void Routes::Run(database::PlayerStorage& playerStorage)
 		});
 	CROW_ROUTE(m_app, "/players/update_bullet_speed/<string>").methods("POST"_method)([&, this](const crow::request& req, const std::string& username)
 		{
-			auto player = playerStorage.GetPlayerByName(playerStorage.GetAllPlayers(), req.url_params.get("username"));
-			return UpdatePlayerBulletSpeed(playerStorage, player, req);
+			return UpdatePlayerBulletSpeed(playerStorage, req,username);
 		});
 	CROW_ROUTE(m_app, "/player/move_up")([&, this](const crow::request& req)
 		{
@@ -116,9 +115,14 @@ crow::response Routes::UpdatePlayerFirerate(database::PlayerStorage& playerStora
 		return crow::response(400, "Not enough points");
 	}
 }
-crow::response Routes::UpdatePlayerBulletSpeed(database::PlayerStorage& playerStorage, std::shared_ptr<Player>& player, const crow::request& req) {
+crow::response Routes::UpdatePlayerBulletSpeed(database::PlayerStorage& playerStorage,  const crow::request& req,const std::string& username) {
+	auto player = playerStorage.GetPlayerByName(playerStorage.GetAllPlayers(), username);
+
 	if (!player) {
 		return crow::response(400, "Player not found");
+	}
+	if (player->GetBulletSpeedUpgrade()){
+		return crow::response(200, "Upgrade already purchased");
 	}
 	if (player->GetScore() >= 10) {
 		player->SetBulletSpeedUpgrade(true);
