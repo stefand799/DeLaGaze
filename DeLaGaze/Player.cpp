@@ -1,5 +1,6 @@
 #include "Player.h"
 #include "Bullet.h"
+#include "DeadlyBlock.h"
 
 // Constructors
 
@@ -27,7 +28,8 @@ Player::Player(Map* m, const std::pair<int, int>& pos, const int& id, const std:
 	m_ySpeed{ 0.0f },
 	m_isMoving{ false },
 	m_endOfMove{ Clock::now() },
-	m_lastShotTime{ Clock::now() }
+	m_lastShotTime{ Clock::now() },
+	m_lastDeathTime{ Clock::now() }
 {}
 Player::Player(const int& id, const std::string& username, uint8_t score, uint16_t points, uint8_t bulletSpeed, bool bulletSpeedUpgrade)
 	: m_id(id),
@@ -188,6 +190,11 @@ void Player::MoveUp()
 		return;
 	}
 
+	if (std::shared_ptr<DeadlyBlock> deadlyBlock = std::dynamic_pointer_cast<DeadlyBlock>((*m_playerMap)[newY][newX])) {
+		this->OnDeath();
+		return;
+	}
+
 	if ((*m_playerMap)[newY][newX]->GetType() == ObjectType::Pathway)
 	{
 		(*m_playerMap)[newY][newX].swap((*m_playerMap)[m_mapY][m_mapX]);
@@ -210,6 +217,11 @@ void Player::MoveDown()
 	}
 
 	if (!(*m_playerMap)[newY][newX]->CanMoveHere()) {
+		return;
+	}
+
+	if (std::shared_ptr<DeadlyBlock> deadlyBlock = std::dynamic_pointer_cast<DeadlyBlock>((*m_playerMap)[newY][newX])) {
+		this->OnDeath();
 		return;
 	}
 
@@ -238,6 +250,11 @@ void Player::MoveLeft()
 		return;
 	}
 
+	if (std::shared_ptr<DeadlyBlock> deadlyBlock = std::dynamic_pointer_cast<DeadlyBlock>((*m_playerMap)[newY][newX])) {
+		this->OnDeath();
+		return;
+	}
+
 	if ((*m_playerMap)[newY][newX]->GetType() == ObjectType::Pathway)
 	{
 		(*m_playerMap)[newY][newX].swap((*m_playerMap)[m_mapY][m_mapX]);
@@ -260,6 +277,11 @@ void Player::MoveRight()
 	}
 
 	if (!(*m_playerMap)[newY][newX]->CanMoveHere()) {
+		return;
+	}
+
+	if (std::shared_ptr<DeadlyBlock> deadlyBlock = std::dynamic_pointer_cast<DeadlyBlock>((*m_playerMap)[newY][newX])) {
+		this->OnDeath();
 		return;
 	}
 
@@ -306,6 +328,13 @@ void Player::Shoot(std::vector<std::shared_ptr<Bullet>>& bullets) {
 	bullets.emplace_back(std::move(std::make_shared<Bullet>(std::dynamic_pointer_cast<Player>((*m_playerMap)[m_mapY][m_mapX]) , m_x, m_y, bulletSpeed, m_facing)));
 	m_lastShotTime = Clock::now();
 }
+void Player::Kill()
+{
+	if (fSecDur(Clock::now() - m_lastDeathTime).count() < kSpawnProtection) return;
+	OnDeath();
+	m_lastDeathTime = Clock::now();
+}
+
 void Player::OnDeath()
 {
 	m_hp--;
@@ -317,15 +346,21 @@ void Player::OnDeath()
 		(*m_playerMap)[m_mapY][m_mapX] = std::make_shared<Pathway>(std::pair<size_t, size_t>{m_mapY, m_mapX});
 	}
 }
+
 void Player::Respawn() {
-	(*m_playerMap)[m_mapY][m_mapX].swap((*m_playerMap)[m_spawnpoint.second][m_spawnpoint.first]);
-	(*m_playerMap)[m_mapY][m_mapX] = std::make_shared<Pathway>(std::pair<size_t, size_t>{m_mapY, m_mapX});
-	m_mapX = m_spawnpoint.first;
-	m_mapY = m_spawnpoint.second;
+	if (m_mapX != m_spawnpoint.first || m_mapY != m_spawnpoint.second)
+	{
+		if (std::shared_ptr<Player> otherPlayerOnSpawnpoint = std::dynamic_pointer_cast<Player>((*m_playerMap)[m_spawnpoint.second][m_spawnpoint.first])) {
+			otherPlayerOnSpawnpoint->OnDeath();
+		}
+		(*m_playerMap)[m_mapY][m_mapX].swap((*m_playerMap)[m_spawnpoint.second][m_spawnpoint.first]);
+		(*m_playerMap)[m_mapY][m_mapX] = std::make_shared<Pathway>(std::pair<size_t, size_t>{m_mapY, m_mapX});
+		m_mapX = m_spawnpoint.first;
+		m_mapY = m_spawnpoint.second;
+	}
 	m_x = m_mapX + 0.5f;
 	m_y = m_mapY + 0.5f;
 	m_endOfMove = Clock::now();
-	//TODO: Check if there is a player or possition is accessible
 }
 
 void Player::Print() const

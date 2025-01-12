@@ -289,7 +289,7 @@ void Game::RemoveDestroyedObjects()
 			continue;
 		}
 		if (std::shared_ptr<Player> player = std::dynamic_pointer_cast<Player>(obj)) {
-			player->OnDeath();
+			player->Kill();
 			continue;
 		}
 	}
@@ -371,6 +371,7 @@ void Game::CheckDeathmatchCondition()
 	}
 
 	if (m_hasDeathmatchStarted) {
+		m_map.InitiateShrinking();
 		for (std::shared_ptr<Player>& player : m_players) {
 			if (player->GetHp() > 0) {
 				player->SetHp(1);

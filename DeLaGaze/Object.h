@@ -11,7 +11,7 @@ public:
 		Pathway,
 		UnbreakableBlock,
 		BreakableBlock,
-		BombTrapBlock
+		BombTrapBlock,
 	};
 	virtual ObjectType GetType() const = 0;
 

@@ -36,6 +36,7 @@ public:
 public:
 
 	void Shrink();
+	void InitiateShrinking();
 
 	bool Generate(
 		const std::vector<uint8_t>& probabilities = std::vector<uint8_t>{
@@ -100,7 +101,7 @@ private:
 		kMaxMapWidth { 20 }, kMaxMapHeight  { 12 };
 	const uint8_t kTotalBombCount{ 3 };
 
-	const std::chrono::seconds kShrinkCooldown = std::chrono::seconds(2);
+	const std::chrono::seconds kShrinkCooldown = std::chrono::seconds(15);
 
 	//Atributes
 private:

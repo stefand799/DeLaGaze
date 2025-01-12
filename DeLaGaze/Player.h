@@ -70,6 +70,7 @@ public:
 	
 	// Functionalities
 	void Shoot(std::vector<std::shared_ptr<Bullet>>& bullets);
+	void Kill();
 	void OnDeath();
 	void Respawn();
 
@@ -94,6 +95,8 @@ private:
 	};
 	const float kDefaultMoveCooldown = 0.25f;
 	const float kPlayerHitBoxRadius = 0.3f;
+	const float kSpawnProtection = 3.0f;
+
 	//Atributes
 	int m_id;
 	std::string m_username;
@@ -117,6 +120,7 @@ private:
 	bool m_isMoving;
 	Clock::time_point m_endOfMove;
 	std::pair<int, int> m_spawnpoint;
+	Clock::time_point m_lastDeathTime;
 
 	uint8_t m_teamId;
 };

@@ -1,7 +1,8 @@
 #include "DeadlyBlock.h"
 
-DeadlyBlock::DeadlyBlock(std::pair<size_t, size_t> pos) : Block{ pos }
+DeadlyBlock::DeadlyBlock(std::pair<size_t, size_t> pos) : UnbreakableBlock{ pos }
 {
+
 }
 
 void DeadlyBlock::Print() const

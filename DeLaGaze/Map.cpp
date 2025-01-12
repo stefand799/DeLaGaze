@@ -70,7 +70,7 @@ void Map::Shrink()
 	if (m_isGenerated == false) return;
 
 	Clock::time_point now = Clock::now();
-	if (std::chrono::duration<float>(now - m_lastShrinkTime) < kShrinkCooldown)
+	if (std::chrono::duration<float>(now - m_lastShrinkTime) < (m_shrinkOrder==0? std::chrono::seconds(3) : kShrinkCooldown))
 		return;
 	if (m_shrinkOrder * 2 > std::min(m_mapWidth, m_mapHeight)) 
 		return;
@@ -103,6 +103,11 @@ void Map::Shrink()
 	}
 
 	m_shrinkOrder++;
+}
+
+void Map::InitiateShrinking()
+{
+	m_lastShrinkTime = Clock::now();
 }
 
 bool Map::Generate(const std::vector<uint8_t>& probabilities, uint32_t seed)

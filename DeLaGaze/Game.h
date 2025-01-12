@@ -65,7 +65,7 @@ private:
 	//Constants
 	const uint16_t kMaxFps = 30; //for windows as of now the maximum fps achievable with the hybrid sleep and busy-waiting method in use is 64hz
 
-	const std::chrono::seconds kTimeUntilDeathmatch = std::chrono::seconds(15);
+	const std::chrono::seconds kTimeUntilDeathmatch = std::chrono::seconds(177);
 
 
 	Nsec m_shortestSleepTime;

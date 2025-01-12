@@ -60,7 +60,7 @@ void BombTrapBlock::Boom()
 				continue;
 			}
 			if (std::shared_ptr<Player> player = std::dynamic_pointer_cast<Player>((*m_map)[y][x])) {
-				player->OnDeath();
+				player->Kill();
 				continue;
 			}
 		}
