@@ -22,6 +22,7 @@ public:
 	std::string ObjectTypeToString(int i, int j);
 	~Map() = default;
 
+
 	//Getter
 	const std::vector<std::shared_ptr<Object>>& operator[](size_t line) const;
 	
@@ -33,6 +34,8 @@ public:
 
 	//Methods
 public:
+
+	void Shrink();
 
 	bool Generate(
 		const std::vector<uint8_t>& probabilities = std::vector<uint8_t>{
@@ -62,6 +65,9 @@ private:
 	void BreakUnbreakableOnBestPath(std::vector<std::vector<std::pair<size_t, size_t>>> path, std::pair<size_t, size_t> start, std::pair<size_t, size_t> end);
 
 private:
+	//Usings
+	using Clock = std::chrono::high_resolution_clock;
+
 	// Nested Node class for Dijkstra
 	class BestPathNode {
 	public:
@@ -94,6 +100,8 @@ private:
 		kMaxMapWidth { 20 }, kMaxMapHeight  { 12 };
 	const uint8_t kTotalBombCount{ 3 };
 
+	const std::chrono::seconds kShrinkCooldown = std::chrono::seconds(2);
+
 	//Atributes
 private:
 	/*TODO: change matrix to shared_ptr, and all pertaining methods to accomodate for the new usage (matrix.get().Method())*/
@@ -103,7 +111,10 @@ private:
 	uint32_t m_seed;
 	std::mt19937 m_generator; // Mersenne Twister 19937 generator
 
-	bool m_alreadyGenerated : 1;
+	Clock::time_point m_lastShrinkTime;
+	int8_t m_shrinkOrder;
+
+	bool m_isGenerated : 1;
 
 public:
 	bool IsWithinBounds(const int& i, const int& j) const;

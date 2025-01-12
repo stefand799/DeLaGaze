@@ -1,12 +1,14 @@
 #include "Map.h"
-
+#include "Player.h"
+#include "DeadlyBlock.h"
 
 
 Map::Map() :
-	m_alreadyGenerated{false},
+	m_isGenerated{false},
 	m_seed{0},
 	m_mapHeight{0},
-	m_mapWidth{0}
+	m_mapWidth{0},
+	m_shrinkOrder{0}
 {
 }
 
@@ -63,10 +65,52 @@ std::vector<std::shared_ptr<Object>>& Map::operator[](size_t line)
 
 
 
+void Map::Shrink()
+{
+	if (m_isGenerated == false) return;
+
+	Clock::time_point now = Clock::now();
+	if (std::chrono::duration<float>(now - m_lastShrinkTime) < kShrinkCooldown)
+		return;
+	if (m_shrinkOrder * 2 > std::min(m_mapWidth, m_mapHeight)) 
+		return;
+
+	m_lastShrinkTime = now;
+	for (int8_t x = m_shrinkOrder; x < m_mapWidth - m_shrinkOrder; x++) {
+
+		if (std::shared_ptr<Player> player = std::dynamic_pointer_cast<Player>(m_matrix[m_shrinkOrder][x])) {
+			player->OnDeath();
+		}
+		m_matrix[m_shrinkOrder][x] = std::make_shared<DeadlyBlock>(std::pair<size_t, size_t>{x, m_shrinkOrder});
+
+		if (std::shared_ptr<Player> player = std::dynamic_pointer_cast<Player>(m_matrix[m_mapHeight - 1 - m_shrinkOrder][x])) {
+			player->OnDeath();
+		}
+		m_matrix[m_mapHeight - 1 - m_shrinkOrder][x] = std::make_shared<DeadlyBlock>(std::pair<size_t, size_t>{x, m_mapHeight - 1 - m_shrinkOrder});
+	}
+
+	for (int8_t y = m_shrinkOrder; y < m_mapHeight - m_shrinkOrder; y++) {
+
+		if (std::shared_ptr<Player> player = std::dynamic_pointer_cast<Player>(m_matrix[y][m_shrinkOrder])) {
+			player->OnDeath();
+		}
+		m_matrix[y][m_shrinkOrder] = std::make_shared<DeadlyBlock>(std::pair<size_t, size_t>{m_shrinkOrder, y});
+
+		if (std::shared_ptr<Player> player = std::dynamic_pointer_cast<Player>(m_matrix[y][m_mapWidth - 1 - m_shrinkOrder])) {
+			player->OnDeath();
+		}
+		m_matrix[y][m_mapWidth - 1 - m_shrinkOrder] = std::make_shared<DeadlyBlock>(std::pair<size_t, size_t>{m_mapWidth - 1 - m_shrinkOrder, y});
+	}
+
+	m_shrinkOrder++;
+}
+
 bool Map::Generate(const std::vector<uint8_t>& probabilities, uint32_t seed)
 {
 	//Ensuring there is no second call of generate
-	if (m_alreadyGenerated) return false;
+	if (m_isGenerated) return false;
+
+	m_lastShrinkTime = Clock::now();
 
 	//Initializing objects
 	m_probabilities = probabilities;
@@ -87,7 +131,7 @@ bool Map::Generate(const std::vector<uint8_t>& probabilities, uint32_t seed)
 	BreakUnbreakableOnBestPath(FindBestPath({ 0,0 }, { m_mapWidth - 1,m_mapHeight - 1 }), { 0,0 }, { m_mapWidth - 1,m_mapHeight - 1 });
 	BreakUnbreakableOnBestPath(FindBestPath({ m_mapWidth - 1 ,0 }, { 0 ,m_mapHeight - 1 }), { m_mapWidth - 1 ,0 }, { 0 ,m_mapHeight - 1 });
 
-	m_alreadyGenerated = true;
+	m_isGenerated = true;
 	return true;
 
 }

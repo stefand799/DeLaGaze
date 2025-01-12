@@ -27,8 +27,10 @@ void Game::Start()
 	m_map[0][0] = m_players[0];
 
 	//testing with another player!
-	//m_players.emplace_back(std::move(std::make_shared<Player>(&m_map, std::pair<int, int>{ m_map.GetMapWidth() - 1, 0 }, 1, "Player1", 0, 3, true, Direction::South, State::Idle, 0 ,1, 3)));
+	//m_players.emplace_back(std::move(std::make_shared<Player>(&m_map, std::pair<int, int>{ m_map.GetMapWidth() - 1, 0 }, 1, "Player2", 0, 3, true, Direction::South, State::Idle, 0 ,1, 3)));
 	//m_map[0][m_map.GetMapWidth() - 1] = m_players[1];
+	//m_players.emplace_back(std::move(std::make_shared<Player>(&m_map, std::pair<int, int>{ m_map.GetMapWidth() - 1, m_map.GetMapHeight() - 1 }, 1, "Player3", 0, 3, true, Direction::South, State::Idle, 0, 2, 3)));
+	//m_map[m_map.GetMapHeight()-1][m_map.GetMapWidth() - 1] = m_players[2];
 
 	//ONLY FOR TESTING
 #ifdef DEBUG
@@ -85,6 +87,8 @@ void Game::Update(){
 
 	if (!m_hasDeathmatchStarted)
 		CheckDeathmatchCondition();
+	else
+		m_map.Shrink();
 }
 
 void Game::HandleCollisions()
