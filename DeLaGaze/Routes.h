@@ -13,7 +13,7 @@ class Routes
 	private:
 		crow::response LoginPlayer(database::PlayerStorage& playerStorage, const std::string& username);
 		crow::response AddPlayerToDatabase(database::PlayerStorage& playerStorage, const crow::request& req);
-		crow::response UpdatePlayerFirerate(database::PlayerStorage& playerStorage, const crow::request& req, std::shared_ptr<Player>& player);
+		crow::response UpdatePlayerFirerate(database::PlayerStorage& playerStorage, const crow::request& req, const std::string& username);
 		crow::response UpdatePlayerBulletSpeed(database::PlayerStorage& playerStorage, std::shared_ptr<Player>& player, const crow::request& req);
 		crow::response GetPlayersFromDatabase(database::PlayerStorage& playerStorage);
 		crow::response FinishGame(database::PlayerStorage& playerStorage, const crow::request& req, std::vector<Player>& Players);

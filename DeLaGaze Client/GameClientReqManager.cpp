@@ -58,7 +58,7 @@ void GameClientReqManager::loginOrCreatePlayer(const std::string& username) {
 void GameClientReqManager::upgradeFireRate()
 {
 	auto response = cpr::Post(
-		cpr::Url{ serverUrl + "/player/update_firerate/" + m_username },
+		cpr::Url{ serverUrl + "/players/update_firerate/" + m_username },
 		cpr::Header{ {"Content-Type","application/json"} }
 	);
 
@@ -71,7 +71,7 @@ void GameClientReqManager::upgradeFireRate()
 void GameClientReqManager::upgradeBulletSpeed()
 {
 	auto response = cpr::Post(
-		cpr::Url{ serverUrl + "/player/update_bullet_speed/"+m_username },
+		cpr::Url{ serverUrl + "/players/update_bullet_speed/"+m_username },
 		cpr::Header{ {"Content-Type","application/json"} }
 	);
 

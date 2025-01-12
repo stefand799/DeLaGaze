@@ -15,12 +15,11 @@ void Routes::Run(database::PlayerStorage& playerStorage)
     CROW_ROUTE(m_app, "/players/add").methods("POST"_method)([&,this](const crow::request& req) {
 		return AddPlayerToDatabase(playerStorage, req);
         });
-	CROW_ROUTE(m_app, "/players/update_firerate/<string>")([&,this](const crow::request& req, const std::string& username)
+	CROW_ROUTE(m_app, "/players/update_firerate/<string>").methods("POST"_method)([&,this](const crow::request& req, const std::string& username)
 		{
-			auto player = playerStorage.GetPlayerByName(playerStorage.GetAllPlayers(), req.url_params.get("username"));
-			return UpdatePlayerFirerate(playerStorage, req,player);
+			return UpdatePlayerFirerate(playerStorage, req,username);
 		});
-	CROW_ROUTE(m_app, "/players/update_bullet_speed/<string>")([&, this](const crow::request& req, const std::string& username)
+	CROW_ROUTE(m_app, "/players/update_bullet_speed/<string>").methods("POST"_method)([&, this](const crow::request& req, const std::string& username)
 		{
 			auto player = playerStorage.GetPlayerByName(playerStorage.GetAllPlayers(), req.url_params.get("username"));
 			return UpdatePlayerBulletSpeed(playerStorage, player, req);
@@ -99,8 +98,10 @@ crow::response Routes::AddPlayerToDatabase(database::PlayerStorage& playerStorag
 		return crow::response(500, "Error adding player");
 	}
 }
-crow::response Routes::UpdatePlayerFirerate(database::PlayerStorage& playerStorage, const crow::request& req, std::shared_ptr<Player>& player)
+crow::response Routes::UpdatePlayerFirerate(database::PlayerStorage& playerStorage, const crow::request& req, const std::string& username)
 {
+	auto player = playerStorage.GetPlayerByName(playerStorage.GetAllPlayers(),username);
+
 	if (player->GetPoints() >= 500) {
 		player->SetFireRate(player->GetFireRate() + 1);
 		player->SetPoints(player->GetPoints() - 500);

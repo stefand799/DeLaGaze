@@ -58,17 +58,17 @@ void DeLaGazeClient::initializeConnections(){
         /*TODO: display UI changes, accordingly. Also add the setters for the displayed values when the player is logged in*/
             qDebug() << "Bullet speed UPGRADED!\n";
         });
-    connect(reqManager, &GameClientReqManager::upgradeBulletSpeedFailed, this, [&]()
+    connect(reqManager, &GameClientReqManager::upgradeBulletSpeedFailed, this, [&](const std::string& errorMessage)
         {
-            qDebug() << "Bullet speed FAILED!\n";
+            qDebug() << "Bullet speed FAILED!\n"<<errorMessage;
         });
     connect(reqManager, &GameClientReqManager::upgradeFireRateSuccess, this, [&]()
         {
             qDebug() << "FireRate UPGRADED!\n";
         });
-    connect(reqManager, &GameClientReqManager::upgradeFireRateFailed, this, [&]()
+    connect(reqManager, &GameClientReqManager::upgradeFireRateFailed, this, [&](const std::string& errorMessage)
         {
-            qDebug() << "FireRate FAILED!\n";
+            qDebug() << "FireRate FAILED!\n" << errorMessage;
         });
 
 
