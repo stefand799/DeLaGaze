@@ -3,7 +3,7 @@
 #include "Routes.h"
 
 int main() {
-    std::shared_ptr<Lobby> lobby;
+    std::shared_ptr<Lobby> lobby = std::make_shared<Lobby>();
     //game.Start();
     std::shared_ptr<database::PlayerStorage> playerStorage(std::make_shared<database::PlayerStorage>());
     //database::PlayerStorage playerStorage;
