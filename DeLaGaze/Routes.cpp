@@ -1,6 +1,6 @@
 #include "Routes.h"
 
-void Routes::Run(database::PlayerStorage& playerStorage)
+void Routes::Run(std::shared_ptr<database::PlayerStorage> playerStorage, std::shared_ptr<Lobby> lobby)
 {
 	CROW_ROUTE(m_app, "/map")([this](const crow::request& req) {
 		return GetMapAsJson(req);
@@ -25,29 +25,43 @@ void Routes::Run(database::PlayerStorage& playerStorage)
 		});
 	CROW_ROUTE(m_app, "/player/move_up")([&, this](const crow::request& req)
 		{
-			auto player = playerStorage.GetPlayerByName(req.url_params.get("username"));
+			auto player = playerStorage->GetPlayerByName(req.url_params.get("username"));
 			return PlayerMoveUp(player, req);
 		});
 	CROW_ROUTE(m_app, "/player/move_down")([&, this](const crow::request& req)
 		{
-			auto player = playerStorage.GetPlayerByName(req.url_params.get("username"));
+			auto player = playerStorage->GetPlayerByName(req.url_params.get("username"));
 			return PlayerMoveDown(player, req);
 		});
 	CROW_ROUTE(m_app, "/player/move_left")([&, this](const crow::request& req)
 		{
-			auto player = playerStorage.GetPlayerByName(req.url_params.get("username"));
+			auto player = playerStorage->GetPlayerByName(req.url_params.get("username"));
 			return PlayerMoveLeft(player, req);
 		});
 	CROW_ROUTE(m_app, "/player/move_right")([&, this](const crow::request& req)
 		{
-			auto player = playerStorage.GetPlayerByName(req.url_params.get("username"));
+			auto player = playerStorage->GetPlayerByName(req.url_params.get("username"));
 			return PlayerMoveRight(player, req);
+		});
+	CROW_ROUTE(m_app, "/player/join/<string>")([&, this](const crow::request& req, const std::string& username)
+		{
+			return PlayerJoinLobby(playerStorage, req, username);
 		});
 	m_app.port(18080).multithreaded().run();
 }
 	
-crow::response Routes::LoginPlayer(database::PlayerStorage& playerStorage, const std::string& username) {
-	auto player = playerStorage.GetPlayerByName(username);
+
+crow::response Routes::PlayerJoinLobby(std::shared_ptr<database::PlayerStorage> playerStorage, const crow::request& req, const std::string& username) 
+{
+	auto player = playerStorage->GetPlayerByName(username);
+	if (this->m_lobby->JoinPlayerInLobby(player))
+		return crow::response(200, "You joined lobby");
+	else
+		return crow::response(400, "Could not join lobby");
+}
+
+crow::response Routes::LoginPlayer(std::shared_ptr<database::PlayerStorage> playerStorage, const std::string& username) {
+	auto player = playerStorage->GetPlayerByName(username);
 
 	if (player != nullptr) {
 		// Create a JSON response with player details
@@ -66,15 +80,11 @@ crow::response Routes::LoginPlayer(database::PlayerStorage& playerStorage, const
 	return AddPlayerToDatabase(playerStorage, crow::request{});
 }
 
-crow::response Routes::AddPlayerToDatabase(database::PlayerStorage& playerStorage, const crow::request& req) {
+crow::response Routes::AddPlayerToDatabase(std::shared_ptr<database::PlayerStorage> playerStorage, const crow::request& req) {
     crow::json::rvalue body = crow::json::load(req.body);
     if (!body) {
         return crow::response(400, "Invalid JSON body");
     }
-	//de stabilit ce facem in caz ca avem deja un player cu acelasi username
-	/*if (playerStorage.GetPlayer(body["username"].s())) {
-		return crow::response(400, "Player already exists");
-	}*/
 	auto p = std::make_shared<Player>(
 		0,                            
 		body["username"].s(),          
@@ -83,7 +93,7 @@ crow::response Routes::AddPlayerToDatabase(database::PlayerStorage& playerStorag
 		1,                             
 		false                         
 	);
-	if (playerStorage.AddPlayer(p)) {
+	if (playerStorage->AddPlayer(p)) {
 		crow::json::wvalue responseJson;
 		responseJson["id"] = p->GetId();
 		responseJson["username"] = p->GetUsername();
@@ -97,14 +107,14 @@ crow::response Routes::AddPlayerToDatabase(database::PlayerStorage& playerStorag
 		return crow::response(500, "Error adding player");
 	}
 }
-crow::response Routes::UpdatePlayerFirerate(database::PlayerStorage& playerStorage, const crow::request& req, const std::string& username)
+crow::response Routes::UpdatePlayerFirerate(std::shared_ptr<database::PlayerStorage> playerStorage, const crow::request& req, const std::string& username)
 {
-	auto player = playerStorage.GetPlayerByName(username);
+	auto player = playerStorage->GetPlayerByName(username);
 
 	if (player->GetPoints() >= 500) {
 		player->SetFireRate(player->GetFireRate() + 1);
 		player->SetPoints(player->GetPoints() - 500);
-		if (playerStorage.UpdatePlayer(player)) {
+		if (playerStorage->UpdatePlayer(player)) {
 			return crow::response(200, "Player updated successfully");
 		}
 		else {
@@ -115,8 +125,8 @@ crow::response Routes::UpdatePlayerFirerate(database::PlayerStorage& playerStora
 		return crow::response(400, "Not enough points");
 	}
 }
-crow::response Routes::UpdatePlayerBulletSpeed(database::PlayerStorage& playerStorage,  const crow::request& req,const std::string& username) {
-	auto player = playerStorage.GetPlayerByName(username);
+crow::response Routes::UpdatePlayerBulletSpeed(std::shared_ptr<database::PlayerStorage> playerStorage,  const crow::request& req,const std::string& username) {
+	auto player = playerStorage->GetPlayerByName(username);
 
 	if (!player) {
 		return crow::response(400, "Player not found");
@@ -126,7 +136,7 @@ crow::response Routes::UpdatePlayerBulletSpeed(database::PlayerStorage& playerSt
 	}
 	if (player->GetScore() >= 10) {
 		player->SetBulletSpeedUpgrade(true);
-		if (playerStorage.UpdatePlayer(player)) {
+		if (playerStorage->UpdatePlayer(player)) {
 			return crow::response(200, "Player updated successfully");
 		}
 		else {
@@ -137,10 +147,10 @@ crow::response Routes::UpdatePlayerBulletSpeed(database::PlayerStorage& playerSt
 		return crow::response(400, "Your score is not high enough");
 	}
 }
-crow::response Routes::GetPlayersFromDatabase(database::PlayerStorage& playerStorage) 
+crow::response Routes::GetPlayersFromDatabase(std::shared_ptr<database::PlayerStorage> playerStorage)
 {
 	std::vector<crow::json::wvalue> players_json;
-	for (const auto& player : playerStorage.GetAllPlayers())
+	for (const auto& player : playerStorage->GetAllPlayers())
 	{
 		players_json.push_back(crow::json::wvalue{
 			{"username", player->GetUsername()},
@@ -184,6 +194,6 @@ crow::response Routes::PlayerMoveRight(std::shared_ptr<Player>& p, const crow::r
 
 crow::response Routes::GetMapAsJson(const crow::request& req) {
 	std::lock_guard<std::mutex> lock(m_mutex);
-	crow::json::wvalue mapJson = gameInstance.GetMap().toJson();
+	crow::json::wvalue mapJson = this->m_lobby->m_game->GetMap().toJson();
 	return mapJson;
 }

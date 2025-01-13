@@ -11,7 +11,7 @@ namespace database
     {
         try {
 
-            if (m_db.count<Player>() > 0) {
+            if (m_db.count<Player>() == 0) {
                 m_db.insert(Player(1, "ppp1", 1000, 1000, 1, false));
                 m_db.insert(Player(2, "ppp2", 1000, 1000, 1, false));
 

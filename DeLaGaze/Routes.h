@@ -4,30 +4,32 @@
 #include <map>
 #include "Game.h"
 #include <mutex>
+#include "Lobby.h"
 class Routes
 {
 	public:
 		Routes() = default;
-		Routes(database::PlayerStorage& db, Game& game) : m_db(db), gameInstance(game) {}
-		void Run(database::PlayerStorage& playerStorage);
+		Routes(std::shared_ptr<database::PlayerStorage> db, std::shared_ptr<Lobby> lobby) : m_db{ std::move(db) }, m_lobby{ lobby } {}
+		void Run(std::shared_ptr<database::PlayerStorage> playerStorage, std::shared_ptr<Lobby> lobby);
 	private:
-		crow::response LoginPlayer(database::PlayerStorage& playerStorage, const std::string& username);
-		crow::response AddPlayerToDatabase(database::PlayerStorage& playerStorage, const crow::request& req);
-		crow::response UpdatePlayerFirerate(database::PlayerStorage& playerStorage, const crow::request& req, const std::string& username);
-		crow::response UpdatePlayerBulletSpeed(database::PlayerStorage& playerStorage, const crow::request& req,const std::string& username);
-		crow::response GetPlayersFromDatabase(database::PlayerStorage& playerStorage);
-		crow::response FinishGame(database::PlayerStorage& playerStorage, const crow::request& req, std::vector<Player>& Players);
-		crow::response JoinGame(database::PlayerStorage& playerStorage, const crow::request& req, Player& Players);
+		crow::response LoginPlayer(std::shared_ptr<database::PlayerStorage> playerStorage, const std::string& username);
+		crow::response AddPlayerToDatabase(std::shared_ptr<database::PlayerStorage> playerStorage, const crow::request& req);
+		crow::response UpdatePlayerFirerate(std::shared_ptr<database::PlayerStorage> playerStorage, const crow::request& req, const std::string& username);
+		crow::response UpdatePlayerBulletSpeed(std::shared_ptr<database::PlayerStorage> playerStorage, const crow::request& req,const std::string& username);
+		crow::response GetPlayersFromDatabase(std::shared_ptr<database::PlayerStorage> playerStorage);
+		crow::response FinishGame(std::shared_ptr<database::PlayerStorage> playerStorage, const crow::request& req, std::vector<Player>& Players);
+		crow::response JoinGame(std::shared_ptr<database::PlayerStorage> playerStorage, const crow::request& req, Player& Players);
 		crow::response PlayerMoveUp(std::shared_ptr<Player>& p, const crow::request& req);
 		crow::response PlayerMoveDown(std::shared_ptr<Player>& p, const crow::request& req);
 		crow::response PlayerMoveLeft(std::shared_ptr<Player>& p, const crow::request& req);
 		crow::response PlayerMoveRight(std::shared_ptr<Player>& p, const crow::request& req);
 		crow::response PlayerShoot (std::shared_ptr<Player>& p, const crow::request& req);
 		crow::response GetMapAsJson(const crow::request& req);
+		crow::response PlayerJoinLobby(std::shared_ptr<database::PlayerStorage> playerStorage, const crow::request& req, const std::string& username);
 private:
 		crow::SimpleApp m_app;
 		std::mutex m_mutex;
-		database::PlayerStorage& m_db;
-		Game& gameInstance;
+		std::shared_ptr<database::PlayerStorage> m_db;
+		std::shared_ptr<Lobby> m_lobby;
 };
 

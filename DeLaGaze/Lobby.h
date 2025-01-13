@@ -6,8 +6,8 @@ class Lobby
 {
 public:
 	Lobby();
-private:
-	std::unique_ptr<Game> m_game;
+	bool JoinPlayerInLobby(std::shared_ptr<Player> player);
 	std::vector<std::shared_ptr<Player>> m_players;
+	std::shared_ptr<Game> m_game;
 };
 
