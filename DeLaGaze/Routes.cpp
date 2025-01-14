@@ -1,20 +1,16 @@
 #include "Routes.h"
 
-void Routes::Run(std::shared_ptr<database::PlayerStorage> playerStorage, std::shared_ptr<Lobby> lobby)
+void Routes::Run(std::shared_ptr<database::PlayerStorage> playerStorage, std::shared_ptr<LobbyManager> lobbies)
 {
-	CROW_ROUTE(m_app, "/map")([this](const crow::request& req) {
-		return GetMapAsJson(req);
+	CROW_ROUTE(m_app, "/map/<string>").methods("GET"_method)([&, this](const crow::request& req, const std::string& username) {
+		return GetMapAsJson(req, username);
 		});
 	CROW_ROUTE(m_app, "/login/<string>").methods("GET"_method)([&, this](const crow::request& req, const std::string& username) {
 		return LoginPlayer(playerStorage, username);
 		});
-
     CROW_ROUTE(m_app,"/players")([&]() {
 		return GetPlayersFromDatabase(playerStorage);
     });
-    CROW_ROUTE(m_app, "/players/add").methods("POST"_method)([&,this](const crow::request& req) {
-		return AddPlayerToDatabase(playerStorage, req);
-        });
 	CROW_ROUTE(m_app, "/players/update_firerate/<string>").methods("POST"_method)([&,this](const crow::request& req, const std::string& username)
 		{
 			return UpdatePlayerFirerate(playerStorage, req,username);
@@ -23,38 +19,75 @@ void Routes::Run(std::shared_ptr<database::PlayerStorage> playerStorage, std::sh
 		{
 			return UpdatePlayerBulletSpeed(playerStorage, req,username);
 		});
-	CROW_ROUTE(m_app, "/player/move_up")([&, this](const crow::request& req)
+	CROW_ROUTE(m_app, "/move/<string>/<string>").methods("POST"_method)([&, this](const crow::request& req, const std::string& username, const std::string& direction)
 		{
-			auto player = playerStorage->GetPlayerByName(req.url_params.get("username"));
-			return PlayerMoveUp(player, req);
+			return PlayerMove(req, username, direction);
 		});
-	CROW_ROUTE(m_app, "/player/move_down")([&, this](const crow::request& req)
+	CROW_ROUTE(m_app, "/face/<string>/<string>").methods("POST"_method)([&, this](const crow::request& req, const std::string& username, const std::string& direction)
 		{
-			auto player = playerStorage->GetPlayerByName(req.url_params.get("username"));
-			return PlayerMoveDown(player, req);
+			return PlayerFace(req, username, direction);
 		});
-	CROW_ROUTE(m_app, "/player/move_left")([&, this](const crow::request& req)
-		{
-			auto player = playerStorage->GetPlayerByName(req.url_params.get("username"));
-			return PlayerMoveLeft(player, req);
-		});
-	CROW_ROUTE(m_app, "/player/move_right")([&, this](const crow::request& req)
-		{
-			auto player = playerStorage->GetPlayerByName(req.url_params.get("username"));
-			return PlayerMoveRight(player, req);
-		});
-	CROW_ROUTE(m_app, "/player/join/<string>")([&, this](const crow::request& req, const std::string& username)
+	CROW_ROUTE(m_app, "/join/<string>")([&, this](const crow::request& req, const std::string& username)
 		{
 			return PlayerJoinLobby(playerStorage, req, username);
 		});
+	CROW_ROUTE(m_app, "/shoot/<string>").methods("POST"_method)([&, this](const crow::request& req, const std::string& username) {
+			return PlayerShoot(req, username);
+		});
 	m_app.port(18080).multithreaded().run();
 }
+
+crow::response Routes::PlayerShoot(const crow::request& req, const std::string& username) {
+	m_lobbies->GetLobbyByPlayer(username)->GetGame()->GetPlayerByName(username)->Shoot(m_lobbies->GetLobbyByPlayer(username)->GetGame()->GetBullets());
+	return crow::response(200, "Player shoot");
+}
 	
+crow::response Routes::PlayerMove(const crow::request& req, const std::string& username, const std::string& direction)
+{
+	if (direction == "NORTH") {
+		m_lobbies->GetLobbyByPlayer(username)->GetGame()->GetPlayerByName(username)->MoveUp();
+		return crow::response(200, "Player moved up");
+	}
+	if (direction == "SOUTH"){
+		m_lobbies->GetLobbyByPlayer(username)->GetGame()->GetPlayerByName(username)->MoveDown();
+		return crow::response(200, "Player moved down");
+	}
+	if (direction == "EAST"){
+		m_lobbies->GetLobbyByPlayer(username)->GetGame()->GetPlayerByName(username)->MoveRight();
+		return crow::response(200, "Player moved right");
+	}
+	if (direction == "WEST"){
+		m_lobbies->GetLobbyByPlayer(username)->GetGame()->GetPlayerByName(username)->MoveLeft();
+		return crow::response(200, "Player moved left");
+	}
+	return crow::response(404, "Player invalid direction");
+}
+
+crow::response Routes::PlayerFace(const crow::request& req, const std::string& username, const std::string& direction)
+{
+	if (direction == "NORTH") {
+		m_lobbies->GetLobbyByPlayer(username)->GetGame()->GetPlayerByName(username)->FaceNorth();
+		return crow::response(200, "Player faced north");
+	}
+	if (direction == "SOUTH") {
+		m_lobbies->GetLobbyByPlayer(username)->GetGame()->GetPlayerByName(username)->FaceSouth();
+		return crow::response(200, "Player faced south");
+	}
+	if (direction == "EAST") {
+		m_lobbies->GetLobbyByPlayer(username)->GetGame()->GetPlayerByName(username)->FaceEast();
+		return crow::response(200, "Player faced east");
+	}
+	if (direction == "WEST") {
+		m_lobbies->GetLobbyByPlayer(username)->GetGame()->GetPlayerByName(username)->FaceWest();
+		return crow::response(200, "Player faced west");
+	}
+	return crow::response(400, "Invalid direction");
+}
 
 crow::response Routes::PlayerJoinLobby(std::shared_ptr<database::PlayerStorage> playerStorage, const crow::request& req, const std::string& username) 
 {
 	auto player = playerStorage->GetPlayerByName(username);
-	if (this->m_lobby->JoinLobby(player))
+	if (this->m_lobbies->JoinALobby(player))
 		return crow::response(200, "You joined lobby");
 	else
 		return crow::response(400, "Could not join lobby");
@@ -162,38 +195,9 @@ crow::response Routes::GetPlayersFromDatabase(std::shared_ptr<database::PlayerSt
 	}
 	return crow::json::wvalue{ players_json };
 }
-crow::response Routes::PlayerMoveUp(std::shared_ptr<Player>& p, const crow::request& req)
-{
-	p->MoveUp();
-	crow::json::wvalue mapJson;
-	Map* map = p->GetMap();
-	mapJson = map->toJson();
-	return mapJson;
-}
-crow::response Routes::PlayerMoveDown(std::shared_ptr<Player>& p, const crow::request& req) {
-	p->MoveDown();
-	crow::json::wvalue mapJson;
-	Map* map = p->GetMap();
-	mapJson = map->toJson();
-	return mapJson;
-}
-crow::response Routes::PlayerMoveLeft(std::shared_ptr<Player>& p, const crow::request& req) {
-	p->MoveLeft();
-	crow::json::wvalue mapJson;
-	Map* map = p->GetMap();
-	mapJson = map->toJson();
-	return mapJson;
-}
-crow::response Routes::PlayerMoveRight(std::shared_ptr<Player>& p, const crow::request& req) {
-	p->MoveRight();
-	crow::json::wvalue mapJson;
-	Map* map = p->GetMap();
-	mapJson = map->toJson();
-	return mapJson;
-}
 
-crow::response Routes::GetMapAsJson(const crow::request& req) {
+crow::response Routes::GetMapAsJson(const crow::request& req, const std::string& username) {
 	std::lock_guard<std::mutex> lock(m_mutex);
-	crow::json::wvalue mapJson = this->m_lobby->m_game->GetMap().toJson();
+	crow::json::wvalue mapJson = this->m_lobbies->GetLobbyByPlayer(username)->m_game->GetMap().toJson();
 	return mapJson;
 }

@@ -1,5 +1,4 @@
 #pragma once
-
 #include "Object.h"
 #include "UnbreakableBlock.h"
 #include "BreakableBlock.h"
@@ -22,12 +21,13 @@ public:
 	~Game();
 	void AddPlayer(const Player& player);
 	void RemovePlayer(const Player& player);
-
-
-	Map& GetMap();
 	void Start();
 
-
+	Map& GetMap();
+	std::shared_ptr<Player> GetPlayerByName(const std::string& username);
+	std::vector<std::shared_ptr<Bullet>>& GetBullets() {
+		return m_bullets;
+	}
 
 private:
 	//Usings

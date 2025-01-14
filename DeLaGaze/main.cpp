@@ -3,12 +3,12 @@
 #include "Routes.h"
 
 int main() {
-    std::shared_ptr<Lobby> lobby = std::make_shared<Lobby>();
+    std::shared_ptr<LobbyManager> lobbyManager = std::make_shared<LobbyManager>();
     //game.Start();
     std::shared_ptr<database::PlayerStorage> playerStorage(std::make_shared<database::PlayerStorage>());
     //database::PlayerStorage playerStorage;
     //Routes routes(playerStorage, game);
-    Routes routes(playerStorage, lobby);
+    Routes routes(playerStorage, lobbyManager);
     std::vector<std::shared_ptr<Player>> p = playerStorage->GetAllPlayers();
     int cnt = 0;
     for (const auto& player : p) {
@@ -19,6 +19,6 @@ int main() {
         }
         if (cnt > 1) break;
     }
-    routes.Run(playerStorage, lobby);
+    routes.Run(playerStorage, lobbyManager);
     return 0;
 }

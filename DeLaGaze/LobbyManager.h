@@ -11,8 +11,7 @@ class LobbyManager
 {
 public:
 	std::shared_ptr<Lobby> JoinALobby(std::shared_ptr<Player> player);
-	
-
+	std::shared_ptr<Lobby> GetLobbyByPlayer(const std::string& playerUsername);
 private:
 	std::unordered_map<std::string, std::shared_ptr<Lobby>> m_lobbies;
 	std::unordered_map<std::string, std::shared_ptr<Lobby>> m_playerToLobby;

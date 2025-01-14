@@ -13,24 +13,30 @@ std::string LobbyManager::GenerateUniqueId() {
 	return ss.str();
 }
 
-//std::shared_ptr<Lobby> LobbyManager::CreateLobby() {
-//	auto id = GenerateUniqueId();
-//	auto lobby = std::make_shared<Lobby>(id);
-//	m_lobbies[id] = lobby;
-//	return lobby;
-//}
-//
-//std::shared_ptr<Lobby> LobbyManager::JoinALobby(std::shared_ptr<Player> player) {
-//	std::lock_guard<std::mutex> lock(m_mutex);
-//	// Aici se intra in lobby deci verificare deci pot verifica scorul
-//	std::string playerUsername = player->GetUsername();
-//	for (auto& [id, lobby] : m_lobbies) {
-//		lobby->JoinLobby(std::move(player));
-//		m_playerToLobby[playerUsername] = lobby;
-//		return lobby;
-//	}
-//	auto newLobby = CreateLobby();
-//	newLobby->JoinLobby(std::move(player));
-//	m_playerToLobby[playerUsername] = newLobby;
-//	return newLobby;
-//}
+std::shared_ptr<Lobby> LobbyManager::CreateLobby() {
+	auto id = GenerateUniqueId();
+	auto lobby = std::make_shared<Lobby>(id);
+	m_lobbies[id] = lobby;
+	return lobby;
+}
+
+std::shared_ptr<Lobby> LobbyManager::JoinALobby(std::shared_ptr<Player> player) {
+	std::lock_guard<std::mutex> lock(m_mutex);
+	// Aici se intra in lobby deci verificare deci pot verifica scorul
+	std::string playerUsername = player->GetUsername();
+	for (auto& [id, lobby] : m_lobbies) {
+		lobby->JoinLobby(std::move(player));
+		m_playerToLobby[playerUsername] = lobby;
+		return lobby;
+	}
+	auto newLobby = CreateLobby();
+	newLobby->JoinLobby(std::move(player));
+	m_playerToLobby[playerUsername] = newLobby;
+	return newLobby;
+}
+
+std::shared_ptr<Lobby> LobbyManager::GetLobbyByPlayer(const std::string& playerUsername) {
+	std::lock_guard<std::mutex> lock(m_mutex);
+
+	return m_playerToLobby[playerUsername];
+}

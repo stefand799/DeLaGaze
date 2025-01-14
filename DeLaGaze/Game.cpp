@@ -441,3 +441,13 @@ Map& Game::GetMap() {
 //		if (keyboardInput == 27) break; // ESCAPE, to ensure that the loop is not run again before the other thread changes m_isRunning to false
 //	}
 //}
+
+// Getteri
+std::shared_ptr<Player> Game::GetPlayerByName(const std::string& username)
+{
+	for (auto player : m_players) {
+		if (player->GetUsername() == username)
+			return player;
+	}
+	return nullptr;
+}
