@@ -1,12 +1,11 @@
 #include "Lobby.h"
 
-Lobby::Lobby()
-{
-	this->m_game = std::make_shared<Game>();
-}
+Lobby::Lobby() {};
+Lobby::Lobby(std::string id) : m_id{ id }, m_game{ nullptr }{};
 
-bool Lobby::JoinPlayerInLobby(std::shared_ptr<Player> player)
+
+bool Lobby::JoinLobby(std::shared_ptr<Player> player)
 {
-	this->m_players.emplace_back(player);
+	this->m_players.emplace_back(std::move(player));
 	return true;
 }

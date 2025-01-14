@@ -54,7 +54,7 @@ void Routes::Run(std::shared_ptr<database::PlayerStorage> playerStorage, std::sh
 crow::response Routes::PlayerJoinLobby(std::shared_ptr<database::PlayerStorage> playerStorage, const crow::request& req, const std::string& username) 
 {
 	auto player = playerStorage->GetPlayerByName(username);
-	if (this->m_lobby->JoinPlayerInLobby(player))
+	if (this->m_lobby->JoinLobby(player))
 		return crow::response(200, "You joined lobby");
 	else
 		return crow::response(400, "Could not join lobby");
