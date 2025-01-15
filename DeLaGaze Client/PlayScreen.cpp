@@ -102,10 +102,10 @@ void PlayScreen::buttonClicked()
 		qWarning() << "Sender does not belong to the known buttons!";
 	} else if (clickedButton==backButton){
 		qDebug() << "Back button clicked!";
-		emit selectedScreen(Screen::MainScreen);
+		emit backButtonClicked();
 	} else if (clickedButton==ffaGameButton){
-		emit selectedScreen(Screen::FFAGameScreen);
+		emit joinLobbyRequest("ffa");
 	}else if (clickedButton==teamGameButton){
-		emit selectedScreen(Screen::TeamGameScreen);
+		emit joinLobbyRequest("teams");
 	}
 }

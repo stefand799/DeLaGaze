@@ -80,3 +80,16 @@ void GameClientReqManager::upgradeBulletSpeed()
 	else
 		emit upgradeBulletSpeedFailed(response.text);
 }
+
+void GameClientReqManager::joinLobby(const std::string& gameMode)
+{
+	auto response = cpr::Post(
+		cpr::Url{ serverUrl + "/join/" + gameMode + "/" + m_username },
+		cpr::Header{ {"Content-Type","application/json"} }
+	);
+
+	if (response.status_code == 200)
+		emit joinLobbySuccess(response.text);
+	else
+		emit joinLobbyFailed(response.text);
+}

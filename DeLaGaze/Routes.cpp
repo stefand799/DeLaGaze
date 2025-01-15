@@ -36,7 +36,7 @@ void Routes::Run(std::shared_ptr<database::PlayerStorage> playerStorage, std::sh
 		{
 			return PlayerFace(req, username, direction);
 		});
-	CROW_ROUTE(m_app, "/join/<string>/<string>")([&, this](const crow::request& req, const std::string& gameMode, const std::string& username)
+	CROW_ROUTE(m_app, "/join/<string>/<string>").methods("POST"_method)([&, this](const crow::request& req, const std::string& gameMode, const std::string& username)
 		{
 			return PlayerJoinLobby(playerStorage, req, gameMode, username);
 		});

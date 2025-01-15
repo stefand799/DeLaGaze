@@ -98,6 +98,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="GameClientReqManager.cpp" />
+    <ClCompile Include="GameScreen.cpp" />
+    <ClCompile Include="LobbyScreen.cpp" />
     <ClCompile Include="LoginScreen.cpp" />
     <ClCompile Include="MainScreen.cpp" />
     <ClCompile Include="MiauScreen.cpp" />
@@ -124,6 +126,12 @@
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="MiauScreen.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="LobbyScreen.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="GameScreen.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

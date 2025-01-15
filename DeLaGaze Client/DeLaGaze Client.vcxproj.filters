@@ -58,6 +58,12 @@
     <ClCompile Include="MiauScreen.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="LobbyScreen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GameScreen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="LoginScreen.h">
@@ -76,6 +82,12 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="MiauScreen.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="LobbyScreen.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="GameScreen.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

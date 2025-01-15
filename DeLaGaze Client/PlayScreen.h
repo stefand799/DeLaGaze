@@ -13,15 +13,10 @@ class PlayScreen  : public MiauScreen
 public:
 	PlayScreen(QWidget *parent=nullptr);
 	~PlayScreen();
-	enum class Screen
-	{
-		FFAGameScreen,
-		TeamGameScreen,
-		MainScreen
-	};
 	std::vector<std::vector<std::string>> deserializeMapToGrid(const std::string& jsonString);
 signals:
-	void selectedScreen(PlayScreen::Screen);
+	void backButtonClicked();
+	void joinLobbyRequest(const std::string& gameMode);
 private slots:
 	void buttonClicked();
 private:

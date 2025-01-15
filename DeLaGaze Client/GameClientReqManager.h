@@ -13,6 +13,7 @@ public:
 	void loginOrCreatePlayer(const std::string& username);
 	void upgradeFireRate();
 	void upgradeBulletSpeed();
+	void joinLobby(const std::string& gameMode);
 signals:
 	void loginSuccess(const std::string& username, int score, int points, int fireRate, bool upgradeBS);
 	void loginFailed(const std::string& errorMessage);
@@ -21,6 +22,8 @@ signals:
 	void upgradeFireRateFailed(const std::string& errorMessage);
 	void upgradeBulletSpeedSuccess();
 	void upgradeBulletSpeedFailed(const std::string& errorMessage);
+	void joinLobbySuccess(const std::string& successMessage);
+	void joinLobbyFailed(const std::string& errorMessage);
 private:
 	std::string serverUrl;
 	std::string m_username;
