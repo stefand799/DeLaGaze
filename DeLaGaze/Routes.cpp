@@ -27,9 +27,9 @@ void Routes::Run(std::shared_ptr<database::PlayerStorage> playerStorage, std::sh
 		{
 			return PlayerFace(req, username, direction);
 		});
-	CROW_ROUTE(m_app, "/join/<string>")([&, this](const crow::request& req, const std::string& username)
+	CROW_ROUTE(m_app, "/join/<string>/<string>")([&, this](const crow::request& req, const std::string& gameMode, const std::string& username)
 		{
-			return PlayerJoinLobby(playerStorage, req, username);
+			return PlayerJoinLobby(playerStorage, req, gameMode, username);
 		});
 	CROW_ROUTE(m_app, "/shoot/<string>").methods("POST"_method)([&, this](const crow::request& req, const std::string& username) {
 			return PlayerShoot(req, username);
@@ -84,14 +84,32 @@ crow::response Routes::PlayerFace(const crow::request& req, const std::string& u
 	return crow::response(400, "Invalid direction");
 }
 
-crow::response Routes::PlayerJoinLobby(std::shared_ptr<database::PlayerStorage> playerStorage, const crow::request& req, const std::string& username) 
-{
+crow::response Routes::PlayerJoinLobby(std::shared_ptr<database::PlayerStorage> playerStorage, const crow::request& req, const std::string& gameMode, const std::string& username) {
 	auto player = playerStorage->GetPlayerByName(username);
-	if (this->m_lobbies->JoinALobby(player))
-		return crow::response(200, "You joined lobby");
-	else
-		return crow::response(400, "Could not join lobby");
+	if (!player) {
+		return crow::response(400, "Player not found");
+	}
+
+	GameMode mode;
+	if (gameMode == "ffa") {
+		mode = GameMode::FFA;
+	}
+	else if (gameMode == "teams") {
+		mode = GameMode::TEAMS;
+	}
+	else {
+		return crow::response(400, "Invalid game mode");
+	}
+
+	auto lobby = m_lobbies->JoinALobby(player, mode);
+	if (lobby) {
+		return crow::response(200, "You joined lobby with ID: " + lobby->GetId());
+	}
+	else {
+		return crow::response(500, "Could not join lobby");
+	}
 }
+
 
 crow::response Routes::LoginPlayer(std::shared_ptr<database::PlayerStorage> playerStorage, const std::string& username) {
 	auto player = playerStorage->GetPlayerByName(username);

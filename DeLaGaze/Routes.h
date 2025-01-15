@@ -19,7 +19,7 @@ class Routes
 		crow::response GetPlayersFromDatabase(std::shared_ptr<database::PlayerStorage> playerStorage);
 		crow::response FinishGame(std::shared_ptr<database::PlayerStorage> playerStorage, const crow::request& req, std::vector<Player>& Players);
 		crow::response GetMapAsJson(const crow::request& req, const std::string& username);
-		crow::response PlayerJoinLobby(std::shared_ptr<database::PlayerStorage> playerStorage, const crow::request& req, const std::string& username);
+		crow::response PlayerJoinLobby(std::shared_ptr<database::PlayerStorage> playerStorage, const crow::request& req, const std::string& gameMode, const std::string& username);
 		crow::response PlayerMove(const crow::request& req, const std::string& username, const std::string& direction);
 		crow::response PlayerFace(const crow::request& req, const std::string& username, const std::string& direction);
 		crow::response PlayerShoot(const crow::request& req, const std::string& username);

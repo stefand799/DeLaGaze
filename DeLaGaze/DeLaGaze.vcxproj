@@ -167,6 +167,7 @@
     <ClInclude Include="DeadlyBlock.h" />
     <ClInclude Include="Direction.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="GameMode.h" />
     <ClInclude Include="Lobby.h" />
     <ClInclude Include="LobbyManager.h" />
     <ClInclude Include="Map.h" />
