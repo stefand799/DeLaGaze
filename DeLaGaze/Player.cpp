@@ -31,12 +31,12 @@ Player::Player(Map* m, const std::pair<int, int>& pos, const int& id, const std:
 	m_lastShotTime{ Clock::now() },
 	m_lastDeathTime{ Clock::now() }
 {}
-Player::Player(const int& id, const std::string& username, uint8_t score, uint16_t points, uint8_t bulletSpeed, bool bulletSpeedUpgrade)
+Player::Player(const int& id, const std::string& username, uint8_t score, uint16_t points, uint8_t fireRate, bool bulletSpeedUpgrade)
 	: m_id(id),
 	m_username(username),
 	m_score(score),
 	m_points(points),
-	m_bulletSpeed(bulletSpeed),
+	m_bulletSpeed(fireRate),
 	m_bulletSpeedUpgrade(bulletSpeedUpgrade) {}
 
 // Operators
@@ -409,4 +409,29 @@ crow::json::wvalue Player::toJson()
 	jsonPlayerObj["spawnX"] = m_spawnpoint.first;
 	jsonPlayerObj["spawnY"] = m_spawnpoint.second;
 	return jsonPlayerObj;
+}
+
+
+//std::make_shared<Player>(&m_map, std::pair<int, int>{ 0, 0 }, 1, "Player1", 0, 3, true, Direction::South, State::Idle, 0, 0, 3))
+void Player::SetPlayerInGame(Map* map, const std::pair<int, int>& pos, Direction facing, State state, uint8_t teamid) {
+	
+	m_playerState = state;
+	m_facing = facing;
+	m_playerMap = map;
+	m_hp = 3;
+	m_teamId = teamid;
+	m_mapX = pos.first;
+	m_mapY = pos.second;
+	m_previousMapX = pos.first;
+	m_previousMapY = pos.second;
+	m_x = pos.first + 0.5f;
+	m_y = pos.second + 0.5f;
+	m_moveCooldown = kDefaultMoveCooldown;
+	m_playerSpeed = 1.0f / m_moveCooldown;
+	m_xSpeed = 0.0f;
+	m_ySpeed = 0.0f;
+	m_isMoving = false;
+	m_endOfMove = Clock::now();
+	m_lastShotTime = Clock::now();
+	m_lastDeathTime = Clock::now();
 }

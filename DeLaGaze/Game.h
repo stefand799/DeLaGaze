@@ -20,7 +20,7 @@ class Game {
 public:
 	Game();
 	~Game();
-	void AddPlayers(const std::vector<std::shared_ptr<Player>>& players);
+	bool AddPlayers(const std::vector<std::shared_ptr<Player>>& players);
 	void RemovePlayer(const Player& player);
 	void Start();
 
@@ -29,6 +29,7 @@ public:
 	std::vector<std::shared_ptr<Bullet>>& GetBullets() {
 		return m_bullets;
 	}
+	void SetGameMode(GameMode gameMode);
 
 private:
 	//Usings

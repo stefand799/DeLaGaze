@@ -32,6 +32,7 @@ void Game::Start()
 	//m_players.emplace_back(std::move(std::make_shared<Player>(&m_map, std::pair<int, int>{ m_map.GetMapWidth() - 1, m_map.GetMapHeight() - 1 }, 1, "Player3", 0, 3, true, Direction::South, State::Idle, 0, 2, 3)));
 	//m_map[m_map.GetMapHeight()-1][m_map.GetMapWidth() - 1] = m_players[2];
 
+
 	m_isRunning = true;
 	m_lastFrameTime = std::chrono::high_resolution_clock::now();
 
@@ -48,6 +49,10 @@ void Game::Start()
 	//Part of the example for thread use for input from above
 	//if (playerInputThread.joinable())
 	//	playerInputThread.join();
+}
+
+void Game::SetGameMode(GameMode gameMode) {
+	m_mode = gameMode;
 }
 
 void Game::Update(){
@@ -443,16 +448,49 @@ Map& Game::GetMap() {
 //}
 
 // Game data
-void Game::AddPlayers(const std::vector<std::shared_ptr<Player>>& players) {
-	for (const auto& player : players) {
-		m_players.push_back(player);
+bool Game::AddPlayers(const std::vector<std::shared_ptr<Player>>& players) {
+	if (m_mode == GameMode::FFA) {
+		if (players.size() > 0 && players[0] != nullptr) {
+			m_players[0] = players[0];
+			m_players[0]->SetPlayerInGame(&m_map, { 0, 0 }, Direction::South, State::Idle, 0);
+		}
+		if (players.size() > 1 && players[1] != nullptr) {
+			m_players[1] = players[1];
+			m_players[1]->SetPlayerInGame(&m_map, { m_map.GetMapWidth() - 1, 0 }, Direction::South, State::Idle, 1);
+		}
+		if (players.size() > 2 && players[2] != nullptr) {
+			m_players[2] = players[2];
+			m_players[2]->SetPlayerInGame(&m_map, { 0, m_map.GetMapHeight() - 1 }, Direction::South, State::Idle, 2);
+		}
+		if (players.size() > 3 && players[3] != nullptr) {
+			m_players[3] = players[3];
+			m_players[3]->SetPlayerInGame(&m_map, { m_map.GetMapWidth() - 1, m_map.GetMapHeight() - 1 }, Direction::South, State::Idle, 3);
+		}
+		return true;
 	}
-	//TODO Trebuie facut in functie de numarul de playeri
-	//m_players[0]->SetPlayerOnPos({0,0}, Direction::South);
-	//m_players[1]->SetPlayerOnPos({ 0,0 }, Direction::South);
-	//m_players[2]->SetPlayerOnPos({ 0,0 }, Direction::South);
-	//m_players[3]->SetPlayerOnPos({ 0,0 }, Direction::South);
+	else if (m_mode == GameMode::TEAMS) {
+		if (players.size() > 0 && players[0] != nullptr) {
+			m_players[0] = players[0];
+			m_players[0]->SetPlayerInGame(&m_map, { 0, 0 }, Direction::South, State::Idle, 0);
+		}
+		if (players.size() > 1 && players[1] != nullptr) {
+			m_players[1] = players[1];
+			m_players[1]->SetPlayerInGame(&m_map, { m_map.GetMapWidth() - 1, 0 }, Direction::South, State::Idle, 0);
+		}
+		if (players.size() > 2 && players[2] != nullptr) {
+			m_players[2] = players[2];
+			m_players[2]->SetPlayerInGame(&m_map, { 0, m_map.GetMapHeight() - 1 }, Direction::North, State::Idle, 1);
+		}
+		if (players.size() > 3 && players[3] != nullptr) {
+			m_players[3] = players[3];
+			m_players[3]->SetPlayerInGame(&m_map, { m_map.GetMapWidth() - 1, m_map.GetMapHeight() - 1 }, Direction::North, State::Idle, 1);
+		}
+		return true;
+	}
+	return false;
+
 }
+//Map* map, const std::pair<int, int>& pos,  Direction facing, State state, uint8_t teami
 
 // Getteri
 std::shared_ptr<Player> Game::GetPlayerByName(const std::string& username)

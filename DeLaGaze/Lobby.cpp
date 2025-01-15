@@ -21,8 +21,10 @@ bool Lobby::JoinLobby(std::shared_ptr<Player> player) {
 
 void Lobby::StartGame() {
     if (m_game) {
-        m_game->AddPlayers(m_players);
-        m_game->Start();
+        if (m_game->AddPlayers(m_players)) {
+            m_game->Start();
+            std::cout << "Players added to game";
+        }
     }
     std::cout << "Game started in lobby: " << m_id << " with " << m_players.size() << " players." << std::endl;
 }

@@ -19,7 +19,7 @@ public:
 	// Constructors
 	Player() = default;
 	Player(Map* m, const std::pair<int,int>& pos, const int& id, const std::string& username, uint8_t points, uint8_t fireRate, bool bulletSpeedUpgrade, Direction facing, State playerState, uint8_t score = 0, uint8_t teamid = 0, uint8_t hp = 3);
-	Player(const int& id, const std::string& username, uint8_t score, uint16_t points, uint8_t bulletSpeed, bool bulletSpeedUpgrade);
+	Player(const int& id, const std::string& username, uint8_t score, uint16_t points, uint8_t fireRate, bool bulletSpeedUpgrade);
 	~Player() = default;
 
 	// Operators
@@ -53,6 +53,7 @@ public:
 	void SetPlayerState(const State& playerState);
 	void SetX(const int& x);
 	void SetY(const int& y);
+	void SetPlayerInGame(Map* map, const std::pair<int, int>& pos, Direction facing, State state, uint8_t teamid);
 
 	// Movement
 	bool CanMoveHere() override;
