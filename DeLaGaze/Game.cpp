@@ -442,6 +442,18 @@ Map& Game::GetMap() {
 //	}
 //}
 
+// Game data
+void Game::AddPlayers(const std::vector<std::shared_ptr<Player>>& players) {
+	for (const auto& player : players) {
+		m_players.push_back(player);
+	}
+	//TODO Trebuie facut in functie de numarul de playeri
+	//m_players[0]->SetPlayerOnPos({0,0}, Direction::South);
+	//m_players[1]->SetPlayerOnPos({ 0,0 }, Direction::South);
+	//m_players[2]->SetPlayerOnPos({ 0,0 }, Direction::South);
+	//m_players[3]->SetPlayerOnPos({ 0,0 }, Direction::South);
+}
+
 // Getteri
 std::shared_ptr<Player> Game::GetPlayerByName(const std::string& username)
 {

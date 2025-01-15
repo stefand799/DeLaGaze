@@ -12,6 +12,7 @@
 #include <cstdint>
 #include <chrono>
 #include <thread>
+#include "GameMode.h"
 
 
 
@@ -19,7 +20,7 @@ class Game {
 public:
 	Game();
 	~Game();
-	void AddPlayer(const Player& player);
+	void AddPlayers(const std::vector<std::shared_ptr<Player>>& players);
 	void RemovePlayer(const Player& player);
 	void Start();
 
@@ -69,7 +70,8 @@ private:
 	//Atributes
 	Map m_map;
 	std::vector<std::shared_ptr<Player>> m_players;
-	std::vector<std::shared_ptr<Bullet>> m_bullets; 
+	std::vector<std::shared_ptr<Bullet>> m_bullets;
+	GameMode m_mode;
 	
 	struct ObjectCollision {
 		ObjectCollision(std::shared_ptr<Object> obj1, std::shared_ptr<Object> obj2, float collisionTime) :

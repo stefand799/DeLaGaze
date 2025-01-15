@@ -334,7 +334,6 @@ void Player::Kill()
 	OnDeath();
 	m_lastDeathTime = Clock::now();
 }
-
 void Player::OnDeath()
 {
 	m_hp--;
@@ -346,7 +345,6 @@ void Player::OnDeath()
 		(*m_playerMap)[m_mapY][m_mapX] = std::make_shared<Pathway>(std::pair<size_t, size_t>{m_mapY, m_mapX});
 	}
 }
-
 void Player::Respawn() {
 	if (m_mapX != m_spawnpoint.first || m_mapY != m_spawnpoint.second)
 	{
@@ -362,6 +360,12 @@ void Player::Respawn() {
 	m_y = m_mapY + 0.5f;
 	m_endOfMove = Clock::now();
 }
+void Player::SetPlayerOnPos(std::pair<int, int> pos, Direction facing) {
+	m_spawnpoint = pos;
+	m_facing = facing;
+	m_playerState = State::Idle;
+}
+
 
 void Player::Print() const
 {

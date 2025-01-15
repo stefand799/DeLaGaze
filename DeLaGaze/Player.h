@@ -73,7 +73,7 @@ public:
 	void Kill();
 	void OnDeath();
 	void Respawn();
-
+	void SetPlayerOnPos(std::pair<int,int> pos, Direction facing);
 	void Print() const override;
 	virtual crow::json::wvalue toJson() override;
 	std::string DirectionToString(Direction direction);

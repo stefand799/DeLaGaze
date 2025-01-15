@@ -8,12 +8,16 @@ class Lobby{
 public:
 	Lobby(std::string id, GameMode gameMode);
 	bool JoinLobby(std::shared_ptr<Player> player);
+	void StartGame();
 	friend class Routes;
 	std::unique_ptr<Game> GetGame();
 	const GameMode& GetMode();
 	const std::string& GetId();
 private:
-	const size_t MAX_PLAYERS;
+	std::chrono::time_point<std::chrono::steady_clock> m_timerStart;
+	bool m_timerActive = false;
+	const int MAX_PLAYERS = 4;
+	const int TIMER_THRESHOLD = 30;
 	std::string m_id;
 	GameMode m_gameMode;
 	std::vector<std::shared_ptr<Player>> m_players;
