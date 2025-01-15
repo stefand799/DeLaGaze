@@ -2,22 +2,31 @@
 
 void Routes::Run(std::shared_ptr<database::PlayerStorage> playerStorage, std::shared_ptr<LobbyManager> lobbies)
 {
-	CROW_ROUTE(m_app, "/map/<string>").methods("GET"_method)([&, this](const crow::request& req, const std::string& username) {
+	CROW_ROUTE(m_app, "/getmap/<string>").methods("GET"_method)([&, this](const crow::request& req, const std::string& username) {
 		return GetMapAsJson(req, username);
+		});
+	CROW_ROUTE(m_app, "/gamestarted/<string>").methods("POST"_method)([&, this](const crow::request& req, const std::string& username) {
+		return GameStarted(req, username);
+		});
+	CROW_ROUTE(m_app, "/getplayers/<string>").methods("POST"_method)([&, this](const crow::request& req, const std::string& username) {
+		return GetPlayers(req, username);
+		});
+	CROW_ROUTE(m_app, "/getbullets/<string>").methods("POST"_method)([&, this](const crow::request& req, const std::string& username) {
+		return GetBullets(req, username);
 		});
 	CROW_ROUTE(m_app, "/login/<string>").methods("GET"_method)([&, this](const crow::request& req, const std::string& username) {
 		return LoginPlayer(playerStorage, username);
 		});
-    CROW_ROUTE(m_app,"/players")([&]() {
+	CROW_ROUTE(m_app, "/players")([&]() {
 		return GetPlayersFromDatabase(playerStorage);
-    });
-	CROW_ROUTE(m_app, "/players/update_firerate/<string>").methods("POST"_method)([&,this](const crow::request& req, const std::string& username)
+		});
+	CROW_ROUTE(m_app, "/players/update_firerate/<string>").methods("POST"_method)([&, this](const crow::request& req, const std::string& username)
 		{
-			return UpdatePlayerFirerate(playerStorage, req,username);
+			return UpdatePlayerFirerate(playerStorage, req, username);
 		});
 	CROW_ROUTE(m_app, "/players/update_bullet_speed/<string>").methods("POST"_method)([&, this](const crow::request& req, const std::string& username)
 		{
-			return UpdatePlayerBulletSpeed(playerStorage, req,username);
+			return UpdatePlayerBulletSpeed(playerStorage, req, username);
 		});
 	CROW_ROUTE(m_app, "/move/<string>/<string>").methods("POST"_method)([&, this](const crow::request& req, const std::string& username, const std::string& direction)
 		{
@@ -32,16 +41,29 @@ void Routes::Run(std::shared_ptr<database::PlayerStorage> playerStorage, std::sh
 			return PlayerJoinLobby(playerStorage, req, gameMode, username);
 		});
 	CROW_ROUTE(m_app, "/shoot/<string>").methods("POST"_method)([&, this](const crow::request& req, const std::string& username) {
-			return PlayerShoot(req, username);
+		return PlayerShoot(req, username);
 		});
 	m_app.port(18080).multithreaded().run();
+}
+
+crow::response Routes::GetPlayers(const crow::request& req, const std::string& username) {
+	return crow::response(404, "Players not found");
+}
+
+crow::response Routes::GetBullets(const crow::request& req, const std::string& username) {
+
+	return crow::response(404, "Bullets not found");
+}
+
+crow::response Routes::GameStarted(const crow::request& req, const std::string& username) {
+	return crow::response(303, "Game loading");
 }
 
 crow::response Routes::PlayerShoot(const crow::request& req, const std::string& username) {
 	m_lobbies->GetLobbyByPlayer(username)->GetGame()->GetPlayerByName(username)->Shoot(m_lobbies->GetLobbyByPlayer(username)->GetGame()->GetBullets());
 	return crow::response(200, "Player shoot");
 }
-	
+
 crow::response Routes::PlayerMove(const crow::request& req, const std::string& username, const std::string& direction)
 {
 	if (direction == "NORTH") {
@@ -85,8 +107,8 @@ crow::response Routes::PlayerFace(const crow::request& req, const std::string& u
 }
 
 crow::response Routes::PlayerJoinLobby(std::shared_ptr<database::PlayerStorage> playerStorage, const crow::request& req, const std::string& gameMode, const std::string& username) {
-	auto player = playerStorage->GetPlayerByName(username);
-	if (!player) {
+	auto persistentPlayer = playerStorage->GetPlayerByName(username);
+	if (!persistentPlayer) {
 		return crow::response(400, "Player not found");
 	}
 
@@ -100,8 +122,7 @@ crow::response Routes::PlayerJoinLobby(std::shared_ptr<database::PlayerStorage> 
 	else {
 		return crow::response(400, "Invalid game mode");
 	}
-
-	auto lobby = m_lobbies->JoinALobby(player, mode);
+	auto lobby = m_lobbies->JoinALobby(persistentPlayer, mode);
 	if (lobby) {
 		return crow::response(200, "You joined lobby with ID: " + lobby->GetId());
 	}

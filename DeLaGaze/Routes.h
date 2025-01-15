@@ -23,6 +23,9 @@ class Routes
 		crow::response PlayerMove(const crow::request& req, const std::string& username, const std::string& direction);
 		crow::response PlayerFace(const crow::request& req, const std::string& username, const std::string& direction);
 		crow::response PlayerShoot(const crow::request& req, const std::string& username);
+		crow::response GetPlayers(const crow::request& req, const std::string& username);
+		crow::response GetBullets(const crow::request& req, const std::string& username);
+		crow::response GameStarted(const crow::request& req, const std::string& username);
 
 private:
 		crow::SimpleApp m_app;
