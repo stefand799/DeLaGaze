@@ -6,7 +6,7 @@ Lobby::Lobby(std::string id, GameMode gameMode) : m_id{ id }, m_gameMode{ gameMo
 bool Lobby::JoinLobby(std::shared_ptr<Player> player) {
     m_players.emplace_back(std::move(player));
 
-    if (m_players.size() == 2 && !m_timerActive) {
+    if (m_players.size() == 2) {
         m_timerStart = std::chrono::steady_clock::now();
         m_timerActive = true;
     }

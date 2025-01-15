@@ -449,46 +449,84 @@ Map& Game::GetMap() {
 
 // Game data
 bool Game::AddPlayers(const std::vector<std::shared_ptr<Player>>& players) {
-	if (m_mode == GameMode::FFA) {
-		if (players.size() > 0 && players[0] != nullptr) {
-			m_players[0] = players[0];
-			m_players[0]->SetPlayerInGame(&m_map, { 0, 0 }, Direction::South, State::Idle, 0);
-		}
-		if (players.size() > 1 && players[1] != nullptr) {
-			m_players[1] = players[1];
-			m_players[1]->SetPlayerInGame(&m_map, { m_map.GetMapWidth() - 1, 0 }, Direction::South, State::Idle, 1);
-		}
-		if (players.size() > 2 && players[2] != nullptr) {
-			m_players[2] = players[2];
-			m_players[2]->SetPlayerInGame(&m_map, { 0, m_map.GetMapHeight() - 1 }, Direction::South, State::Idle, 2);
-		}
-		if (players.size() > 3 && players[3] != nullptr) {
-			m_players[3] = players[3];
-			m_players[3]->SetPlayerInGame(&m_map, { m_map.GetMapWidth() - 1, m_map.GetMapHeight() - 1 }, Direction::South, State::Idle, 3);
-		}
-		return true;
+	// Generate map first
+	if (!m_map.Generate()) {
+		std::cerr << "Error: Map generation failed" << std::endl;
+		return false;
 	}
-	else if (m_mode == GameMode::TEAMS) {
-		if (players.size() > 0 && players[0] != nullptr) {
-			m_players[0] = players[0];
-			m_players[0]->SetPlayerInGame(&m_map, { 0, 0 }, Direction::South, State::Idle, 0);
-		}
-		if (players.size() > 1 && players[1] != nullptr) {
-			m_players[1] = players[1];
-			m_players[1]->SetPlayerInGame(&m_map, { m_map.GetMapWidth() - 1, 0 }, Direction::South, State::Idle, 0);
-		}
-		if (players.size() > 2 && players[2] != nullptr) {
-			m_players[2] = players[2];
-			m_players[2]->SetPlayerInGame(&m_map, { 0, m_map.GetMapHeight() - 1 }, Direction::North, State::Idle, 1);
-		}
-		if (players.size() > 3 && players[3] != nullptr) {
-			m_players[3] = players[3];
-			m_players[3]->SetPlayerInGame(&m_map, { m_map.GetMapWidth() - 1, m_map.GetMapHeight() - 1 }, Direction::North, State::Idle, 1);
-		}
-		return true;
-	}
-	return false;
 
+	std::cout << "Map generated successfully. Dimensions: " << m_map.GetMapWidth() << "x" << m_map.GetMapHeight() << std::endl;
+
+	// Validate map dimensions
+	if (m_map.GetMapWidth() == 0 || m_map.GetMapHeight() == 0) {
+		std::cerr << "Error: Invalid map dimensions after generation" << std::endl;
+		return false;
+	}
+
+	// Resize player vector safely
+	try {
+		m_players.resize(players.size());
+		std::cout << "Resized m_players to: " << m_players.size() << std::endl;
+	}
+	catch (const std::exception& e) {
+		std::cerr << "Error resizing players vector: " << e.what() << std::endl;
+		return false;
+	}
+
+	m_mode = GameMode::FFA;
+
+	if (m_mode == GameMode::FFA) {
+		struct SpawnPoint {
+			int x;
+			int y;
+		};
+
+		std::vector<SpawnPoint> spawnPoints = {
+			{0, 0},
+			{static_cast<int>(m_map.GetMapWidth() - 1), 0},
+			{0, static_cast<int>(m_map.GetMapHeight() - 1)},
+			{static_cast<int>(m_map.GetMapWidth() - 1), static_cast<int>(m_map.GetMapHeight() - 1)}
+		};
+
+		// Add players with bounds checking
+		for (size_t i = 0; i < players.size() && i < 4; ++i) {
+			if (players[i] != nullptr) {
+				std::cout << "Adding player " << i << " at position ("
+					<< spawnPoints[i].x << ", " << spawnPoints[i].y << ")" << std::endl;
+
+				try {
+					m_players[i] = players[i];
+					m_players[i]->SetPlayerInGame(
+						&m_map,
+						{ spawnPoints[i].x, spawnPoints[i].y },
+						Direction::South,
+						State::Idle,
+						i
+					);
+					// Add player to map grid like in original code
+					m_map[spawnPoints[i].y][spawnPoints[i].x] = m_players[i];
+					std::cout << "Successfully added player " << i << " to map" << std::endl;
+				}
+				catch (const std::exception& e) {
+					std::cerr << "Error adding player " << i << ": " << e.what() << std::endl;
+					return false;
+				}
+			}
+			else {
+				std::cout << "Warning: Player " << i << " is nullptr" << std::endl;
+			}
+		}
+
+		m_startGameTime = Clock::now();
+		m_lastFrameTime = std::chrono::high_resolution_clock::now();
+		m_isRunning = true;
+
+		std::cout << "All players added successfully and game initialized" << std::endl;
+		return true;
+	}
+
+	std::cout << "Unknown game mode" << std::endl;
+	return false;
 }
 //Map* map, const std::pair<int, int>& pos,  Direction facing, State state, uint8_t teami
 
