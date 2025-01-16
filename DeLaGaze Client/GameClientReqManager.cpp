@@ -24,7 +24,8 @@ void GameClientReqManager::loginOrCreatePlayer(const std::string& username) {
 			jsonResponse["score"].i(),
 			jsonResponse["points"].i(),
 			jsonResponse["firerate"].i(),
-			jsonResponse["upgrade_bs"].b()
+			jsonResponse["upgrade_bs"].b(),
+			response.text
 		);
 	}
 	else if (response.status_code == 400)
@@ -42,7 +43,7 @@ void GameClientReqManager::loginOrCreatePlayer(const std::string& username) {
 		if (createResponse.status_code == 201)
 		{
 			m_username = username;
-			emit loginSuccess(username, 0, 0, 1, false);
+			emit loginSuccess(username, 0, 0, 1, false, response.text);
 		}
 		else
 		{
@@ -63,7 +64,7 @@ void GameClientReqManager::upgradeFireRate()
 	);
 
 	if (response.status_code == 200)
-		emit upgradeFireRateSuccess();
+		emit upgradeFireRateSuccess(response.text);
 	else
 		emit upgradeFireRateFailed(response.text);
 }
@@ -76,7 +77,7 @@ void GameClientReqManager::upgradeBulletSpeed()
 	);
 
 	if (response.status_code == 200)
-		emit upgradeBulletSpeedSuccess();
+		emit upgradeBulletSpeedSuccess(response.text);
 	else
 		emit upgradeBulletSpeedFailed(response.text);
 }
@@ -92,4 +93,29 @@ void GameClientReqManager::joinLobby(const std::string& gameMode)
 		emit joinLobbySuccess(response.text);
 	else
 		emit joinLobbyFailed(response.text);
+}
+
+void GameClientReqManager::checkHasGameStarted()
+{
+	auto response = cpr::Get(
+		cpr::Url{ serverUrl + "/gamestarted/" + m_username },
+		cpr::Header{ {"Content-Type","application/json"} }
+	);
+	if (response.status_code == 200)
+		emit hasGameStartedSuccess(response.text);
+	else
+		emit hasGameStartedFailed(response.text);
+}
+
+void GameClientReqManager::getGameState()
+{
+	auto response = cpr::Get(
+		cpr::Url{ serverUrl + "/getgamestate/" + m_username },
+		cpr::Header{ {"Content-Type","application/json"} }
+	);
+
+	if (response.status_code == 200)
+		emit getGameStateSuccess(response.text);
+	else
+		emit getGameStateFailed(response.text);
 }

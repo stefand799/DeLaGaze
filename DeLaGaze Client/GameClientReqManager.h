@@ -14,16 +14,23 @@ public:
 	void upgradeFireRate();
 	void upgradeBulletSpeed();
 	void joinLobby(const std::string& gameMode);
+	void checkHasGameStarted();
+	void getGameState();
+	//TODO: constants, remove headers where not needed
 signals:
-	void loginSuccess(const std::string& username, int score, int points, int fireRate, bool upgradeBS);
+	void loginSuccess(const std::string& username, int score, int points, int fireRate, bool upgradeBS, const std::string& successMessage);
 	void loginFailed(const std::string& errorMessage);
 	void addPlayerFailed(const std::string& errorMessage);
-	void upgradeFireRateSuccess();
+	void upgradeFireRateSuccess(const std::string& successMessage);
 	void upgradeFireRateFailed(const std::string& errorMessage);
-	void upgradeBulletSpeedSuccess();
+	void upgradeBulletSpeedSuccess(const std::string& successMessage);
 	void upgradeBulletSpeedFailed(const std::string& errorMessage);
 	void joinLobbySuccess(const std::string& successMessage);
 	void joinLobbyFailed(const std::string& errorMessage);
+	void hasGameStartedSuccess(const std::string& successMessage);
+	void hasGameStartedFailed(const std::string& errorMessage);
+	void getGameStateSuccess(const std::string& successMessage);
+	void getGameStateFailed(const std::string& errorMessage);
 private:
 	std::string serverUrl;
 	std::string m_username;

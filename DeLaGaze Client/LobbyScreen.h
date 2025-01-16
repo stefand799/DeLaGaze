@@ -5,6 +5,7 @@
 #include "MiauScreen.h"
 #include "qlabel.h"
 #include "qpushbutton.h"
+#include "qtimer.h"
 
 class LobbyScreen : public MiauScreen
 {
@@ -16,8 +17,11 @@ public:
 
 signals:  
     void backButtonClicked();
-
+    void hasGameStartedRequest();
+public slots:
+    void onGameStart();
 private:
+    QTimer* hasGameStartedTimer;
     QLabel* waitingLabel;
     QPushButton* backButton;
 };

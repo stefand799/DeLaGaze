@@ -5,7 +5,7 @@ void Routes::Run(std::shared_ptr<database::PlayerStorage> playerStorage, std::sh
 	CROW_ROUTE(m_app, "/getgamestate/<string>").methods("GET"_method)([&, this](const crow::request& req, const std::string& username) {
 		return GetGameStateAsJson(req, username);
 		});
-	CROW_ROUTE(m_app, "/gamestarted/<string>").methods("POST"_method)([&, this](const crow::request& req, const std::string& username) {
+	CROW_ROUTE(m_app, "/gamestarted/<string>").methods("GET"_method)([&, this](const crow::request& req, const std::string& username) {
 		return GameStarted(req, username);
 		});
 	CROW_ROUTE(m_app, "/login/<string>").methods("GET"_method)([&, this](const crow::request& req, const std::string& username) {
@@ -50,7 +50,17 @@ crow::response Routes::GetBullets(const crow::request& req, const std::string& u
 }
 
 crow::response Routes::GameStarted(const crow::request& req, const std::string& username) {
-	return crow::response(303, "Game loading");
+	//return crow::response(303, "Game loading");
+	auto game = this->m_lobbies->GetLobbyByPlayer(username)->GetGame();
+	if (!game)
+		return crow::response(400, "Game hasn't been initialized!");
+	else
+		if (game->IsRunning())
+			return crow::response(200, "Game has started!");
+	return crow::response(303, "Game loading!");
+	/*if (!(this->m_lobbies->GetLobbyByPlayer(username)->GetGame()->IsRunning()))
+		return crow::response(200, "Game has started!");
+	else return crow::response(303, "Game loading!");*/
 }
 
 crow::response Routes::PlayerShoot(const crow::request& req, const std::string& username) {
@@ -232,5 +242,5 @@ crow::response Routes::GetPlayersFromDatabase(std::shared_ptr<database::PlayerSt
 crow::response Routes::GetGameStateAsJson(const crow::request& req, const std::string& username) {
 	std::lock_guard<std::mutex> lock(m_mutex);
 	crow::json::wvalue gameStateJson = this->m_lobbies->GetLobbyByPlayer(username)->m_game->GameStateToJson();
-	return gameStateJson;
+	return crow::response(200, gameStateJson.dump());
 }

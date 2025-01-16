@@ -32,7 +32,8 @@ void Lobby::StartGame() {
 
 // Getters
 std::shared_ptr<Game> Lobby::GetGame() {
-	return m_game;
+    if (m_game) return m_game;
+    return nullptr;
 }
 const GameMode& Lobby::GetMode() {
 	return m_gameMode;

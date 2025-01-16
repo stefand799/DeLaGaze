@@ -29,9 +29,23 @@ LobbyScreen::LobbyScreen(QWidget* parent)
 	auto topLayout = new QHBoxLayout;
 	topLayout->addWidget(backButton);
 	topLayout->addStretch();
+
+
+	hasGameStartedTimer = new QTimer(this);
+	connect(hasGameStartedTimer, &QTimer::timeout, this, [&]()
+		{
+			qDebug() << "CHECKING WHETHER GAME HAS STARTED\n";
+			emit hasGameStartedRequest();
+		});
+	hasGameStartedTimer->start(1000);
 }
 
 LobbyScreen::~LobbyScreen()
 {}
+
+void LobbyScreen::onGameStart()
+{
+	hasGameStartedTimer->stop();
+}
 
 

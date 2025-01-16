@@ -31,6 +31,8 @@ public:
 	}
 	void SetGameMode(GameMode gameMode);
 	crow::json::wvalue GameStateToJson();
+
+	bool IsRunning() { return m_isRunning; };
 private:
 	//Usings
 	using Clock = std::chrono::high_resolution_clock;
@@ -111,7 +113,7 @@ private:
 
 	Nsec m_targetFrameDuration;
 
-	bool m_isRunning;
+	bool m_isRunning = false;
 
 
 	Clock::time_point m_startGameTime;
