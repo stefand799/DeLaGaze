@@ -16,11 +16,13 @@ crow::json::wvalue Map::toJson()
 {
 	crow::json::wvalue::list mapJson;
 	for (int i = 0; i < m_mapHeight; i++) {
-		crow::json::wvalue rowJson;
-		rowJson["type"] = ObjectTypeToString(i, i);
-		rowJson["x"] = i;
-		rowJson["y"] = i;
-		mapJson.push_back(std::move(rowJson));
+		for (int j = 0; j < m_mapWidth; j++) {
+			crow::json::wvalue rowJson;
+			rowJson["type"] = ObjectTypeToString(i, j);
+			rowJson["x"] = i;
+			rowJson["y"] = j;
+			mapJson.push_back(std::move(rowJson));
+		}
 	}
 	crow::json::wvalue mapData;
 	mapData["height"] = m_mapHeight;
