@@ -30,7 +30,7 @@ public:
 		return m_bullets;
 	}
 	void SetGameMode(GameMode gameMode);
-
+	crow::json::wvalue GameStateToJson();
 private:
 	//Usings
 	using Clock = std::chrono::high_resolution_clock;
@@ -40,6 +40,8 @@ private:
 
 	//Methods
 	crow::json::wvalue BulletsToJson();
+	crow::json::wvalue PlayersToJson();
+	crow::json::wvalue MapToJson();
 
 	void Run();
 	void CheckDeathmatchCondition();

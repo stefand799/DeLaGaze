@@ -30,7 +30,6 @@ void Lobby::StartGame() {
 }
 
 
-
 // Getters
 std::shared_ptr<Game> Lobby::GetGame() {
 	return m_game;

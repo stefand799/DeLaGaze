@@ -91,49 +91,6 @@ Direction Player::GetFacing() const { return m_facing; }
 Map* Player::GetMap() const { return m_playerMap; }
 uint8_t Player::GetTeamId() const { return m_teamId; }
 
-std::tuple<std::shared_ptr<Object>, std::shared_ptr<Object>, float> Player::GetBulletToPlayerColision(std::shared_ptr<Bullet> bullet)
-{
-	float bulletX = bullet->GetX();
-	float bulletY = bullet->GetY();
-
-	float bulletXSpeed = bullet->GetXSpeed();
-	float bulletYSpeed = bullet->GetYSpeed();
-	float bulletRadius = bullet->GetRadius();
-
-	float collisionDistance = kPlayerHitBoxRadius + bulletRadius;
-
-	float x12 = m_x - bulletX;
-	float y12 = m_y - bulletY;
-
-	float vx12 = m_xSpeed - bulletXSpeed;
-	float vy12 = m_ySpeed - bulletYSpeed;
-
-	float a = vx12 * vx12 + vy12 * vy12;
-	float b = 2 * (x12 * vx12 + y12 * vy12);
-	float c = x12 * x12 + y12 * y12 - collisionDistance * collisionDistance;
-	if (c <= 0.0f) return std::tuple<std::shared_ptr<Object>, std::shared_ptr<Object>, float>{ (*m_playerMap)[m_mapY][m_mapX], bullet, 0.0f };
-
-	float delta = (b * b) - (4 * a * c);
-
-	if (delta < 0 || a == 0.0f ) return std::tuple<std::shared_ptr<Object>, std::shared_ptr<Object>, float>{ (*m_playerMap)[m_mapY][m_mapX],bullet,NAN };
-
-	float sqrtDelta = sqrt(delta);
-	float t1 = (-b - sqrtDelta) / (2 * a);
-	float t2 = (-b + sqrtDelta) / (2 * a);
-
-	if (t1 < 0 && t2 < 0) return std::tuple<std::shared_ptr<Object>, std::shared_ptr<Object>, float>{ (*m_playerMap)[m_mapY][m_mapX],bullet , NAN };
-
-	float T = 0.0f;
-
-	if (t1 < 0) T = t2;
-	else if (t2 < 0) T = t1;
-	else T = std::min(t1, t2);
-
-	if (m_isMoving && Clock::now() + fSecDur(T) > m_endOfMove) T = NAN;
-
-	return std::tuple<std::shared_ptr<Object>, std::shared_ptr<Object>, float>{(*m_playerMap)[m_mapY][m_mapX], bullet, T };
-}
-
 // Setters
 void Player::SetId(int id) { m_id = id; }
 void Player::SetUsername(const std::string& username) { m_username = username; }
@@ -150,31 +107,31 @@ void Player::SetY(const int& y) { m_mapY = y; }
 // Movement
 bool Player::CanMoveHere() { return false; }
 
-//void Player::Move(float deltaTime)
-//{
-//	if (Clock::now() >= m_endOfMove) {
-//		m_isMoving = false;
-//		m_x = m_mapX + 0.5f;
-//		m_y = m_mapY + 0.5f;
-//		m_previousMapX = m_mapX;
-//		m_previousMapY = m_mapY;
-//		m_xSpeed = 0.0f;
-//		m_ySpeed = 0.0f;
-//		return;
-//	}
-//	if (m_previousMapX < m_mapX) {
-//		m_x = std::min(m_x+ deltaTime * m_playerSpeed, m_mapX + 0.5f);
-//	}
-//	if (m_previousMapX > m_mapX) {
-//		m_x = std::max(m_x - deltaTime * m_playerSpeed, m_mapX + 0.5f);
-//	}
-//	if (m_previousMapY < m_mapY) {
-//		m_y = std::min(m_y + deltaTime * m_playerSpeed, m_mapY + 0.5f);
-//	}
-//	if (m_previousMapY > m_mapY) {
-//		m_y = std::max(m_y - deltaTime * m_playerSpeed, m_mapY + 0.5f);;
-//	}
-//}
+void Player::Move(float deltaTime)
+{
+	if (Clock::now() >= m_endOfMove) {
+		m_isMoving = false;
+		m_x = m_mapX + 0.5f;
+		m_y = m_mapY + 0.5f;
+		m_previousMapX = m_mapX;
+		m_previousMapY = m_mapY;
+		m_xSpeed = 0.0f;
+		m_ySpeed = 0.0f;
+		return;
+	}
+	if (m_previousMapX < m_mapX) {
+		m_x = std::min(m_x+ deltaTime * m_playerSpeed, m_mapX + 0.5f);
+	}
+	if (m_previousMapX > m_mapX) {
+		m_x = std::max(m_x - deltaTime * m_playerSpeed, m_mapX + 0.5f);
+	}
+	if (m_previousMapY < m_mapY) {
+		m_y = std::min(m_y + deltaTime * m_playerSpeed, m_mapY + 0.5f);
+	}
+	if (m_previousMapY > m_mapY) {
+		m_y = std::max(m_y - deltaTime * m_playerSpeed, m_mapY + 0.5f);;
+	}
+}
 
 void Player::MoveUp()
 {
@@ -360,12 +317,48 @@ void Player::Respawn() {
 	m_y = m_mapY + 0.5f;
 	m_endOfMove = Clock::now();
 }
-void Player::SetPlayerOnPos(std::pair<int, int> pos, Direction facing) {
-	m_spawnpoint = pos;
-	m_facing = facing;
-	m_playerState = State::Idle;
-}
+std::tuple<std::shared_ptr<Object>, std::shared_ptr<Object>, float> Player::GetBulletToPlayerColision(std::shared_ptr<Bullet> bullet)
+{
+	float bulletX = bullet->GetX();
+	float bulletY = bullet->GetY();
 
+	float bulletXSpeed = bullet->GetXSpeed();
+	float bulletYSpeed = bullet->GetYSpeed();
+	float bulletRadius = bullet->GetRadius();
+
+	float collisionDistance = kPlayerHitBoxRadius + bulletRadius;
+
+	float x12 = m_x - bulletX;
+	float y12 = m_y - bulletY;
+
+	float vx12 = m_xSpeed - bulletXSpeed;
+	float vy12 = m_ySpeed - bulletYSpeed;
+
+	float a = vx12 * vx12 + vy12 * vy12;
+	float b = 2 * (x12 * vx12 + y12 * vy12);
+	float c = x12 * x12 + y12 * y12 - collisionDistance * collisionDistance;
+	if (c <= 0.0f) return std::tuple<std::shared_ptr<Object>, std::shared_ptr<Object>, float>{ (*m_playerMap)[m_mapY][m_mapX], bullet, 0.0f };
+
+	float delta = (b * b) - (4 * a * c);
+
+	if (delta < 0 || a == 0.0f) return std::tuple<std::shared_ptr<Object>, std::shared_ptr<Object>, float>{ (*m_playerMap)[m_mapY][m_mapX], bullet, NAN };
+
+	float sqrtDelta = sqrt(delta);
+	float t1 = (-b - sqrtDelta) / (2 * a);
+	float t2 = (-b + sqrtDelta) / (2 * a);
+
+	if (t1 < 0 && t2 < 0) return std::tuple<std::shared_ptr<Object>, std::shared_ptr<Object>, float>{ (*m_playerMap)[m_mapY][m_mapX], bullet, NAN };
+
+	float T = 0.0f;
+
+	if (t1 < 0) T = t2;
+	else if (t2 < 0) T = t1;
+	else T = std::min(t1, t2);
+
+	if (m_isMoving && Clock::now() + fSecDur(T) > m_endOfMove) T = NAN;
+
+	return std::tuple<std::shared_ptr<Object>, std::shared_ptr<Object>, float>{(*m_playerMap)[m_mapY][m_mapX], bullet, T };
+}
 
 void Player::Print() const
 {
@@ -410,9 +403,6 @@ crow::json::wvalue Player::toJson()
 	jsonPlayerObj["spawnY"] = m_spawnpoint.second;
 	return jsonPlayerObj;
 }
-
-
-//std::make_shared<Player>(&m_map, std::pair<int, int>{ 0, 0 }, 1, "Player1", 0, 3, true, Direction::South, State::Idle, 0, 0, 3))
 void Player::SetPlayerInGame(Map* map, const std::pair<int, int>& pos, Direction facing, State state, uint8_t teamid) {
 	
 	m_playerState = state;

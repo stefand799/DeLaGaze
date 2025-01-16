@@ -81,9 +81,9 @@ void Game::Update(){
 	for (std::shared_ptr<Bullet>& bullet : m_bullets)
 		bullet->Move(m_deltaTime);
 
-	//for (std::shared_ptr<Player>& player : m_players) {
-	//	player->Move(m_deltaTime);
-	//}
+	for (std::shared_ptr<Player>& player : m_players) {
+		player->Move(m_deltaTime);
+	}
 
 	HandleCollisions();
 
@@ -302,7 +302,9 @@ void Game::RemoveDestroyedObjects()
 	}
 }
 
-
+crow::json::wvalue Game::MapToJson() {
+	return m_map.toJson();
+}
 
 crow::json::wvalue Game::BulletsToJson()
 {
@@ -313,6 +315,28 @@ crow::json::wvalue Game::BulletsToJson()
 	}
 	return jsonBullets;
 }
+
+crow::json::wvalue Game::PlayersToJson()
+{
+	std::vector<crow::json::wvalue> jsonPlayers;
+	for (const auto& player : m_players) {
+		jsonPlayers.push_back(player->toJson());
+	}
+	return jsonPlayers;
+}
+crow::json::wvalue Game::GameStateToJson()
+{
+	crow::json::wvalue gameState;
+
+	gameState["map"] = MapToJson();
+
+	gameState["bullets"] = BulletsToJson();
+
+	gameState["players"] = PlayersToJson();
+
+	return gameState;
+}
+
 
 void Game::Run()
 {

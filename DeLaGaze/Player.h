@@ -57,7 +57,7 @@ public:
 
 	// Movement
 	bool CanMoveHere() override;
-	//void Move(float deltaTime);
+	void Move(float deltaTime);
 	void MoveUp();
 	void MoveDown();
 	void MoveLeft();
@@ -74,7 +74,6 @@ public:
 	void Kill();
 	void OnDeath();
 	void Respawn();
-	void SetPlayerOnPos(std::pair<int,int> pos, Direction facing);
 	void Print() const override;
 	virtual crow::json::wvalue toJson() override;
 	std::string DirectionToString(Direction direction);

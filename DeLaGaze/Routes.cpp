@@ -2,17 +2,11 @@
 
 void Routes::Run(std::shared_ptr<database::PlayerStorage> playerStorage, std::shared_ptr<LobbyManager> lobbies)
 {
-	CROW_ROUTE(m_app, "/getmap/<string>").methods("GET"_method)([&, this](const crow::request& req, const std::string& username) {
-		return GetMapAsJson(req, username);
+	CROW_ROUTE(m_app, "/getgamestate/<string>").methods("GET"_method)([&, this](const crow::request& req, const std::string& username) {
+		return GetGameStateAsJson(req, username);
 		});
 	CROW_ROUTE(m_app, "/gamestarted/<string>").methods("POST"_method)([&, this](const crow::request& req, const std::string& username) {
 		return GameStarted(req, username);
-		});
-	CROW_ROUTE(m_app, "/getplayers/<string>").methods("POST"_method)([&, this](const crow::request& req, const std::string& username) {
-		return GetPlayers(req, username);
-		});
-	CROW_ROUTE(m_app, "/getbullets/<string>").methods("POST"_method)([&, this](const crow::request& req, const std::string& username) {
-		return GetBullets(req, username);
 		});
 	CROW_ROUTE(m_app, "/login/<string>").methods("GET"_method)([&, this](const crow::request& req, const std::string& username) {
 		return LoginPlayer(playerStorage, username);
@@ -235,8 +229,8 @@ crow::response Routes::GetPlayersFromDatabase(std::shared_ptr<database::PlayerSt
 	return crow::json::wvalue{ players_json };
 }
 
-crow::response Routes::GetMapAsJson(const crow::request& req, const std::string& username) {
+crow::response Routes::GetGameStateAsJson(const crow::request& req, const std::string& username) {
 	std::lock_guard<std::mutex> lock(m_mutex);
-	crow::json::wvalue mapJson = this->m_lobbies->GetLobbyByPlayer(username)->m_game->GetMap().toJson();
-	return mapJson;
+	crow::json::wvalue gameStateJson = this->m_lobbies->GetLobbyByPlayer(username)->m_game->GameStateToJson();
+	return gameStateJson;
 }
