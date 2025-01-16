@@ -150,31 +150,31 @@ void Player::SetY(const int& y) { m_mapY = y; }
 // Movement
 bool Player::CanMoveHere() { return false; }
 
-void Player::Move(float deltaTime)
-{
-	if (Clock::now() >= m_endOfMove) {
-		m_isMoving = false;
-		m_x = m_mapX + 0.5f;
-		m_y = m_mapY + 0.5f;
-		m_previousMapX = m_mapX;
-		m_previousMapY = m_mapY;
-		m_xSpeed = 0.0f;
-		m_ySpeed = 0.0f;
-		return;
-	}
-	if (m_previousMapX < m_mapX) {
-		m_x = std::min(m_x+ deltaTime * m_playerSpeed, m_mapX + 0.5f);
-	}
-	if (m_previousMapX > m_mapX) {
-		m_x = std::max(m_x - deltaTime * m_playerSpeed, m_mapX + 0.5f);
-	}
-	if (m_previousMapY < m_mapY) {
-		m_y = std::min(m_y + deltaTime * m_playerSpeed, m_mapY + 0.5f);
-	}
-	if (m_previousMapY > m_mapY) {
-		m_y = std::max(m_y - deltaTime * m_playerSpeed, m_mapY + 0.5f);;
-	}
-}
+//void Player::Move(float deltaTime)
+//{
+//	if (Clock::now() >= m_endOfMove) {
+//		m_isMoving = false;
+//		m_x = m_mapX + 0.5f;
+//		m_y = m_mapY + 0.5f;
+//		m_previousMapX = m_mapX;
+//		m_previousMapY = m_mapY;
+//		m_xSpeed = 0.0f;
+//		m_ySpeed = 0.0f;
+//		return;
+//	}
+//	if (m_previousMapX < m_mapX) {
+//		m_x = std::min(m_x+ deltaTime * m_playerSpeed, m_mapX + 0.5f);
+//	}
+//	if (m_previousMapX > m_mapX) {
+//		m_x = std::max(m_x - deltaTime * m_playerSpeed, m_mapX + 0.5f);
+//	}
+//	if (m_previousMapY < m_mapY) {
+//		m_y = std::min(m_y + deltaTime * m_playerSpeed, m_mapY + 0.5f);
+//	}
+//	if (m_previousMapY > m_mapY) {
+//		m_y = std::max(m_y - deltaTime * m_playerSpeed, m_mapY + 0.5f);;
+//	}
+//}
 
 void Player::MoveUp()
 {

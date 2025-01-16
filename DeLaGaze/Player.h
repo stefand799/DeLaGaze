@@ -57,7 +57,7 @@ public:
 
 	// Movement
 	bool CanMoveHere() override;
-	void Move(float deltaTime);
+	//void Move(float deltaTime);
 	void MoveUp();
 	void MoveDown();
 	void MoveLeft();

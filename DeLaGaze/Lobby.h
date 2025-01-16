@@ -10,7 +10,7 @@ public:
 	bool JoinLobby(std::shared_ptr<Player> player);
 	void StartGame();
 	friend class Routes;
-	std::unique_ptr<Game> GetGame();
+	std::shared_ptr<Game> GetGame();
 	const GameMode& GetMode();
 	const std::string& GetId();
 private:
@@ -21,6 +21,6 @@ private:
 	std::string m_id;
 	GameMode m_gameMode;
 	std::vector<std::shared_ptr<Player>> m_players;
-	std::unique_ptr<Game> m_game;
+	std::shared_ptr<Game> m_game;
 };
 

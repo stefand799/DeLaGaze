@@ -1,6 +1,6 @@
 #include "Lobby.h"
 
-Lobby::Lobby(std::string id, GameMode gameMode) : m_id{ id }, m_gameMode{ gameMode }, m_game{ std::make_unique<Game>() }, MAX_PLAYERS{2} {};
+Lobby::Lobby(std::string id, GameMode gameMode) : m_id{ id }, m_gameMode{ gameMode }, m_game{ std::make_shared<Game>() }, MAX_PLAYERS{2} {};
 
 
 bool Lobby::JoinLobby(std::shared_ptr<Player> player) {
@@ -32,8 +32,8 @@ void Lobby::StartGame() {
 
 
 // Getters
-std::unique_ptr<Game> Lobby::GetGame() {
-	return std::move(m_game);
+std::shared_ptr<Game> Lobby::GetGame() {
+	return m_game;
 }
 const GameMode& Lobby::GetMode() {
 	return m_gameMode;

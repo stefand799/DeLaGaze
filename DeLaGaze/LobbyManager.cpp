@@ -41,7 +41,6 @@ std::shared_ptr<Lobby> LobbyManager::JoinALobby(std::shared_ptr<Player> player, 
 
 
 std::shared_ptr<Lobby> LobbyManager::GetLobbyByPlayer(const std::string& playerUsername) {
-	std::lock_guard<std::mutex> lock(m_mutex);
 
 	return m_playerToLobby[playerUsername];
 }

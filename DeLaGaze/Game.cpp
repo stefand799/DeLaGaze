@@ -81,9 +81,9 @@ void Game::Update(){
 	for (std::shared_ptr<Bullet>& bullet : m_bullets)
 		bullet->Move(m_deltaTime);
 
-	for (std::shared_ptr<Player>& player : m_players) {
-		player->Move(m_deltaTime);
-	}
+	//for (std::shared_ptr<Player>& player : m_players) {
+	//	player->Move(m_deltaTime);
+	//}
 
 	HandleCollisions();
 
@@ -520,7 +520,7 @@ bool Game::AddPlayers(const std::vector<std::shared_ptr<Player>>& players) {
 		m_startGameTime = Clock::now();
 		m_lastFrameTime = std::chrono::high_resolution_clock::now();
 		m_isRunning = true;
-
+			
 		std::cout << "All players added successfully and game initialized" << std::endl;
 		return true;
 	}
