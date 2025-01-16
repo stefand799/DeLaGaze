@@ -119,3 +119,16 @@ void GameClientReqManager::getGameState()
 	else
 		emit getGameStateFailed(response.text);
 }
+
+void GameClientReqManager::playerMove(const std::string& direction)
+{
+	auto response = cpr::Post(
+		cpr::Url{ serverUrl + "/move/" + m_username + "/" + direction },
+		cpr::Header{ {"Content-Type","application/json"} }
+	);
+
+	if (response.status_code == 200)
+		emit playerMoveSuccess(response.text);
+	else
+		emit playerMoveFailed(response.text);
+}

@@ -16,6 +16,9 @@ public:
 	void joinLobby(const std::string& gameMode);
 	void checkHasGameStarted();
 	void getGameState();
+	void playerMove(const std::string& direction);
+	void playerFace();
+	void playerShoot();
 	//TODO: constants, remove headers where not needed
 signals:
 	void loginSuccess(const std::string& username, int score, int points, int fireRate, bool upgradeBS, const std::string& successMessage);
@@ -31,6 +34,8 @@ signals:
 	void hasGameStartedFailed(const std::string& errorMessage);
 	void getGameStateSuccess(const std::string& successMessage);
 	void getGameStateFailed(const std::string& errorMessage);
+	void playerMoveSuccess(const std::string& successMessage);
+	void playerMoveFailed(const std::string& errorMessage);
 private:
 	std::string serverUrl;
 	std::string m_username;

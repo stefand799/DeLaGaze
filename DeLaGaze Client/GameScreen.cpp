@@ -4,22 +4,26 @@
 #include "qpainter.h"
 
 GameScreen::GameScreen(QWidget *parent)
-	:MiauScreen(":/DeLaGazeClient/images/miau_main.png", parent)
+	:MiauScreen(":/DeLaGazeClient/images/miau_main.png", parent),
+    gameStateTimer (new QTimer(this)),
+	inputTimer(new QTimer(this))
 {
-	gameStateTimer = new QTimer(this);
+    setFocusPolicy(Qt::StrongFocus);
+
 	connect(gameStateTimer, &QTimer::timeout, this, [this]()
 		{
 			emit getGameStateRequest();
 		});
 	gameStateTimer->start(16);
 
-
+    connect(inputTimer, &QTimer::timeout, this, &GameScreen::processInput);
+    inputTimer->start(16);
 }
 
 
 void GameScreen::paintEvent(QPaintEvent* event)
 {
-    MiauScreen::paintEvent(event);
+    //MiauScreen::paintEvent(event);
 	QPainter painter(this);
 	//TODO: maybe remove for performance?
 	painter.setRenderHint(QPainter::Antialiasing);
@@ -35,8 +39,8 @@ void GameScreen::paintEvent(QPaintEvent* event)
         auto& blocks = map["map"];
         for (const auto& block : blocks) {
             if (block.has("type") && block.has("x") && block.has("y")) {
-                int x = block["y"].i() * GRID_SIZE;
-                int y = block["x"].i() * GRID_SIZE;
+                int x = block["x"].i() * GRID_SIZE;
+                int y = block["y"].i() * GRID_SIZE;
 
                 // Set different colors based on block type
                 if (block["type"].s() == "UnbreakableBlock") {
@@ -123,6 +127,116 @@ void GameScreen::paintEvent(QPaintEvent* event)
         }
     }
 }
+
+void GameScreen::keyPressEvent(QKeyEvent* event)
+{
+	if (!event->isAutoRepeat())
+	{
+        pressedKeys.insert(event->key());
+	}
+    //QWidget::keyPressEvent(event);
+}
+
+void GameScreen::keyReleaseEvent(QKeyEvent* event)
+{
+    if (!event->isAutoRepeat())
+        pressedKeys.remove(event->key());
+    //QWidget::keyReleaseEvent(event);
+}
+
+//void GameScreen::processInput()
+//{
+//    bool moved = false;
+//	if (pressedKeys.contains(Qt::Key_W))
+//	{
+//        emit playerMoveRequest("NORTH");
+//	}
+//    if (pressedKeys.contains(Qt::Key_A))
+//    {
+//        emit playerMoveRequest("WEST");
+//
+//    }
+//	if (pressedKeys.contains(Qt::Key_S))
+//    {
+//        emit playerMoveRequest("SOUTH");
+//
+//    }
+//    if (pressedKeys.contains(Qt::Key_D))
+//    {
+//        emit playerMoveRequest("EAST");
+//
+//    }
+//
+//    if (pressedKeys.contains(Qt::Key_Up))
+//    {
+//	    
+//    }
+//    if (pressedKeys.contains(Qt::Key_Left))
+//    {
+//
+//    }
+//    if (pressedKeys.contains(Qt::Key_Down))
+//    {
+//
+//    }
+//    if (pressedKeys.contains(Qt::Key_Right))
+//    {
+//
+//    }
+//}
+
+void GameScreen::processInput()
+{
+    bool moved = false;
+    std::string direction;
+
+	if (pressedKeys.contains(Qt::Key_W))
+	{
+        direction = "NORTH";
+        moved = true;
+	}
+    else if (pressedKeys.contains(Qt::Key_A))
+    {
+        direction = "WEST";
+        moved = true;
+
+    }
+	else if (pressedKeys.contains(Qt::Key_S))
+    {
+        direction = "SOUTH";
+        moved = true;
+
+    }
+    else if (pressedKeys.contains(Qt::Key_D))
+    {
+        direction = "EAST";
+        moved = true; 
+
+    }
+
+    else if (pressedKeys.contains(Qt::Key_Up))
+    {
+	    
+    }
+    else if (pressedKeys.contains(Qt::Key_Left))
+    {
+
+    }
+    else if (pressedKeys.contains(Qt::Key_Down))
+    {
+
+    }
+    else if (pressedKeys.contains(Qt::Key_Right))
+    {
+
+    }
+    if (moved)
+    {
+        emit playerMoveRequest(direction);
+        update();
+    }
+}
+
 void GameScreen::onGameStateReceived(const std::string& gameStateJson)
 {
 	currentState = crow::json::load(gameStateJson);
@@ -147,4 +261,5 @@ QPoint GameScreen::calculateOffset()
 GameScreen::~GameScreen()
 {
 	gameStateTimer->stop();
+    inputTimer->stop();
 }

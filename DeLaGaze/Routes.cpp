@@ -68,25 +68,69 @@ crow::response Routes::PlayerShoot(const crow::request& req, const std::string& 
 	return crow::response(200, "Player shoot");
 }
 
+//crow::response Routes::PlayerMove(const crow::request& req, const std::string& username, const std::string& direction)
+//{
+//	if (direction == "NORTH") {
+//		m_lobbies->GetLobbyByPlayer(username)->GetGame()->GetPlayerByName(username)->MoveUp();
+//		return crow::response(200, "Player moved up");
+//	}
+//	if (direction == "SOUTH"){
+//		m_lobbies->GetLobbyByPlayer(username)->GetGame()->GetPlayerByName(username)->MoveDown();
+//		return crow::response(200, "Player moved down");
+//	}
+//	if (direction == "EAST"){
+//		m_lobbies->GetLobbyByPlayer(username)->GetGame()->GetPlayerByName(username)->MoveRight();
+//		return crow::response(200, "Player moved right");
+//	}
+//	if (direction == "WEST"){
+//		m_lobbies->GetLobbyByPlayer(username)->GetGame()->GetPlayerByName(username)->MoveLeft();
+//		return crow::response(200, "Player moved left");
+//	}
+//	return crow::response(404, "Player invalid direction");
+//}
+
 crow::response Routes::PlayerMove(const crow::request& req, const std::string& username, const std::string& direction)
 {
+	auto lobby = m_lobbies->GetLobbyByPlayer(username);
+	if (!lobby) return crow::response(404, "Lobby not found");
+
+	auto game = lobby->GetGame();
+	if (!game) return crow::response(404, "Game not found");
+
+	std::lock_guard<std::mutex> lock(game->GetMutex());  // Lock while modifying player state
+
+	auto player = game->GetPlayerByName(username);
+	if (!player) return crow::response(404, "Player not found");
+
+	// Add some debug logging
+	std::cout << "Before move - Player " << username << ": x=" << player->GetX()
+		<< " y=" << player->GetY() << " isMoving=" << player->IsMoving() << std::endl;
+
 	if (direction == "NORTH") {
-		m_lobbies->GetLobbyByPlayer(username)->GetGame()->GetPlayerByName(username)->MoveUp();
+		player->MoveUp();
+		std::cout << "After move up - Player " << username << ": x=" << player->GetX()
+			<< " y=" << player->GetY() << " isMoving=" << player->IsMoving() << std::endl;
 		return crow::response(200, "Player moved up");
 	}
-	if (direction == "SOUTH"){
-		m_lobbies->GetLobbyByPlayer(username)->GetGame()->GetPlayerByName(username)->MoveDown();
+	if (direction == "SOUTH") {
+		player->MoveDown();
+		std::cout << "After move down - Player " << username << ": x=" << player->GetX()
+			<< " y=" << player->GetY() << " isMoving=" << player->IsMoving() << std::endl;
 		return crow::response(200, "Player moved down");
 	}
-	if (direction == "EAST"){
-		m_lobbies->GetLobbyByPlayer(username)->GetGame()->GetPlayerByName(username)->MoveRight();
+	if (direction == "EAST") {
+		player->MoveRight();
+		std::cout << "After move right - Player " << username << ": x=" << player->GetX()
+			<< " y=" << player->GetY() << " isMoving=" << player->IsMoving() << std::endl;
 		return crow::response(200, "Player moved right");
 	}
-	if (direction == "WEST"){
-		m_lobbies->GetLobbyByPlayer(username)->GetGame()->GetPlayerByName(username)->MoveLeft();
+	if (direction == "WEST") {
+		player->MoveLeft();
+		std::cout << "After move left - Player " << username << ": x=" << player->GetX()
+			<< " y=" << player->GetY() << " isMoving=" << player->IsMoving() << std::endl;
 		return crow::response(200, "Player moved left");
 	}
-	return crow::response(404, "Player invalid direction");
+	return crow::response(404, "Invalid direction");
 }
 
 crow::response Routes::PlayerFace(const crow::request& req, const std::string& username, const std::string& direction)
