@@ -1,7 +1,7 @@
+#include <numeric>
 #include "Map.h"
 #include "Player.h"
 #include "DeadlyBlock.h"
-
 
 Map::Map() :
 	m_isGenerated{false},
@@ -15,12 +15,12 @@ Map::Map() :
 crow::json::wvalue Map::toJson()
 {
 	crow::json::wvalue::list mapJson;
-	for (int i = 0; i < m_mapHeight; i++) {
-		for (int j = 0; j < m_mapWidth; j++) {
+	for (size_t y : std::views::iota(0,static_cast<int>(m_mapHeight))) {
+		for (size_t x : std::views::iota(0,static_cast<int>(m_mapWidth))) {
 			crow::json::wvalue rowJson;
-			rowJson["type"] = ObjectTypeToString(i, j);
-			rowJson["x"] = j;
-			rowJson["y"] = i;
+			rowJson["type"] = ObjectTypeToString(y, x);
+			rowJson["x"] = x;
+			rowJson["y"] = y;
 			mapJson.push_back(std::move(rowJson));
 		}
 	}
@@ -143,9 +143,7 @@ bool Map::Generate(const std::vector<uint8_t>& probabilities, uint32_t seed)
 bool Map::VerifyProbabilities() {
 	if (m_probabilities.size() != 3) return false;
 
-	int sumOfProbabilities = 0;
-	for (int it : m_probabilities) sumOfProbabilities += it;
-	return sumOfProbabilities == 100;
+	return std::accumulate(m_probabilities.begin(), m_probabilities.end(), 0) == 100;
 
 }
 
@@ -164,9 +162,9 @@ bool Map::GenerateStructures() {
 	std::vector<std::shared_ptr<Object>*> breakableBlocksVector;
 
 	std::uniform_int_distribution<> objectRandomNumber(0, 99);
-	for (size_t y = 0; y < m_matrix.size(); ++y) {
+	for (size_t y : std::views::iota(0, static_cast<int>(m_mapHeight))) {
 		std::vector<std::shared_ptr<Object>>& line = m_matrix[y];
-		for (size_t x = 0; x < m_matrix[0].size(); ++x) {
+		for (size_t x : std::views::iota(0, static_cast<int>(m_mapWidth))) {
 			std::shared_ptr<Object>& object = line[x];
 			uint8_t sum = 0;
 			uint8_t current = 0;

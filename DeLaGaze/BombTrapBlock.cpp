@@ -44,8 +44,8 @@ void BombTrapBlock::Boom()
 	size_t yBorderTop = std::max((int)yBomb - (int)std::ceil(m_boomRadius), 0);
 	size_t yBorderBottom = std::min((int)yBomb + (int)std::ceil(m_boomRadius), m_map->GetMapHeight() - 1);
 
-	for (size_t y = yBorderTop; y <= yBorderBottom; ++y) {
-		for (size_t x = xBorderLeft; x <= xBorderRight; ++x) {
+	for (size_t y : std::views::iota(yBorderTop, yBorderBottom)) {
+		for (size_t x : std::views::iota(xBorderLeft, xBorderRight)) {
 			if (x == m_pos.first && y == m_pos.second) continue;
 			if (!(*m_map)[y][x]) continue;
 			float distance = ((float)x - (float)xBomb) * ((float)x - (float)xBomb) + ((float)y - (float)yBomb) * ((float)y - (float)yBomb);
