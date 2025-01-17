@@ -244,6 +244,7 @@ void Game::HandleBulletToPlayerCollisions(std::shared_ptr<Bullet>& bullet)
 {
 	for (std::shared_ptr<Player>& player : m_players) {
 		if (!player) continue;
+		if (player->GetHp() <= 0) continue;
 		ObjectCollision collision{ player->GetBulletToPlayerColision(bullet) };
 		if (collision.time >= 0 && collision.time <= m_deltaTime)
 			m_collisions.push(std::move(collision));
@@ -320,6 +321,7 @@ crow::json::wvalue Game::PlayersToJson()
 {
 	std::vector<crow::json::wvalue> jsonPlayers;
 	for (const auto& player : m_players) {
+		if (player->GetHp() <= 0) continue;
 		jsonPlayers.push_back(player->toJson());
 	}
 	return jsonPlayers;
