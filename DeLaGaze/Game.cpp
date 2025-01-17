@@ -34,6 +34,7 @@ void Game::Start()
 
 	m_isRunning = true;
 	m_lastFrameTime = std::chrono::high_resolution_clock::now();
+	m_hasDeathmatchStarted = false;
 
 	//EXAMPLE PLAYER INPUT ON OTHER THREAD
 	// shouldn't be needed since routes are multithreaded, but I left it here for example and refference
@@ -91,10 +92,10 @@ void Game::Update(){
 		return;
 	}
 
-	//if (!m_hasDeathmatchStarted)
-	//	CheckDeathmatchCondition();
-	//else
-	//	m_map.Shrink();
+	if (!m_hasDeathmatchStarted)
+		CheckDeathmatchCondition();
+	else
+		m_map.Shrink();
 }
 
 void Game::HandleCollisions()
@@ -125,7 +126,7 @@ void Game::HandleBulletToWallCollisions(std::shared_ptr<Bullet>& bullet)
 	{
 		std::shared_ptr<Object> collidedToObject = m_map[static_cast<int>(y)][static_cast<int>(x)];
 		Object::ObjectType type = collidedToObject->GetType();
-		if (type == Object::ObjectType::BombTrapBlock || type == Object::ObjectType::BreakableBlock || type == Object::ObjectType::UnbreakableBlock) 
+		if (type == Object::ObjectType::BombTrapBlock || type == Object::ObjectType::BreakableBlock || type == Object::ObjectType::UnbreakableBlock || type == Object::ObjectType::DeadlyBlock) 
 			m_collisions.emplace(std::move(ObjectCollision{ bullet, collidedToObject, 0 }));
 	}
 
@@ -136,7 +137,7 @@ void Game::HandleBulletToWallCollisions(std::shared_ptr<Bullet>& bullet)
 			if (t > 0.0f) {
 				std::shared_ptr<Object> collidedToObject = m_map[static_cast<int>(y)][nextBlockX];
 				Object::ObjectType type = collidedToObject->GetType();
-				if (type == Object::ObjectType::BombTrapBlock || type == Object::ObjectType::BreakableBlock || type == Object::ObjectType::UnbreakableBlock) 
+				if (type == Object::ObjectType::BombTrapBlock || type == Object::ObjectType::BreakableBlock || type == Object::ObjectType::UnbreakableBlock || type == Object::ObjectType::DeadlyBlock)
 					m_collisions.emplace(std::move(ObjectCollision{ bullet, collidedToObject, t }));
 			}
 			t = (nextBlockX-- -x + radius) / xSpeed;
@@ -149,7 +150,7 @@ void Game::HandleBulletToWallCollisions(std::shared_ptr<Bullet>& bullet)
 			if (t > 0.0f) {
 				std::shared_ptr<Object> collidedToObject = m_map[static_cast<int>(y)][nextBlockX];
 				Object::ObjectType type = collidedToObject->GetType();
-				if (type == Object::ObjectType::BombTrapBlock || type == Object::ObjectType::BreakableBlock || type == Object::ObjectType::UnbreakableBlock) 
+				if (type == Object::ObjectType::BombTrapBlock || type == Object::ObjectType::BreakableBlock || type == Object::ObjectType::UnbreakableBlock || type == Object::ObjectType::DeadlyBlock)
 					m_collisions.emplace(std::move(ObjectCollision{ bullet, collidedToObject, t }));
 			}
 			t = (++nextBlockX - x - radius) / xSpeed;
@@ -163,7 +164,7 @@ void Game::HandleBulletToWallCollisions(std::shared_ptr<Bullet>& bullet)
 			if (t > 0.0f) {
 				std::shared_ptr<Object> collidedToObject = m_map[nextBlockY][static_cast<int>(x)];
 				Object::ObjectType type = collidedToObject->GetType();
-				if (type == Object::ObjectType::BombTrapBlock || type == Object::ObjectType::BreakableBlock || type == Object::ObjectType::UnbreakableBlock) 
+				if (type == Object::ObjectType::BombTrapBlock || type == Object::ObjectType::BreakableBlock || type == Object::ObjectType::UnbreakableBlock || type == Object::ObjectType::DeadlyBlock)
 					m_collisions.emplace(std::move(ObjectCollision{ bullet, collidedToObject, t }));
 			}
 			t = (nextBlockY-- - y + radius) / ySpeed;
@@ -176,7 +177,7 @@ void Game::HandleBulletToWallCollisions(std::shared_ptr<Bullet>& bullet)
 			if (t > 0.0f) {
 				std::shared_ptr<Object> collidedToObject = m_map[nextBlockY][static_cast<int>(x)];
 				Object::ObjectType type = collidedToObject->GetType();
-				if (type == Object::ObjectType::BombTrapBlock || type == Object::ObjectType::BreakableBlock || type == Object::ObjectType::UnbreakableBlock) 
+				if (type == Object::ObjectType::BombTrapBlock || type == Object::ObjectType::BreakableBlock || type == Object::ObjectType::UnbreakableBlock || type == Object::ObjectType::DeadlyBlock)
 					m_collisions.emplace(std::move(ObjectCollision{ bullet, collidedToObject, t }));
 			}
 			t = (++nextBlockY - y - radius) / ySpeed;
@@ -285,7 +286,7 @@ void Game::RemoveDestroyedObjects()
 			if (it != m_bullets.end()) m_bullets.erase(it);
 			continue;
 		}
-		if (type == Object::ObjectType::UnbreakableBlock) {
+		if (type == Object::ObjectType::UnbreakableBlock || type == Object::ObjectType::DeadlyBlock) {
 			continue;
 		}
 		if (std::shared_ptr<BreakableBlock> breakable = std::dynamic_pointer_cast<BreakableBlock>(obj)) {

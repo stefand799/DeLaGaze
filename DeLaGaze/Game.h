@@ -65,7 +65,7 @@ private:
 	//Constants
 	const uint16_t kMaxFps = 30;
 
-	const std::chrono::seconds kTimeUntilDeathmatch = std::chrono::seconds(177);
+	const std::chrono::seconds kTimeUntilDeathmatch = std::chrono::seconds(175);
 
 
 	Nsec m_shortestSleepTime;
@@ -117,7 +117,7 @@ private:
 
 
 	Clock::time_point m_startGameTime;
-	bool m_hasDeathmatchStarted;
+	bool m_hasDeathmatchStarted = false;
 	
 	
 	std::queue<std::pair<std::shared_ptr<Player>,char>> m_playerInputs;

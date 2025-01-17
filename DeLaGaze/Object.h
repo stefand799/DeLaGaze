@@ -12,6 +12,7 @@ public:
 		UnbreakableBlock,
 		BreakableBlock,
 		BombTrapBlock,
+		DeadlyBlock
 	};
 	virtual ObjectType GetType() const = 0;
 

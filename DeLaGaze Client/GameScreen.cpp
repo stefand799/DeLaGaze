@@ -47,6 +47,10 @@ void GameScreen::paintEvent(QPaintEvent* event)
                     painter.setBrush(QColor(80, 80, 80));  // Dark gray
                     painter.setPen(Qt::black);
                 }
+                if (block["type"].s() == "DeadlyBlock") {
+                    painter.setBrush(Qt::magenta);  // Magenta
+                    painter.setPen(Qt::black);
+                }
                 else if (block["type"].s() == "BreakableBlock") {
                     painter.setBrush(QColor(150, 75, 0));  // Brown
                     painter.setPen(Qt::black);

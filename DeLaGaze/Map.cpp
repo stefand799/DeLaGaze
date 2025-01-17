@@ -38,13 +38,15 @@ std::string Map::ObjectTypeToString(int i, int j)
 	Object::ObjectType type = obj->GetType();
 	switch (type) {
 	case Object::ObjectType::Player:
-		return "Player";
+		return "Pathway";
 	case Object::ObjectType::Bullet:
 		return "Bullet";
 	case Object::ObjectType::Pathway:
 		return "Pathway";
 	case Object::ObjectType::UnbreakableBlock:
 		return "UnbreakableBlock";
+	case Object::ObjectType::DeadlyBlock:
+		return "DeadlyBlock";
 	case Object::ObjectType::BreakableBlock:
 		return "BreakableBlock";
 	case Object::ObjectType::BombTrapBlock:
@@ -72,7 +74,7 @@ void Map::Shrink()
 	if (m_isGenerated == false) return;
 
 	Clock::time_point now = Clock::now();
-	if (std::chrono::duration<float>(now - m_lastShrinkTime) < (m_shrinkOrder==0? std::chrono::seconds(3) : kShrinkCooldown))
+	if (std::chrono::duration<float>(now - m_lastShrinkTime) < (m_shrinkOrder==0? std::chrono::seconds(5) : kShrinkCooldown))
 		return;
 	if (m_shrinkOrder * 2 > std::min(m_mapWidth, m_mapHeight)) 
 		return;
