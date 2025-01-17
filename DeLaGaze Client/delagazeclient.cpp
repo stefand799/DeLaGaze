@@ -10,7 +10,7 @@ DeLaGazeClient::DeLaGazeClient(QWidget* parent)
 	upgradesScreen(new UpgradesScreen(this)),
 	//lobbyScreen(new LobbyScreen(this)),
 	//gameScreen(new GameScreen(this)),
-	reqManager(new GameClientReqManager("http://localhost:18080",this))
+	reqManager(new GameClientReqManager("http://127.0.0.1:18080",this))
 {
     ui.setupUi(this);
 
@@ -43,10 +43,9 @@ void DeLaGazeClient::initializeConnections(){
 	connect(playScreen, &PlayScreen::joinLobbyRequest, reqManager, &GameClientReqManager::joinLobby);
     //connect(gameScreen, &GameScreen::getGameStateRequest, reqManager, &GameClientReqManager::getGameState);
 
-	connect(reqManager, &GameClientReqManager::loginSuccess, this, [&](const std::string& username, int score, int points, int fireRate, bool upgradeBS)
+	connect(reqManager, &GameClientReqManager::loginSuccess, this, [&](int id, const std::string& username, int score, int points, int fireRate, bool upgradeBS, const std::string& successMessage)
         {
             std::cout << "Login successful for username: " << username << std::endl;
-
         /*TODO: SET functions for screens which will display them (upgrades, and maybe main too)*/
             stackedWidget->setCurrentWidget(mainScreen);
         });
@@ -55,12 +54,7 @@ void DeLaGazeClient::initializeConnections(){
             loginScreen->showServerError(errorMessage);
             stackedWidget->setCurrentWidget(loginScreen);
         });
-    connect(reqManager, &GameClientReqManager::addPlayerFailed, this, [&](const std::string& errorMessage)
-        {
-        /*lmbd function for lambdas that identically handle SERVER ERRORS*/
-            loginScreen->showServerError(errorMessage);
-            stackedWidget->setCurrentWidget(loginScreen);
-        });
+   
 
     connect(reqManager, &GameClientReqManager::upgradeBulletSpeedSuccess, this, [&]()
         {

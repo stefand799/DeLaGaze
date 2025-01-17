@@ -21,9 +21,8 @@ public:
 	void playerShoot();
 	//TODO: constants, remove headers where not needed
 signals:
-	void loginSuccess(const std::string& username, int score, int points, int fireRate, bool upgradeBS, const std::string& successMessage);
+	void loginSuccess(int id,const std::string& username, int score, int points, int fireRate, bool upgradeBS, const std::string& successMessage);
 	void loginFailed(const std::string& errorMessage);
-	void addPlayerFailed(const std::string& errorMessage);
 	void upgradeFireRateSuccess(const std::string& successMessage);
 	void upgradeFireRateFailed(const std::string& errorMessage);
 	void upgradeBulletSpeedSuccess(const std::string& successMessage);
