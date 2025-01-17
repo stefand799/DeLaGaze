@@ -91,10 +91,10 @@ void Game::Update(){
 		return;
 	}
 
-	if (!m_hasDeathmatchStarted)
-		CheckDeathmatchCondition();
-	else
-		m_map.Shrink();
+	//if (!m_hasDeathmatchStarted)
+	//	CheckDeathmatchCondition();
+	//else
+	//	m_map.Shrink();
 }
 
 void Game::HandleCollisions()

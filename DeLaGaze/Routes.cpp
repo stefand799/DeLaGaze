@@ -50,18 +50,32 @@ crow::response Routes::GetBullets(const crow::request& req, const std::string& u
 }
 
 crow::response Routes::GameStarted(const crow::request& req, const std::string& username) {
-	//return crow::response(303, "Game loading");
-	auto game = this->m_lobbies->GetLobbyByPlayer(username)->GetGame();
+	auto lobby = this->m_lobbies->GetLobbyByPlayer(username);
+	if (!lobby)
+		return crow::response(400, "Lobby not found for player!");
+
+	auto game = lobby->GetGame();
 	if (!game)
 		return crow::response(400, "Game hasn't been initialized!");
-	else
-		if (game->IsRunning())
-			return crow::response(200, "Game has started!");
-	return crow::response(303, "Game loading!");
-	/*if (!(this->m_lobbies->GetLobbyByPlayer(username)->GetGame()->IsRunning()))
+
+	if (game->IsRunning())
 		return crow::response(200, "Game has started!");
-	else return crow::response(303, "Game loading!");*/
+
+	return crow::response(303, "Game loading!");
 }
+//crow::response Routes::GameStarted(const crow::request& req, const std::string& username) {
+//	//return crow::response(303, "Game loading");
+//	auto game = this->m_lobbies->GetLobbyByPlayer(username)->GetGame();
+//	if (!game)
+//		return crow::response(400, "Game hasn't been initialized!");
+//
+//	if (game->IsRunning())
+//		return crow::response(200, "Game has started!");
+//	return crow::response(303, "Game loading!");
+//	/*if (!(this->m_lobbies->GetLobbyByPlayer(username)->GetGame()->IsRunning()))
+//		return crow::response(200, "Game has started!");
+//	else return crow::response(303, "Game loading!");*/
+//}
 
 crow::response Routes::PlayerShoot(const crow::request& req, const std::string& username) {
 	m_lobbies->GetLobbyByPlayer(username)->GetGame()->GetPlayerByName(username)->Shoot(m_lobbies->GetLobbyByPlayer(username)->GetGame()->GetBullets());

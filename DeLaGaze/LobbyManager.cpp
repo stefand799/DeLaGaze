@@ -22,11 +22,10 @@ std::shared_ptr<Lobby> LobbyManager::CreateLobby(GameMode gameMode) {
 
 
 std::shared_ptr<Lobby> LobbyManager::JoinALobby(std::shared_ptr<Player> player, GameMode gameMode) {
-    std::lock_guard<std::mutex> lock(m_mutex);
     std::string playerUsername = player->GetUsername();
 
     for (auto& [id, lobby] : m_lobbies) {
-        if (lobby->GetMode() == gameMode) {
+        if (lobby->GetMode() == gameMode && !lobby->GetGame()->IsRunning()) {
             lobby->JoinLobby(player);
             m_playerToLobby[playerUsername] = lobby;
             return lobby;

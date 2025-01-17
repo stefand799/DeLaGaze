@@ -1,14 +1,28 @@
 #include "Lobby.h"
 
-Lobby::Lobby(std::string id, GameMode gameMode) : m_id{ id }, m_gameMode{ gameMode }, m_game{ std::make_shared<Game>() }, MAX_PLAYERS{2} {};
+Lobby::Lobby(std::string id, GameMode gameMode) : m_id{ id }, m_gameMode{ gameMode }, m_game{ std::make_shared<Game>() }, MAX_PLAYERS{4} {};
 
 
 bool Lobby::JoinLobby(std::shared_ptr<Player> player) {
     m_players.emplace_back(std::move(player));
 
-    if (m_players.size() == 2) {
+    if (m_players.size() == 2 && !m_timerActive) {
         m_timerStart = std::chrono::steady_clock::now();
         m_timerActive = true;
+
+        std::thread([this]() {
+            while (m_timerActive) {
+                auto currentTime = std::chrono::steady_clock::now();
+                auto elapsedTime = std::chrono::duration_cast<std::chrono::seconds>(currentTime - m_timerStart).count();
+
+                if (elapsedTime >= TIMER_THRESHOLD) {
+                    StartGame();
+                    m_timerActive = false;
+                }
+
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            }
+            }).detach();
     }
 
     if (m_players.size() >= MAX_PLAYERS) {
@@ -19,9 +33,12 @@ bool Lobby::JoinLobby(std::shared_ptr<Player> player) {
     return true;
 }
 
+
+
 void Lobby::StartGame() {
     if (m_game) {
         if (m_game->AddPlayers(m_players)) {
+            std::cout << m_game->IsRunning()<< "daaaaaaaaaaaaaaaaaaaaaaaaaaa";
             std::thread gamethread([&]() {m_game->Start(); });
             gamethread.detach();
             std::cout << "Players added to game";
