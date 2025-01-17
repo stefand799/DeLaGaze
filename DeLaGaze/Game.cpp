@@ -20,7 +20,6 @@ Game::~Game()
 
 void Game::Start()
 {
-	if(!m_map.Generate()) return;
 	//Creating players EXAMPLE
 
 	//m_players.emplace_back(std::move(std::make_shared<Player>(&m_map, std::pair<int, int>{ 0, 0 }, 1, "Player1", 0, 3, true, Direction::South, State::Idle, 0 ,0 ,3)));
@@ -273,7 +272,7 @@ void Game::RemoveDestroyedObjects()
 				if (std::shared_ptr<Bullet> bullet = std::dynamic_pointer_cast<Bullet>(currCollision.second)) 
 					if (std::shared_ptr<Player> player = std::dynamic_pointer_cast<Player>(currCollision.first)) {
 						std::shared_ptr<Player> bulletOwner = bullet->GetOwner();
-						if(player->GetTeamId() != bulletOwner->GetTeamId()) bulletOwner->SetScore(bulletOwner->GetScore() + 100);
+						if(player->GetTeamId() != bulletOwner->GetTeamId()) bulletOwner->SetPoints(bulletOwner->GetPoints() + 100);
 					}
 			}
 	}
@@ -424,19 +423,21 @@ bool Game::CheckEndCondition()
 void Game::HandleEndOfGameActions()
 {
 	size_t leaderboardSize = m_teamLeaderboard.size();
-	if (leaderboardSize >= 1) {
-		for (std::shared_ptr<Player>& player : m_players) {
-			uint8_t playerTeamId = player->GetTeamId();
-			if (std::find(m_teamLeaderboard[leaderboardSize - 1].begin(), m_teamLeaderboard[leaderboardSize - 1].end(), playerTeamId) != m_teamLeaderboard[leaderboardSize - 1].end()) {
-				player->SetPoints(player->GetPoints() + 2);
+	if (m_mode == GameMode::FFA) {
+		if (leaderboardSize >= 1) {
+			for (std::shared_ptr<Player>& player : m_players) {
+				uint8_t playerTeamId = player->GetTeamId();
+				if (std::find(m_teamLeaderboard[leaderboardSize - 1].begin(), m_teamLeaderboard[leaderboardSize - 1].end(), playerTeamId) != m_teamLeaderboard[leaderboardSize - 1].end()) {
+					player->SetScore(player->GetScore() + 2);
+				}
 			}
 		}
-	}
-	if (leaderboardSize >= 2) {
-		for (std::shared_ptr<Player>& player : m_players) {
-			uint8_t playerTeamId = player->GetTeamId();
-			if (std::find(m_teamLeaderboard[leaderboardSize - 2].begin(), m_teamLeaderboard[leaderboardSize - 2].end(), playerTeamId) != m_teamLeaderboard[leaderboardSize - 2].end()) {
-				player->SetPoints(player->GetPoints() + 1);
+		if (leaderboardSize >= 2) {
+			for (std::shared_ptr<Player>& player : m_players) {
+				uint8_t playerTeamId = player->GetTeamId();
+				if (std::find(m_teamLeaderboard[leaderboardSize - 2].begin(), m_teamLeaderboard[leaderboardSize - 2].end(), playerTeamId) != m_teamLeaderboard[leaderboardSize - 2].end()) {
+					player->SetScore(player->GetScore() + 1);
+				}
 			}
 		}
 	}
@@ -540,10 +541,6 @@ bool Game::AddPlayers(const std::vector<std::shared_ptr<Player>>& players) {
 				std::cout << "Warning: Player " << i << " is nullptr" << std::endl;
 			}
 		}
-
-		m_startGameTime = Clock::now();
-		m_lastFrameTime = std::chrono::high_resolution_clock::now();
-		m_isRunning = true;
 			
 		std::cout << "All players added successfully and game initialized" << std::endl;
 		return true;
