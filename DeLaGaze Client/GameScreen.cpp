@@ -193,75 +193,71 @@ void GameScreen::processInput()
 {
     bool moved = false;
     bool faced = false;
-    bool shot = false;
-    std::string direction;
+    std::string moveDirection;
+    std::string faceDirection;
 
 	if (pressedKeys.contains(Qt::Key_W))
 	{
-        direction = "NORTH";
+        moveDirection = "NORTH";
         moved = true;
 	}
     else if (pressedKeys.contains(Qt::Key_A))
     {
-        direction = "WEST";
+        moveDirection = "WEST";
         moved = true;
 
     }
 	else if (pressedKeys.contains(Qt::Key_S))
     {
-        direction = "SOUTH";
+        moveDirection = "SOUTH";
         moved = true;
 
     }
     else if (pressedKeys.contains(Qt::Key_D))
     {
-        direction = "EAST";
+        moveDirection = "EAST";
         moved = true;
 
     }
 
-    else if (pressedKeys.contains(Qt::Key_Up))
+	if (pressedKeys.contains(Qt::Key_Up))
     {
-        direction = "NORTH";
+        faceDirection = "NORTH";
         faced = true;
     }
     else if (pressedKeys.contains(Qt::Key_Left))
     {
-        direction = "WEST";
+        faceDirection = "WEST";
         faced = true;
     }
     else if (pressedKeys.contains(Qt::Key_Down))
     {
-        direction = "SOUTH";
+        faceDirection = "SOUTH";
         faced = true;
     }
     else if (pressedKeys.contains(Qt::Key_Right))
     {
-        direction = "EAST";
+        faceDirection = "EAST";
         faced = true;
     }
 
-    else if (pressedKeys.contains(Qt::Key_Space))
-    {
-        shot = true;
-    }
+    
 
     if (moved)
     {
-        emit playerMoveRequest(direction);
+        emit playerMoveRequest(moveDirection);
         update();
     }
-    else if (faced)
+    if (faced)
     {
-        emit playerFaceRequest(direction);
+        emit playerFaceRequest(faceDirection);
         update();
     }
-    else if (shot)
+    if (pressedKeys.contains(Qt::Key_Space))
     {
         emit playerShootRequest();
         update();
     }
-    
 }
 
 void GameScreen::onGameStateReceived(const std::string& gameStateJson)
