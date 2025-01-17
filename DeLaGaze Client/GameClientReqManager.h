@@ -17,7 +17,7 @@ public:
 	void checkHasGameStarted();
 	void getGameState();
 	void playerMove(const std::string& direction);
-	void playerFace();
+	void playerFace(const std::string& direction);
 	void playerShoot();
 	//TODO: constants, remove headers where not needed
 signals:
@@ -35,6 +35,10 @@ signals:
 	void getGameStateFailed(const std::string& errorMessage);
 	void playerMoveSuccess(const std::string& successMessage);
 	void playerMoveFailed(const std::string& errorMessage);
+	void playerFaceSuccess(const std::string& successMessage);
+	void playerFaceFailed(const std::string& errorMessage);
+	void playerShootSuccess(const std::string& successMessage);
+	void playerShootFailed(const std::string& errorMessage);
 private:
 	std::string serverUrl;
 	std::string m_username;

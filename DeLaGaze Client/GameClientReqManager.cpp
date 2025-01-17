@@ -108,3 +108,24 @@ void GameClientReqManager::playerMove(const std::string& direction)
 	else
 		emit playerMoveFailed(response.text);
 }
+
+void GameClientReqManager::playerFace(const std::string& direction)
+{
+	auto response = cpr::Post(
+		cpr::Url{ serverUrl + "/face/" + m_username + "/" + direction },
+		cpr::Header{ {"Content-Type","application/json"} }
+	);
+	if (response.status_code == 200)
+		emit playerFaceSuccess(response.text);
+	else
+		emit playerFaceFailed(response.text);
+}
+
+void GameClientReqManager::playerShoot()
+{
+	auto response = cpr::Post(
+		cpr::Url{ serverUrl + "/shoot/" + m_username },
+		cpr::Header{ {"Content-Type","application/json"} }
+	);
+
+}

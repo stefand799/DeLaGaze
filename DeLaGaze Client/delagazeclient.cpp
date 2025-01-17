@@ -118,6 +118,26 @@ void DeLaGazeClient::initializeConnections(){
                             qDebug() << "Move FAILED! " << errorMessage << "\n";
                         });
 
+                    connect(gameScreen, &GameScreen::playerFaceRequest, reqManager, &GameClientReqManager::playerFace);
+                    connect(reqManager, &GameClientReqManager::playerFaceSuccess, this, [&](const std::string& successMessage)
+                        {
+                            qDebug() << "Facing successful! " << successMessage << "\n";
+                        });
+                    connect(reqManager, &GameClientReqManager::playerFaceFailed, this, [&](const std::string& errorMessage)
+                        {
+                            qDebug() << "Facing FAILED! " << errorMessage << "\n";
+                        });
+
+                    connect(gameScreen, &GameScreen::playerShootRequest, reqManager, &GameClientReqManager::playerShoot);
+                    connect(reqManager, &GameClientReqManager::playerShootSuccess, this, [&](const std::string& successMessage)
+                        {
+                            qDebug() << "SHOT successfully! " << successMessage << "\n";
+                        });
+                    connect(reqManager, &GameClientReqManager::playerShootFailed, this, [&](const std::string& errorMessage)
+                        {
+                            qDebug() << "SHOT FAILED! " << errorMessage << "\n";
+                        });
+
                 });
             connect(reqManager, &GameClientReqManager::hasGameStartedFailed, this, [&](const std::string& errorMessage)
                 {

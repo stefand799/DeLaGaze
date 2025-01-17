@@ -23,7 +23,7 @@ GameScreen::GameScreen(QWidget *parent)
 
 void GameScreen::paintEvent(QPaintEvent* event)
 {
-    //MiauScreen::paintEvent(event);
+    MiauScreen::paintEvent(event);
 	QPainter painter(this);
 	//TODO: maybe remove for performance?
 	painter.setRenderHint(QPainter::Antialiasing);
@@ -192,6 +192,8 @@ void GameScreen::keyReleaseEvent(QKeyEvent* event)
 void GameScreen::processInput()
 {
     bool moved = false;
+    bool faced = false;
+    bool shot = false;
     std::string direction;
 
 	if (pressedKeys.contains(Qt::Key_W))
@@ -214,31 +216,52 @@ void GameScreen::processInput()
     else if (pressedKeys.contains(Qt::Key_D))
     {
         direction = "EAST";
-        moved = true; 
+        moved = true;
 
     }
 
     else if (pressedKeys.contains(Qt::Key_Up))
     {
-	    
+        direction = "NORTH";
+        faced = true;
     }
     else if (pressedKeys.contains(Qt::Key_Left))
     {
-
+        direction = "WEST";
+        faced = true;
     }
     else if (pressedKeys.contains(Qt::Key_Down))
     {
-
+        direction = "SOUTH";
+        faced = true;
     }
     else if (pressedKeys.contains(Qt::Key_Right))
     {
-
+        direction = "EAST";
+        faced = true;
     }
+
+    else if (pressedKeys.contains(Qt::Key_Space))
+    {
+        shot = true;
+    }
+
     if (moved)
     {
         emit playerMoveRequest(direction);
         update();
     }
+    else if (faced)
+    {
+        emit playerFaceRequest(direction);
+        update();
+    }
+    else if (shot)
+    {
+        emit playerShootRequest();
+        update();
+    }
+    
 }
 
 void GameScreen::onGameStateReceived(const std::string& gameStateJson)

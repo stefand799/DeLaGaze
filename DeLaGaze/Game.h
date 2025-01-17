@@ -63,7 +63,7 @@ private:
 	//void GetPlayerInputs();
 
 	//Constants
-	const uint16_t kMaxFps = 30;
+	const uint16_t kMaxFps = 60;
 
 	const std::chrono::seconds kTimeUntilDeathmatch = std::chrono::seconds(175);
 

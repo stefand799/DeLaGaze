@@ -18,7 +18,7 @@ public:
 signals:
 	void getGameStateRequest();
 	void playerMoveRequest(const std::string& direction);
-	void playerFaceRequest();
+	void playerFaceRequest(const std::string& direction);
 	void playerShootRequest();
 protected:
 	void paintEvent(QPaintEvent* event) override;
