@@ -416,6 +416,7 @@ void Player::SetPlayerInGame(Map* map, const std::pair<int, int>& pos, Direction
 	m_previousMapY = pos.second;
 	m_x = pos.first + 0.5f;
 	m_y = pos.second + 0.5f;
+	m_spawnpoint = pos;
 	m_moveCooldown = kDefaultMoveCooldown;
 	m_playerSpeed = 1.0f / m_moveCooldown;
 	m_xSpeed = 0.0f;
