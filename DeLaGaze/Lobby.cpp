@@ -37,7 +37,7 @@ bool Lobby::JoinLobby(std::shared_ptr<Player> player) {
 
 void Lobby::StartGame() {
     if (m_game) {
-        if (m_game->AddPlayers(m_players)) {
+        if (m_game->AddPlayers(m_players,this->GetMode())) {
             std::cout << m_game->IsRunning()<< "daaaaaaaaaaaaaaaaaaaaaaaaaaa";
             std::thread gamethread([&]() {m_game->Start(); });
             gamethread.detach();

@@ -476,7 +476,7 @@ Map& Game::GetMap() {
 //}
 
 // Game data
-bool Game::AddPlayers(const std::vector<std::shared_ptr<Player>>& players) {
+bool Game::AddPlayers(const std::vector<std::shared_ptr<Player>>& players, GameMode gm) {
 	// Generate map first
 	if (!m_map.Generate()) {
 		std::cerr << "Error: Map generation failed" << std::endl;
@@ -501,51 +501,57 @@ bool Game::AddPlayers(const std::vector<std::shared_ptr<Player>>& players) {
 		return false;
 	}
 
-	m_mode = GameMode::FFA;
+	m_mode = gm;
 
-	if (m_mode == GameMode::FFA) {
-		struct SpawnPoint {
-			int x;
-			int y;
-		};
+	struct SpawnPoint {
+		int x;
+		int y;
+	};
 
-		std::vector<SpawnPoint> spawnPoints = {
-			{0, 0},
-			{static_cast<int>(m_map.GetMapWidth() - 1), 0},
-			{0, static_cast<int>(m_map.GetMapHeight() - 1)},
-			{static_cast<int>(m_map.GetMapWidth() - 1), static_cast<int>(m_map.GetMapHeight() - 1)}
-		};
+	std::vector<SpawnPoint> spawnPoints = {
+		{0, 0},
+		{static_cast<int>(m_map.GetMapWidth() - 1), 0},
+		{0, static_cast<int>(m_map.GetMapHeight() - 1)},
+		{static_cast<int>(m_map.GetMapWidth() - 1), static_cast<int>(m_map.GetMapHeight() - 1)}
+	};
 
-		// Add players with bounds checking
+	if(m_mode == GameMode::FFA){
 		for (size_t i = 0; i < players.size() && i < 4; ++i) {
 			if (players[i] != nullptr) {
-				std::cout << "Adding player " << i << " at position ("
-					<< spawnPoints[i].x << ", " << spawnPoints[i].y << ")" << std::endl;
-
-				try {
-					m_players[i] = players[i];
-					m_players[i]->SetPlayerInGame(
-						&m_map,
-						{ spawnPoints[i].x, spawnPoints[i].y },
-						Direction::South,
-						State::Idle,
-						i
-					);
-					// Add player to map grid like in original code
-					m_map[spawnPoints[i].y][spawnPoints[i].x] = m_players[i];
-					std::cout << "Successfully added player " << i << " to map" << std::endl;
-				}
-				catch (const std::exception& e) {
-					std::cerr << "Error adding player " << i << ": " << e.what() << std::endl;
-					return false;
-				}
-			}
-			else {
-				std::cout << "Warning: Player " << i << " is nullptr" << std::endl;
+				std::cout << "Adding player " << i << " at position (" << spawnPoints[i].x << ", " << spawnPoints[i].y << ")" << std::endl;
+				m_players[i] = players[i];
+				m_players[i]->SetPlayerInGame(
+					&m_map,
+					{ spawnPoints[i].x, spawnPoints[i].y },
+					Direction::South,
+					State::Idle,
+					i
+				);
+				// Add player to map grid like in original code
+				m_map[spawnPoints[i].y][spawnPoints[i].x] = m_players[i];
+				std::cout << "Successfully added player " << i << " to map" << std::endl;
 			}
 		}
-			
-		std::cout << "All players added successfully and game initialized" << std::endl;
+		return true;
+	}
+	else
+	{
+		for (size_t i = 0; i < players.size() && i < 4; ++i) {
+			if (players[i] != nullptr) {
+				std::cout << "Adding player " << i << " at position (" << spawnPoints[i].x << ", " << spawnPoints[i].y << ")" << std::endl;
+				m_players[i] = players[i];
+				m_players[i]->SetPlayerInGame(
+					&m_map,
+					{ spawnPoints[i].x, spawnPoints[i].y },
+					Direction::South,
+					State::Idle,
+					i%2
+				);
+				// Add player to map grid like in original code
+				m_map[spawnPoints[i].y][spawnPoints[i].x] = m_players[i];
+				std::cout << "Successfully added player " << i << " to map" << std::endl;
+			}
+		}
 		return true;
 	}
 

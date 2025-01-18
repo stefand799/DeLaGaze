@@ -20,7 +20,7 @@ class Game {
 public:
 	Game();
 	~Game();
-	bool AddPlayers(const std::vector<std::shared_ptr<Player>>& players);
+	bool AddPlayers(const std::vector<std::shared_ptr<Player>>& players, GameMode gm);
 	void RemovePlayer(const Player& player);
 	void Start();
 
