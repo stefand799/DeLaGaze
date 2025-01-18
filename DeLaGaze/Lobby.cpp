@@ -1,7 +1,11 @@
 #include "Lobby.h"
 
-Lobby::Lobby(std::string id, GameMode gameMode) : m_id{ id }, m_gameMode{ gameMode }, m_game{ std::make_shared<Game>() }, MAX_PLAYERS{4} {};
-
+Lobby::Lobby(std::string id, GameMode gameMode, std::shared_ptr < database::PlayerStorage> db) 
+    : m_id{ id }, m_gameMode{ gameMode }, m_game{ std::make_shared<Game>() }, m_db{ db }, MAX_PLAYERS{ 4 } {};
+Lobby::~Lobby() {
+    for (auto& player : m_players)
+        m_db->UpdatePlayer(player);
+}
 
 bool Lobby::JoinLobby(std::shared_ptr<Player> player) {
     m_players.emplace_back(std::move(player));
@@ -38,7 +42,6 @@ bool Lobby::JoinLobby(std::shared_ptr<Player> player) {
 void Lobby::StartGame() {
     if (m_game) {
         if (m_game->AddPlayers(m_players,this->GetMode())) {
-            std::cout << m_game->IsRunning()<< "daaaaaaaaaaaaaaaaaaaaaaaaaaa";
             std::thread gamethread([&]() {m_game->Start(); });
             gamethread.detach();
             std::cout << "Players added to game";

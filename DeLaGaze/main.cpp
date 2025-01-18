@@ -3,11 +3,11 @@
 #include "Routes.h"
 
 int main() {
-    std::shared_ptr<LobbyManager> lobbyManager = std::make_shared<LobbyManager>();
     //game.Start();
     std::shared_ptr<database::PlayerStorage> playerStorage(std::make_shared<database::PlayerStorage>());
     //database::PlayerStorage playerStorage;
     //Routes routes(playerStorage, game);
+    std::shared_ptr<LobbyManager> lobbyManager = std::make_shared<LobbyManager>(playerStorage);
     Routes routes(playerStorage, lobbyManager);
     std::vector<std::shared_ptr<Player>> p = playerStorage->GetAllPlayers();
     int cnt = 0;

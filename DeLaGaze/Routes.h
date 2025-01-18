@@ -29,7 +29,6 @@ class Routes
 
 private:
 		crow::SimpleApp m_app;
-		std::mutex m_mutex;
 		std::shared_ptr<database::PlayerStorage> m_db;
 		std::shared_ptr<LobbyManager> m_lobbies;
 };

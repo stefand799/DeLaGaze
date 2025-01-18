@@ -1,5 +1,7 @@
 #include "LobbyManager.h"
 
+LobbyManager::LobbyManager(std::shared_ptr<database::PlayerStorage> db) : m_db{ db } {};
+
 std::string LobbyManager::GenerateUniqueId() {
 	static std::random_device rd;
 	static std::mt19937 gen(rd());
@@ -15,7 +17,7 @@ std::string LobbyManager::GenerateUniqueId() {
 
 std::shared_ptr<Lobby> LobbyManager::CreateLobby(GameMode gameMode) {
 	auto id = GenerateUniqueId();
-	auto lobby = std::make_shared<Lobby>(id, gameMode);
+	auto lobby = std::make_shared<Lobby>(id, gameMode, m_db);
 	m_lobbies[id] = lobby;
 	return lobby;
 }
