@@ -53,7 +53,7 @@ public:
 	void SetPlayerState(const State& playerState);
 	void SetX(const int& x);
 	void SetY(const int& y);
-	void SetPlayerInGame(Map* map, const std::pair<int, int>& pos, Direction facing, State state, uint8_t teamid);
+	void SetPlayerInGame(Map* map, const std::pair<int, int>& pos, Direction facing, State state, uint8_t teamid, uint8_t hp);
 
 	// Movement
 	bool CanMoveHere() override;

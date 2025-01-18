@@ -20,35 +20,15 @@ Game::~Game()
 
 void Game::Start()
 {
-	//Creating players EXAMPLE
-
-	//m_players.emplace_back(std::move(std::make_shared<Player>(&m_map, std::pair<int, int>{ 0, 0 }, 1, "Player1", 0, 3, true, Direction::South, State::Idle, 0 ,0 ,3)));
-	//m_map[0][0] = m_players[0];
-
-	//testing with another player!
-	//m_players.emplace_back(std::move(std::make_shared<Player>(&m_map, std::pair<int, int>{ m_map.GetMapWidth() - 1, 0 }, 1, "Player2", 0, 3, true, Direction::South, State::Idle, 0 ,1, 3)));
-	//m_map[0][m_map.GetMapWidth() - 1] = m_players[1];
-	//m_players.emplace_back(std::move(std::make_shared<Player>(&m_map, std::pair<int, int>{ m_map.GetMapWidth() - 1, m_map.GetMapHeight() - 1 }, 1, "Player3", 0, 3, true, Direction::South, State::Idle, 0, 2, 3)));
-	//m_map[m_map.GetMapHeight()-1][m_map.GetMapWidth() - 1] = m_players[2];
-
 
 	m_isRunning = true;
 	m_lastFrameTime = std::chrono::high_resolution_clock::now();
 	m_hasDeathmatchStarted = false;
 
-	//EXAMPLE PLAYER INPUT ON OTHER THREAD
-	// shouldn't be needed since routes are multithreaded, but I left it here for example and refference
-	//std::thread playerInputThread([this]() {
-	//	GetPlayerInputs();
-	//	});
-
 	m_startGameTime = Clock::now();
 
 	this->Run();
 
-	//Part of the example for thread use for input from above
-	//if (playerInputThread.joinable())
-	//	playerInputThread.join();
 }
 
 void Game::SetGameMode(GameMode gameMode) {
@@ -56,27 +36,6 @@ void Game::SetGameMode(GameMode gameMode) {
 }
 
 void Game::Update(){
-	//Handle player input
-	//for now only one player EXAMPLE
-	
-
-
-	//while (!m_playerInputs.empty()) {
-	//	auto [currPlayer,currInput] = m_playerInputs.front();
-	//	m_playerInputs.pop();
-	//	if (currInput == 27) m_isRunning = false; //escape
-	//	if (currInput == 'w' || currInput == 'W') currPlayer->MoveUp();
-	//	if (currInput == 'a' || currInput == 'A') currPlayer->MoveLeft();
-	//	if (currInput == 's' || currInput == 'S') currPlayer->MoveDown();
-	//	if (currInput == 'd' || currInput == 'D') currPlayer->MoveRight();
-	//	if (currInput == 1) currPlayer->FaceNorth();
-	//	if (currInput == 2) currPlayer->FaceSouth();
-	//	if (currInput == 3) currPlayer->FaceWest();
-	//	if (currInput == 4) currPlayer->FaceEast();
-	//	if (currInput == ' ') currPlayer->Shoot(m_bullets);
-	//}
-
-
 
 	for (std::shared_ptr<Bullet>& bullet : m_bullets)
 		bullet->Move(m_deltaTime);
@@ -274,7 +233,7 @@ void Game::RemoveDestroyedObjects()
 				if (std::shared_ptr<Bullet> bullet = std::dynamic_pointer_cast<Bullet>(currCollision.second)) 
 					if (std::shared_ptr<Player> player = std::dynamic_pointer_cast<Player>(currCollision.first)) {
 						std::shared_ptr<Player> bulletOwner = bullet->GetOwner();
-						if(player->GetTeamId() != bulletOwner->GetTeamId()) bulletOwner->SetPoints(bulletOwner->GetPoints() + 100);
+						if(m_mode==GameMode::FFA) if(player->GetTeamId() != bulletOwner->GetTeamId()) bulletOwner->SetPoints(bulletOwner->GetPoints() + 100);
 					}
 			}
 	}
@@ -400,18 +359,19 @@ bool Game::CheckEndCondition()
 		teamHps[player->GetTeamId()] += player->GetHp();
 	}
 	if (teamHps.size() == 0) return true;
-	size_t eliminatedTeamsCount = 0;
 	size_t currPos = m_teamLeaderboard.size();
 	for (auto [id, hp] : teamHps) {
 		if (hp == 0) {
-			eliminatedTeamsCount++;
+			if (m_eliminatedTeams.find(id) != m_eliminatedTeams.end())
+				continue;
+			m_eliminatedTeams.insert(id);
 			if (m_teamLeaderboard.size() == currPos)
 				m_teamLeaderboard.push_back({ id });
 			else 
 				m_teamLeaderboard[currPos].push_back(id);
 		}
 	}
-	if (eliminatedTeamsCount >= teamHps.size() - 1) {
+	if (m_eliminatedTeams.size() >= teamHps.size() - 1) {
 		for (auto [id, hp] : teamHps) {
 			if (hp != 0) {
 				m_teamLeaderboard.push_back({ id });
@@ -432,6 +392,7 @@ void Game::HandleEndOfGameActions()
 				uint8_t playerTeamId = player->GetTeamId();
 				if (std::find(m_teamLeaderboard[leaderboardSize - 1].begin(), m_teamLeaderboard[leaderboardSize - 1].end(), playerTeamId) != m_teamLeaderboard[leaderboardSize - 1].end()) {
 					player->SetScore(player->GetScore() + 2);
+					player->SetPoints(player->GetPoints() + 200);
 				}
 			}
 		}
@@ -444,40 +405,14 @@ void Game::HandleEndOfGameActions()
 			}
 		}
 	}
-	// TODO: SAVE SCORE AND POINTS TO DATABASE
 }
 
 Map& Game::GetMap() {
 	return m_map;
 }
 
-//for now only for testing with one player but in the future may collect input data from players as part of the server part
-// EXAMPLE
-//void Game::GetPlayerInputs()
-//{
-//	while(m_isRunning) {
-//		char keyboardInput = _getch();
-//
-//		if (keyboardInput == -32) { //Arrow input
-//			char arrowKey = _getch();
-//			if(arrowKey == 'H') //up
-//				m_playerInputs.push({ m_players[0], 1});
-//			if(arrowKey == 'P') //down
-//				m_playerInputs.push({ m_players[0], 2 });
-//			if (arrowKey == 'K') //left
-//				m_playerInputs.push({ m_players[0], 3 });
-//			if (arrowKey == 'M') //right
-//				m_playerInputs.push({ m_players[0], 4 });
-//		}
-//		else 
-//			m_playerInputs.push({ m_players[0],keyboardInput});
-//		if (keyboardInput == 27) break; // ESCAPE, to ensure that the loop is not run again before the other thread changes m_isRunning to false
-//	}
-//}
 
-// Game data
 bool Game::AddPlayers(const std::vector<std::shared_ptr<Player>>& players, GameMode gm) {
-	// Generate map first
 	if (!m_map.Generate()) {
 		std::cerr << "Error: Map generation failed" << std::endl;
 		return false;
@@ -485,13 +420,11 @@ bool Game::AddPlayers(const std::vector<std::shared_ptr<Player>>& players, GameM
 
 	std::cout << "Map generated successfully. Dimensions: " << m_map.GetMapWidth() << "x" << m_map.GetMapHeight() << std::endl;
 
-	// Validate map dimensions
 	if (m_map.GetMapWidth() == 0 || m_map.GetMapHeight() == 0) {
 		std::cerr << "Error: Invalid map dimensions after generation" << std::endl;
 		return false;
 	}
 
-	// Resize player vector safely
 	try {
 		m_players.resize(players.size());
 		std::cout << "Resized m_players to: " << m_players.size() << std::endl;
@@ -525,9 +458,9 @@ bool Game::AddPlayers(const std::vector<std::shared_ptr<Player>>& players, GameM
 					{ spawnPoints[i].x, spawnPoints[i].y },
 					Direction::South,
 					State::Idle,
-					i
+					i,
+					3
 				);
-				// Add player to map grid like in original code
 				m_map[spawnPoints[i].y][spawnPoints[i].x] = m_players[i];
 				std::cout << "Successfully added player " << i << " to map" << std::endl;
 			}
@@ -545,9 +478,9 @@ bool Game::AddPlayers(const std::vector<std::shared_ptr<Player>>& players, GameM
 					{ spawnPoints[i].x, spawnPoints[i].y },
 					Direction::South,
 					State::Idle,
-					i%2
+					i%2,
+					1
 				);
-				// Add player to map grid like in original code
 				m_map[spawnPoints[i].y][spawnPoints[i].x] = m_players[i];
 				std::cout << "Successfully added player " << i << " to map" << std::endl;
 			}
@@ -558,9 +491,7 @@ bool Game::AddPlayers(const std::vector<std::shared_ptr<Player>>& players, GameM
 	std::cout << "Unknown game mode" << std::endl;
 	return false;
 }
-//Map* map, const std::pair<int, int>& pos,  Direction facing, State state, uint8_t teami
 
-// Getteri
 std::shared_ptr<Player> Game::GetPlayerByName(const std::string& username)
 {
 	for (auto player : m_players) {

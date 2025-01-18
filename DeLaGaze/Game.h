@@ -123,5 +123,6 @@ private:
 	std::queue<std::pair<std::shared_ptr<Player>,char>> m_playerInputs;
 
 	std::vector<std::vector<uint8_t>> m_teamLeaderboard;
+	std::unordered_set<uint8_t> m_eliminatedTeams;
 
 };

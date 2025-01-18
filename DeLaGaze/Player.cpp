@@ -403,12 +403,12 @@ crow::json::wvalue Player::toJson()
 	jsonPlayerObj["spawnY"] = m_spawnpoint.second;
 	return jsonPlayerObj;
 }
-void Player::SetPlayerInGame(Map* map, const std::pair<int, int>& pos, Direction facing, State state, uint8_t teamid) {
+void Player::SetPlayerInGame(Map* map, const std::pair<int, int>& pos, Direction facing, State state, uint8_t teamid, uint8_t hp) {
 	
 	m_playerState = state;
 	m_facing = facing;
 	m_playerMap = map;
-	m_hp = 3;
+	m_hp = hp;
 	m_teamId = teamid;
 	m_mapX = pos.first;
 	m_mapY = pos.second;
