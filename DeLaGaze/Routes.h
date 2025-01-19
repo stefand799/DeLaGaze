@@ -26,7 +26,7 @@ class Routes
 		crow::response GetPlayers(const crow::request& req, const std::string& username);
 		crow::response GetBullets(const crow::request& req, const std::string& username);
 		crow::response GameStarted(const crow::request& req, const std::string& username);
-
+		bool IsGameActive(const std::string& username);
 private:
 		crow::SimpleApp m_app;
 		std::shared_ptr<database::PlayerStorage> m_db;

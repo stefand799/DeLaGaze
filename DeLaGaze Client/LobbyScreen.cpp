@@ -5,8 +5,7 @@
 
 LobbyScreen::LobbyScreen(QWidget* parent)
 	: MiauScreen(":/DeLaGazeClient/images/miau_main.png", parent),
-	waitingLabel(new QLabel("Waiting for the game to commence . . .", this)),
-	backButton(new QPushButton("Back", this))
+	waitingLabel(new QLabel("Waiting for the game to commence . . .", this))
 {
 	waitingLabel->setStyleSheet("QLabel { background-color: aquamarine; }");
 	QFont labelFont;
@@ -19,16 +18,6 @@ LobbyScreen::LobbyScreen(QWidget* parent)
 	mainLayout->addWidget(waitingLabel);
 	mainLayout->setAlignment(Qt::AlignCenter);
 	setLayout(mainLayout);
-
-	QFont backButtonFont;
-	backButtonFont.setPointSize(15);
-	backButton->setFixedSize(200, 50);
-	backButton->setFont(backButtonFont);
-	connect(backButton, &QPushButton::clicked, this, [&]() { emit backButtonClicked(); });
-
-	auto topLayout = new QHBoxLayout;
-	topLayout->addWidget(backButton);
-	topLayout->addStretch();
 
 
 	hasGameStartedTimer = new QTimer(this);

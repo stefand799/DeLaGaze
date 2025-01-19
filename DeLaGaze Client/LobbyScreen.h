@@ -23,5 +23,4 @@ public slots:
 private:
     QTimer* hasGameStartedTimer;
     QLabel* waitingLabel;
-    QPushButton* backButton;
 };

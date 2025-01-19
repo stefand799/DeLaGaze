@@ -19,7 +19,7 @@ private:
 	std::chrono::time_point<std::chrono::steady_clock> m_timerStart;
 	bool m_timerActive = false;
 	const int MAX_PLAYERS = 4;
-	const int TIMER_THRESHOLD = 10;
+	const int TIMER_THRESHOLD = 30;
 	std::string m_id;
 	GameMode m_gameMode;
 	std::vector<std::shared_ptr<Player>> m_players;

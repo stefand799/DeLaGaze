@@ -5,7 +5,6 @@
 #include "MiauScreen.h"
 #include "qlabel.h"
 #include "qpushbutton.h"
-/*TODO: server requests, to get the upgrade number, the player's score and points,*/
 class UpgradesScreen  : public MiauScreen
 {
 	Q_OBJECT

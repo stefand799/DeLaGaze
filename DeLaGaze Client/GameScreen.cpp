@@ -16,7 +16,7 @@ GameScreen::GameScreen(QWidget *parent)
 		{
 			emit getGameStateRequest();
 		});
-	gameStateTimer->start(16);
+	gameStateTimer->start(33);
 
     connect(inputTimer, &QTimer::timeout, this, &GameScreen::processInput);
     inputTimer->start(16);

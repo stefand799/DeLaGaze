@@ -382,6 +382,7 @@ bool Game::CheckEndCondition()
 
 void Game::HandleEndOfGameActions()
 {
+
 	size_t leaderboardSize = m_teamLeaderboard.size();
 	if (m_mode == GameMode::FFA) {
 		if (leaderboardSize >= 1) {
@@ -402,6 +403,7 @@ void Game::HandleEndOfGameActions()
 			}
 		}
 	}
+
 }
 
 Map& Game::GetMap() {

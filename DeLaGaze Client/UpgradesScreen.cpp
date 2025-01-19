@@ -8,13 +8,11 @@ UpgradesScreen::UpgradesScreen(QWidget* parent)
 	:MiauScreen(":/DeLaGazeClient/images/miau_main.png", parent),
 	fireRateLabel(new QLabel("Fire Rate", this)),
 	bulletSpeedLabel(new QLabel("Bullet Speed", this)),
-	fireRateBuyButton(new QPushButton("Buy\n(X points)", this)),
-	bulletSpeedBuyButton(new QPushButton("Buy\n(Y score)", this)),
+	fireRateBuyButton(new QPushButton("Buy\n(500 points)", this)),
+	bulletSpeedBuyButton(new QPushButton("Buy\n(10 score)", this)),
 	backButton(new QPushButton("Back", this))
 {
-	int pointsPlaceholder = 3000;
-	int scorePlaceholder = 900;
-	QLabel* pointsLabel = new QLabel(this);
+	
 
 	fireRateLabel->setStyleSheet("QLabel { background-color: red; }");
 	bulletSpeedLabel->setStyleSheet("QLabel { background-color: yellow; }");

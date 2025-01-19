@@ -1,7 +1,7 @@
 #include "Lobby.h"
 
 Lobby::Lobby(std::string id, GameMode gameMode, std::shared_ptr < database::PlayerStorage> db) 
-    : m_id{ id }, m_gameMode{ gameMode }, m_db{ db }, MAX_PLAYERS{ 4 } {}
+    : m_id{ id }, m_gameMode{ gameMode }, m_db{ db }, MAX_PLAYERS{ 4 }, m_game{ nullptr } {}
 bool Lobby::JoinLobby(std::shared_ptr<Player> player) {
     m_players.emplace_back(std::move(player));
 
@@ -45,9 +45,11 @@ void Lobby::StartGame() {
     }
     std::cout << "Game started in lobby: " << m_id << " with " << m_players.size() << " players." << std::endl;
     if (!m_game->IsRunning()) {
+       
         for (auto& player : m_players)
             m_db->UpdatePlayer(player);
-        this->~Lobby();
+        m_game->~Game();
+        m_game = nullptr;
     }
         
 }

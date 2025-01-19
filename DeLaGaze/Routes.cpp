@@ -40,15 +40,6 @@ void Routes::Run(std::shared_ptr<database::PlayerStorage> playerStorage, std::sh
 	m_app.port(18080).multithreaded().run();
 }
 
-crow::response Routes::GetPlayers(const crow::request& req, const std::string& username) {
-	return crow::response(404, "Players not found");
-}
-
-crow::response Routes::GetBullets(const crow::request& req, const std::string& username) {
-
-	return crow::response(404, "Bullets not found");
-}
-
 crow::response Routes::GameStarted(const crow::request& req, const std::string& username) {
 	auto lobby = this->m_lobbies->GetLobbyByPlayer(username);
 	if (!lobby)
@@ -238,8 +229,24 @@ crow::response Routes::GetPlayersFromDatabase(std::shared_ptr<database::PlayerSt
 }
 
 crow::response Routes::GetGameStateAsJson(const crow::request& req, const std::string& username) {
-	if (m_lobbies->GetLobbyByPlayer(username)->GetGame() == nullptr)
-		return crow::response(301, "Game has finished!");
-	crow::json::wvalue gameStateJson = this->m_lobbies->GetLobbyByPlayer(username)->m_game->GameStateToJson();
+	if (!IsGameActive(username)) {
+		return crow::response(301, "Game has ended");
+	}
+
+	auto lobby = m_lobbies->GetLobbyByPlayer(username);
+	auto game = lobby->GetGame();
+
+	crow::json::wvalue gameStateJson = game->GameStateToJson();
 	return crow::response(200, gameStateJson.dump());
+}
+
+bool Routes::IsGameActive(const std::string& username) {
+	auto lobby = m_lobbies->GetLobbyByPlayer(username);
+	if (!lobby) return false;
+
+	auto game = lobby->GetGame();
+	if (!game) return false;
+
+	std::cout << game->IsRunning() << game->IsRunning() << game->IsRunning() << game->IsRunning() << game->IsRunning() << game->IsRunning() << game->IsRunning() << game->IsRunning() << game->IsRunning() << game->IsRunning() << game->IsRunning() << game->IsRunning();
+	return game->IsRunning();
 }

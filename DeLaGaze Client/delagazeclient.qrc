@@ -26,5 +26,21 @@
         <file>sprites/unbreakable_block.png</file>
         <file>images/miau_login.png</file>
         <file>images/miau_main.png</file>
+        <file>sprites/player_2_Idle_East.gif</file>
+        <file>sprites/player_2_Idle_North.gif</file>
+        <file>sprites/player_2_Idle_South.gif</file>
+        <file>sprites/player_2_Idle_West.gif</file>
+        <file>sprites/player_2_Shooting_East.gif</file>
+        <file>sprites/player_2_Shooting_North.gif</file>
+        <file>sprites/player_2_Shooting_South.gif</file>
+        <file>sprites/player_2_Shooting_West.gif</file>
+        <file>sprites/player_3_Idle_East.gif</file>
+        <file>sprites/player_3_Idle_North.gif</file>
+        <file>sprites/player_3_Idle_South.gif</file>
+        <file>sprites/player_3_Idle_West.gif</file>
+        <file>sprites/player_3_Shooting_East.gif</file>
+        <file>sprites/player_3_Shooting_North.gif</file>
+        <file>sprites/player_3_Shooting_South.gif</file>
+        <file>sprites/player_3_Shooting_West.gif</file>
     </qresource>
 </RCC>

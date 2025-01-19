@@ -74,12 +74,6 @@ void DeLaGazeClient::initializeConnections(){
             stackedWidget->setCurrentWidget(lobbyScreen);
 
             connect(lobbyScreen, &LobbyScreen::hasGameStartedRequest, reqManager, &GameClientReqManager::checkHasGameStarted);
-            connect(lobbyScreen, &LobbyScreen::backButtonClicked, this, [&]()
-                {
-                    /*TODO: REQUEST FOR LEAVING THE LOBBY!!*/
-                    stackedWidget->setCurrentWidget(playScreen);
-                });
-            
             connect(reqManager, &GameClientReqManager::hasGameStartedSuccess, lobbyScreen, &LobbyScreen::onGameStart);
             connect(reqManager, &GameClientReqManager::hasGameStartedSuccess, this, [&](const std::string& successMessage)
                 {
@@ -97,6 +91,8 @@ void DeLaGazeClient::initializeConnections(){
                     connect(reqManager, &GameClientReqManager::getGameStateFailed, this, [&](const std::string& errorMessage)
                         {
                             qDebug() << "Get gamestate FAILED! " << errorMessage << "\n";
+                            stackedWidget->setCurrentWidget(mainScreen);
+                            delete gameScreen;
                         });
 
                     connect(gameScreen, &GameScreen::playerMoveRequest, reqManager, &GameClientReqManager::playerMove);
@@ -140,8 +136,6 @@ void DeLaGazeClient::initializeConnections(){
         {
             qDebug() << "Join Lobby FAILED! " << errorMessage << "\n";
         });
-    
-
     
 
 
