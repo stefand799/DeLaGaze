@@ -21,7 +21,7 @@ crow::json::wvalue Map::toJson()
 			rowJson["type"] = ObjectTypeToString(y, x);
 			rowJson["x"] = x;
 			rowJson["y"] = y;
-			mapJson.push_back(std::move(rowJson));
+			mapJson.emplace_back(std::move(rowJson));
 		}
 	}
 	crow::json::wvalue mapData;

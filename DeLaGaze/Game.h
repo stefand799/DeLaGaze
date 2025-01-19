@@ -7,6 +7,7 @@
 #include "Player.h"
 #include "Bullet.h"
 #include "Map.h"
+#include "ObjectCollision.h"
 #include <vector>
 #include <unordered_set>
 #include <cstdint>
@@ -60,8 +61,6 @@ private:
 	void RemoveDestroyedObjects();
 
 	
-	//void GetPlayerInputs();
-
 	//Constants
 	const uint16_t kMaxFps = 60;
 
@@ -70,42 +69,12 @@ private:
 
 	Nsec m_shortestSleepTime;
 
-	
 
 	//Atributes
 	Map m_map;
 	std::vector<std::shared_ptr<Player>> m_players;
 	std::vector<std::shared_ptr<Bullet>> m_bullets;
 	GameMode m_mode;
-	
-	struct ObjectCollision {
-		ObjectCollision(std::shared_ptr<Object> obj1, std::shared_ptr<Object> obj2, float collisionTime) :
-			first{ obj1 },
-			second{ obj2 },
-			time{ collisionTime },
-			isBorderCollision{ false }
-		{}
-		ObjectCollision(std::tuple<std::shared_ptr<Object>,std::shared_ptr<Object>,float>&& values) :
-			first{ std::get<0>(values)},
-			second{ std::get<1>(values) },
-			time{ std::get<2>(values) },
-			isBorderCollision{ false }
-		{}
-		ObjectCollision(std::shared_ptr<Object> obj, float collisionTime) :
-			first{ obj },
-			second{ nullptr },
-			time{ collisionTime },
-			isBorderCollision{ true }
-		{}
-
-		std::shared_ptr<Object> first;
-		std::shared_ptr<Object> second;
-		float time;
-		bool isBorderCollision;
-		bool operator<(const ObjectCollision& other) const {
-			return this->time < other.time;
-		}
-	};
 
 	std::priority_queue<ObjectCollision> m_collisions;
 	float m_deltaTime;

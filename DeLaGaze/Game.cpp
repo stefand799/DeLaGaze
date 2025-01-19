@@ -37,13 +37,10 @@ void Game::SetGameMode(GameMode gameMode) {
 
 void Game::Update(){
 
-	for (std::shared_ptr<Bullet>& bullet : m_bullets)
-		bullet->Move(m_deltaTime);
-
-	for (std::shared_ptr<Player>& player : m_players) {
-		player->Move(m_deltaTime);
-	}
-
+	std::for_each(m_bullets.begin(), m_bullets.end(), [&](const std::shared_ptr<Bullet>& bullet) {bullet->Move(m_deltaTime); });
+	std::for_each(m_players.begin(), m_players.end(), [&](const std::shared_ptr<Player>& player) {player->Move(m_deltaTime); });
+	
+	
 	HandleCollisions();
 
 	if (CheckEndCondition()) {
@@ -86,7 +83,7 @@ void Game::HandleBulletToWallCollisions(std::shared_ptr<Bullet>& bullet)
 		std::shared_ptr<Object> collidedToObject = m_map[static_cast<int>(y)][static_cast<int>(x)];
 		Object::ObjectType type = collidedToObject->GetType();
 		if (type == Object::ObjectType::BombTrapBlock || type == Object::ObjectType::BreakableBlock || type == Object::ObjectType::UnbreakableBlock || type == Object::ObjectType::DeadlyBlock) 
-			m_collisions.emplace(std::move(ObjectCollision{ bullet, collidedToObject, 0 }));
+			m_collisions.emplace(bullet, collidedToObject, 0 );
 	}
 
 	if (xSpeed < 0.0f) {
@@ -97,7 +94,7 @@ void Game::HandleBulletToWallCollisions(std::shared_ptr<Bullet>& bullet)
 				std::shared_ptr<Object> collidedToObject = m_map[static_cast<int>(y)][nextBlockX];
 				Object::ObjectType type = collidedToObject->GetType();
 				if (type == Object::ObjectType::BombTrapBlock || type == Object::ObjectType::BreakableBlock || type == Object::ObjectType::UnbreakableBlock || type == Object::ObjectType::DeadlyBlock)
-					m_collisions.emplace(std::move(ObjectCollision{ bullet, collidedToObject, t }));
+					m_collisions.emplace(bullet, collidedToObject, t);
 			}
 			t = (nextBlockX-- -x + radius) / xSpeed;
 		} while (t < m_deltaTime && nextBlockX >= 0);
@@ -110,7 +107,7 @@ void Game::HandleBulletToWallCollisions(std::shared_ptr<Bullet>& bullet)
 				std::shared_ptr<Object> collidedToObject = m_map[static_cast<int>(y)][nextBlockX];
 				Object::ObjectType type = collidedToObject->GetType();
 				if (type == Object::ObjectType::BombTrapBlock || type == Object::ObjectType::BreakableBlock || type == Object::ObjectType::UnbreakableBlock || type == Object::ObjectType::DeadlyBlock)
-					m_collisions.emplace(std::move(ObjectCollision{ bullet, collidedToObject, t }));
+					m_collisions.emplace(bullet, collidedToObject, t );
 			}
 			t = (++nextBlockX - x - radius) / xSpeed;
 		} while (t < m_deltaTime && nextBlockX < m_map.GetMapWidth());
@@ -124,7 +121,7 @@ void Game::HandleBulletToWallCollisions(std::shared_ptr<Bullet>& bullet)
 				std::shared_ptr<Object> collidedToObject = m_map[nextBlockY][static_cast<int>(x)];
 				Object::ObjectType type = collidedToObject->GetType();
 				if (type == Object::ObjectType::BombTrapBlock || type == Object::ObjectType::BreakableBlock || type == Object::ObjectType::UnbreakableBlock || type == Object::ObjectType::DeadlyBlock)
-					m_collisions.emplace(std::move(ObjectCollision{ bullet, collidedToObject, t }));
+					m_collisions.emplace(bullet, collidedToObject, t );
 			}
 			t = (nextBlockY-- - y + radius) / ySpeed;
 		} while (t < m_deltaTime && nextBlockY >= 0);
@@ -137,7 +134,7 @@ void Game::HandleBulletToWallCollisions(std::shared_ptr<Bullet>& bullet)
 				std::shared_ptr<Object> collidedToObject = m_map[nextBlockY][static_cast<int>(x)];
 				Object::ObjectType type = collidedToObject->GetType();
 				if (type == Object::ObjectType::BombTrapBlock || type == Object::ObjectType::BreakableBlock || type == Object::ObjectType::UnbreakableBlock || type == Object::ObjectType::DeadlyBlock)
-					m_collisions.emplace(std::move(ObjectCollision{ bullet, collidedToObject, t }));
+					m_collisions.emplace(bullet, collidedToObject, t);
 			}
 			t = (++nextBlockY - y - radius) / ySpeed;
 		} while (t < m_deltaTime && nextBlockY < m_map.GetMapHeight());
@@ -156,11 +153,11 @@ void Game::HandleBulletToBorderCollisions(std::shared_ptr<Bullet>& bullet)
 	float radius = bullet->GetRadius();
 
 	if (x < 0.0f || x > m_map.GetMapWidth()) {
-		m_collisions.emplace(std::move(ObjectCollision{ bullet, 0 }));
+		m_collisions.emplace(bullet, 0);
 		return;
 	}
 	if (y < 0.0f || y > m_map.GetMapHeight()) {
-		m_collisions.emplace(std::move(ObjectCollision{ bullet, 0 }));
+		m_collisions.emplace(bullet, 0);
 		return;
 	}
 
@@ -179,11 +176,11 @@ void Game::HandleBulletToBorderCollisions(std::shared_ptr<Bullet>& bullet)
 	
 
 	if (tx > 0 && tx <= m_deltaTime) {
-		m_collisions.emplace(std::move(ObjectCollision{ bullet,tx }));
+		m_collisions.emplace(bullet,tx);
 		return;
 	}
 	if (ty > 0 && ty <= m_deltaTime) {
-		m_collisions.emplace(std::move(ObjectCollision{ bullet,ty }));
+		m_collisions.emplace(bullet,ty);
 		return;
 	}
 }
