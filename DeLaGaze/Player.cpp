@@ -395,6 +395,7 @@ crow::json::wvalue Player::toJson()
 	jsonPlayerObj["type"] = "Player";
 	jsonPlayerObj["id"] = m_id;
 	jsonPlayerObj["username"] = m_username;
+	jsonPlayerObj["teamId"] = m_teamId;
 	jsonPlayerObj["x"] = m_x;
 	jsonPlayerObj["y"] = m_y;
 	jsonPlayerObj["facing"] = DirectionToString(m_facing);

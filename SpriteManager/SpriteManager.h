@@ -28,5 +28,5 @@ private:
 
     std::string getSpriteForMapObject(const std::string& type);
     std::string getSpriteForBullet(const std::string& direction);
-    std::string getSpriteForPlayer(const std::string& state, const std::string& facing);
+    std::string getSpriteForPlayer(int teamId,const std::string& state, const std::string& facing);
 };

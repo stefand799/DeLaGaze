@@ -1,5 +1,29 @@
 <RCC>
     <qresource prefix="/DeLaGazeClient">
+        <file>sprites/breakable_block.png</file>
+        <file>sprites/bullet_down.gif</file>
+        <file>sprites/bullet_left.gif</file>
+        <file>sprites/bullet_right.gif</file>
+        <file>sprites/bullet_up.gif</file>
+        <file>sprites/deadly_block.png</file>
+        <file>sprites/pathway.png</file>
+        <file>sprites/player_0_Idle_East.gif</file>
+        <file>sprites/player_0_Idle_North.gif</file>
+        <file>sprites/player_0_Idle_South.gif</file>
+        <file>sprites/player_0_Idle_West.gif</file>
+        <file>sprites/player_0_Shooting_East.gif</file>
+        <file>sprites/player_0_Shooting_North.gif</file>
+        <file>sprites/player_0_Shooting_South.gif</file>
+        <file>sprites/player_0_Shooting_West.gif</file>
+        <file>sprites/player_1_Idle_East.gif</file>
+        <file>sprites/player_1_Idle_North.gif</file>
+        <file>sprites/player_1_Idle_South.gif</file>
+        <file>sprites/player_1_Idle_West.gif</file>
+        <file>sprites/player_1_Shooting_East.gif</file>
+        <file>sprites/player_1_Shooting_North.gif</file>
+        <file>sprites/player_1_Shooting_South.gif</file>
+        <file>sprites/player_1_Shooting_West.gif</file>
+        <file>sprites/unbreakable_block.png</file>
         <file>images/miau_login.png</file>
         <file>images/miau_main.png</file>
     </qresource>
