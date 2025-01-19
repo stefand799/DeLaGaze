@@ -346,6 +346,8 @@ crow::response Routes::GetPlayersFromDatabase(std::shared_ptr<database::PlayerSt
 
 crow::response Routes::GetGameStateAsJson(const crow::request& req, const std::string& username) {
 	//std::lock_guard<std::mutex> lock(m_mutex);
+	if (m_lobbies->GetLobbyByPlayer(username)->GetGame() == nullptr)
+		return crow::response(301, "Game has finished!");
 	crow::json::wvalue gameStateJson = this->m_lobbies->GetLobbyByPlayer(username)->m_game->GameStateToJson();
 	return crow::response(200, gameStateJson.dump());
 }

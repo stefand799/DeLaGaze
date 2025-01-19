@@ -27,7 +27,7 @@ std::shared_ptr<Lobby> LobbyManager::JoinALobby(std::shared_ptr<Player> player, 
     std::string playerUsername = player->GetUsername();
 
     for (auto& [id, lobby] : m_lobbies) {
-        if (lobby->GetMode() == gameMode && !lobby->GetGame()->IsRunning()) {
+        if (lobby->GetMode() == gameMode && lobby->GetGame() == nullptr) {
             lobby->JoinLobby(player);
             m_playerToLobby[playerUsername] = lobby;
             return lobby;

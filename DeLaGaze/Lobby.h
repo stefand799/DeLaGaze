@@ -8,7 +8,6 @@ class Routes;
 class Lobby{
 public:
 	Lobby(std::string id, GameMode gameMode, std::shared_ptr<database::PlayerStorage> db);
-	~Lobby();
 	bool JoinLobby(std::shared_ptr<Player> player);
 	void StartGame();
 	friend class Routes;
