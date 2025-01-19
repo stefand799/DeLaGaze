@@ -5,11 +5,10 @@ MainScreen::MainScreen(QWidget* parent)
 	:MiauScreen(":/DeLaGazeClient/images/miau_main.png",parent),
 	 playButton(new QPushButton("Play",this)),
 	 upgradesButton(new QPushButton("Upgrades",this)),
-	 optionsButton(new QPushButton("Options",this)),
 	 logoutButton(new QPushButton("Logout",this)){
 
 	auto groupLayout = new QHBoxLayout();
-	QList<QPushButton*> buttons = { playButton,upgradesButton,optionsButton,logoutButton };
+	QList<QPushButton*> buttons = { playButton,upgradesButton,logoutButton };
 	QFont buttonFont;
 	buttonFont.setPointSize(20);
 	for (auto button : buttons) {
@@ -33,8 +32,6 @@ void MainScreen::buttonClicked(){
 		emit selectedScreen(Screen::PlayScreen);
 	}else if (clickedButton==upgradesButton){
 		emit selectedScreen(Screen::UpgradesScreen);
-	}else if (clickedButton==optionsButton){
-		emit selectedScreen(Screen::OptionsScreen);
 	}else if (clickedButton==logoutButton){
 		emit selectedScreen(Screen::LoginScreen);
 	}

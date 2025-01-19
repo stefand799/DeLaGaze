@@ -22,6 +22,5 @@ private:
 	QPushButton* upgradesButton;
 	QPushButton* playButton;
 	QPushButton* logoutButton;
-	QPushButton* optionsButton;
 };
 

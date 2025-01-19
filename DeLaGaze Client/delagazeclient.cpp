@@ -8,14 +8,11 @@ DeLaGazeClient::DeLaGazeClient(QWidget* parent)
     mainScreen(new MainScreen(this)),
     playScreen(new PlayScreen(this)),
 	upgradesScreen(new UpgradesScreen(this)),
-	//lobbyScreen(new LobbyScreen(this)),
-	//gameScreen(new GameScreen(this)),
 	reqManager(new GameClientReqManager("http://127.0.0.1:18080",this))
 {
     ui.setupUi(this);
 
-    this->resize(1920, 1080);
-    //this->setFixedSize(1920, 1080);
+    this->resize(1280, 960);
 
     setCentralWidget(stackedWidget);
 
@@ -23,25 +20,19 @@ DeLaGazeClient::DeLaGazeClient(QWidget* parent)
     stackedWidget->addWidget(mainScreen);
     stackedWidget->addWidget(playScreen);
     stackedWidget->addWidget(upgradesScreen);
-    //stackedWidget->addWidget(lobbyScreen);
-    //stackedWidget->addWidget(gameScreen);
     initializeConnections();
     stackedWidget->setCurrentWidget(loginScreen);
 }
 
 DeLaGazeClient::~DeLaGazeClient()
 {
-    delete reqManager;
 }
 
 void DeLaGazeClient::initializeConnections(){
-    //server components
     connect(loginScreen, &LoginScreen::loginRequest, reqManager, &GameClientReqManager::loginOrCreatePlayer);
     connect(upgradesScreen, &UpgradesScreen::bulletSpeedUpgradeRequest, reqManager, &GameClientReqManager::upgradeBulletSpeed);
     connect(upgradesScreen, &UpgradesScreen::fireRateUpgradeRequest, reqManager, &GameClientReqManager::upgradeFireRate);
-    //connect(lobbyScreen, &LobbyScreen::hasGameStartedRequest, reqManager, &GameClientReqManager::checkHasGameStarted);
 	connect(playScreen, &PlayScreen::joinLobbyRequest, reqManager, &GameClientReqManager::joinLobby);
-    //connect(gameScreen, &GameScreen::getGameStateRequest, reqManager, &GameClientReqManager::getGameState);
 
 	connect(reqManager, &GameClientReqManager::loginSuccess, this, [&](int id, const std::string& username, int score, int points, int fireRate, bool upgradeBS, const std::string& successMessage)
         {
@@ -96,11 +87,11 @@ void DeLaGazeClient::initializeConnections(){
                     if (!gameScreen) {
                         gameScreen = new GameScreen(this);
                         qDebug() << "GAME HAS STARTED! " << successMessage << "\n";
-                        // Dynamically create the GameScreen
-                        stackedWidget->addWidget(gameScreen);  // Add it to the stacked widget
+                        stackedWidget->addWidget(gameScreen);  
                     }
 
                     stackedWidget->setCurrentWidget(gameScreen);
+                    delete lobbyScreen;
                     connect(gameScreen, &GameScreen::getGameStateRequest, reqManager, &GameClientReqManager::getGameState);
                     connect(reqManager, &GameClientReqManager::getGameStateSuccess, gameScreen, &GameScreen::onGameStateReceived);
                     connect(reqManager, &GameClientReqManager::getGameStateFailed, this, [&](const std::string& errorMessage)
@@ -154,7 +145,6 @@ void DeLaGazeClient::initializeConnections(){
     
 
 
-    //UI components
 	connect(mainScreen, &MainScreen::selectedScreen, this, [&](MainScreen::Screen screen) {
         switch (screen)
         {
@@ -170,12 +160,6 @@ void DeLaGazeClient::initializeConnections(){
             break;
         }
         });
-    connect(playScreen, &PlayScreen::backButtonClicked, this, [&]() {
-        stackedWidget->setCurrentWidget(mainScreen);
-        });
-    connect(upgradesScreen, &UpgradesScreen::backButtonClicked, this, [&]()
-        {
-            stackedWidget->setCurrentWidget(mainScreen);
-        });
-    
+    connectBackButtonToMainScreen(playScreen, stackedWidget, mainScreen);
+    connectBackButtonToMainScreen(upgradesScreen, stackedWidget, mainScreen);
 }

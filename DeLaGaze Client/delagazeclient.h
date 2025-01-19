@@ -18,6 +18,12 @@ class DeLaGazeClient : public QMainWindow
 public:
     DeLaGazeClient(QWidget *parent = nullptr);
     ~DeLaGazeClient();
+    template<typename Screen>
+    void connectBackButtonToMainScreen(Screen* screen, QStackedWidget* stackedWidget, QWidget* mainScreen) {
+        connect(screen, &Screen::backButtonClicked, stackedWidget, [stackedWidget, mainScreen]() {
+            stackedWidget->setCurrentWidget(mainScreen);
+            });
+    }
 
 private:
     Ui::DeLaGazeClientClass ui;

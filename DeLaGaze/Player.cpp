@@ -131,6 +131,7 @@ void Player::Move(float deltaTime)
 	if (m_previousMapY > m_mapY) {
 		m_y = std::max(m_y - deltaTime * m_playerSpeed, m_mapY + 0.5f);;
 	}
+	this->SetPlayerState(State::Idle);
 }
 
 void Player::MoveUp()
@@ -255,10 +256,10 @@ void Player::MoveRight()
 }
 
 // Facing
-void Player::FaceNorth() { m_facing = Direction::North; }
-void Player::FaceSouth() { m_facing = Direction::South; }
-void Player::FaceWest() { m_facing = Direction::West; }
-void Player::FaceEast() { m_facing = Direction::East; }
+void Player::FaceNorth() { m_facing = Direction::North; m_playerState = State::Idle; }
+void Player::FaceSouth() { m_facing = Direction::South; m_playerState = State::Idle;}
+void Player::FaceWest() { m_facing = Direction::West; m_playerState = State::Idle;}
+void Player::FaceEast() { m_facing = Direction::East; m_playerState = State::Idle;}
 
 // Functionalities
 void Player::Shoot(std::vector<std::shared_ptr<Bullet>>& bullets) {
@@ -284,6 +285,7 @@ void Player::Shoot(std::vector<std::shared_ptr<Bullet>>& bullets) {
 	}
 	bullets.emplace_back(std::move(std::make_shared<Bullet>(std::dynamic_pointer_cast<Player>((*m_playerMap)[m_mapY][m_mapX]) , m_x, m_y, bulletSpeed, m_facing)));
 	m_lastShotTime = Clock::now();
+	this->SetPlayerState(State::Shooting);
 }
 void Player::Kill()
 {
@@ -372,7 +374,6 @@ std::string Player::StateToString(State state)
 	switch (state)
 	{
 	case State::Idle: return "Idle";
-	case State::Moving: return "Moving";
 	case State::Shooting: return "Shooting";
 	default: return "Unknown";
 

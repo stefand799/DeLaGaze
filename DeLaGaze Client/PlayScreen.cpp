@@ -5,7 +5,7 @@ PlayScreen::PlayScreen(QWidget* parent)
 	:MiauScreen(":/DeLaGazeClient/images/miau_main.png", parent),
 	/*TODO: stop hardcoding strings. Create a separate file for them, akin to the android strings.xml ( gotta be the .qrc here i think)*/
 	ffaGameDescription("An all out feline mayhem, where everyone must fend for themselves!\n\n * 2-4 players"),
-	teamGameDescription("A collaborative feline showdown,where everyone must fend for themselves, and their teammate!\n\n *2 teams of 2 players each \n* This gamemode does NOT offer any points\n "),
+	teamGameDescription("A collaborative feline showdown,where everyone must fend for themselves, and their teammate!\n\n *2 teams of 2 players each (Left vs Right) \n* This gamemode does NOT offer any points\n "),
 	ffaGameTextEdit(new QTextEdit( this)),
 	teamGameTextEdit(new QTextEdit(this)),
 	ffaGameButton(new QPushButton("Free For All", this)),
@@ -74,26 +74,6 @@ PlayScreen::PlayScreen(QWidget* parent)
 PlayScreen::~PlayScreen()
 {}
 
-std::vector<std::vector<std::string>> PlayScreen::deserializeMapToGrid(const std::string& jsonString) {
-	json jsonData = json::parse(jsonString);
-
-	int mapHeight = jsonData["height"];
-	int mapWidth = jsonData["width"];
-
-	std::vector<std::vector<std::string>> grid(mapHeight, std::vector<std::string>(mapWidth, ""));
-
-	for (const auto& obj : jsonData["map"]) {
-		int x = obj["x"];
-		int y = obj["y"];
-		std::string type = obj["type"];
-
-		if (x >= 0 && x < mapHeight && y >= 0 && y < mapWidth) {
-			grid[x][y] = type;
-		}
-	}
-
-	return grid;
-}
 
 void PlayScreen::buttonClicked()
 {

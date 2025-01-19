@@ -13,7 +13,6 @@ class PlayScreen  : public MiauScreen
 public:
 	PlayScreen(QWidget *parent=nullptr);
 	~PlayScreen();
-	std::vector<std::vector<std::string>> deserializeMapToGrid(const std::string& jsonString);
 signals:
 	void backButtonClicked();
 	void joinLobbyRequest(const std::string& gameMode);
