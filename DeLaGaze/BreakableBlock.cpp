@@ -5,12 +5,9 @@ BreakableBlock::BreakableBlock(std::pair<size_t, size_t> pos) :
 {
 }
 
-void BreakableBlock::Print() const{
-	std::cout << "\033[37;43m" << " " << "\033[0m"; //B
-}
+
 
 void BreakableBlock::OnBreak(){
-	//Possibly call for break animation
 }
 
 crow::json::wvalue BreakableBlock::toJson()

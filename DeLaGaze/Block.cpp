@@ -10,7 +10,3 @@ std::pair<int, int> Block::GetPos()
 	return m_pos;
 }
 
-//void Block::Print() const {
-//	std::cout << "W";
-//}
-

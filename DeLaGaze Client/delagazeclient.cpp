@@ -37,7 +37,6 @@ void DeLaGazeClient::initializeConnections(){
 	connect(reqManager, &GameClientReqManager::loginSuccess, this, [&](int id, const std::string& username, int score, int points, int fireRate, bool upgradeBS, const std::string& successMessage)
         {
             std::cout << "Login successful for username: " << username << std::endl;
-        /*TODO: SET functions for screens which will display them (upgrades, and maybe main too)*/
             stackedWidget->setCurrentWidget(mainScreen);
         });
     connect(reqManager, &GameClientReqManager::loginFailed, this, [&](const std::string& errorMessage)
@@ -49,7 +48,6 @@ void DeLaGazeClient::initializeConnections(){
 
     connect(reqManager, &GameClientReqManager::upgradeBulletSpeedSuccess, this, [&]()
         {
-        /*TODO: display UI changes, accordingly. Also add the setters for the displayed values when the player is logged in*/
             qDebug() << "Bullet speed UPGRADED!\n";
         });
     connect(reqManager, &GameClientReqManager::upgradeBulletSpeedFailed, this, [&](const std::string& errorMessage)

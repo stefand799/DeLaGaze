@@ -5,9 +5,7 @@ UnbreakableBlock::UnbreakableBlock(std::pair<size_t, size_t> pos) :
 {
 }
 
-void UnbreakableBlock::Print() const{
-	std::cout << "\033[37;44m" << " " << "\033[0m"; //U
-}
+
 
 crow::json::wvalue UnbreakableBlock::toJson()
 {

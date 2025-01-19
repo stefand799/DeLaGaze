@@ -17,7 +17,6 @@ public:
 	virtual ObjectType GetType() const = 0;
 
 	virtual crow::json::wvalue toJson() = 0;
-	virtual void Print() const = 0;
 	virtual bool CanMoveHere() = 0;
 
 };

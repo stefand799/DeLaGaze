@@ -6,9 +6,7 @@ class GameClientReqManager :public QObject
 {
 	Q_OBJECT
 public:
-	/*TODO: replace the signals emitted by each screen, mainly those for navigation, with the proper server
-	 * induced ones, ALSO including signals inside of them!
-	 */
+	
 	GameClientReqManager(const std::string& serverUrl, QObject* parent = nullptr);
 	void loginOrCreatePlayer(const std::string& username);
 	void upgradeFireRate();
@@ -19,7 +17,6 @@ public:
 	void playerMove(const std::string& direction);
 	void playerFace(const std::string& direction);
 	void playerShoot();
-	//TODO: constants, remove headers where not needed
 signals:
 	void loginSuccess(int id,const std::string& username, int score, int points, int fireRate, bool upgradeBS, const std::string& successMessage);
 	void loginFailed(const std::string& errorMessage);

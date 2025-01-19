@@ -13,7 +13,6 @@
 
 class Map
 {
-	//Constuctors and destructors
 public:
 	Map();
 	Map(const Map&) = default;
@@ -23,16 +22,13 @@ public:
 	~Map() = default;
 
 
-	//Getter
 	const std::vector<std::shared_ptr<Object>>& operator[](size_t line) const;
 	
-	//Getter and/or setter
 	std::vector<std::shared_ptr<Object>>& operator[](size_t line);
 
 	uint8_t GetMapWidth() const { return m_mapWidth; };
 	uint8_t GetMapHeight() const { return m_mapHeight; };
 
-	//Methods
 public:
 
 	void Shrink();
@@ -40,14 +36,13 @@ public:
 
 	bool Generate(
 		const std::vector<uint8_t>& probabilities = std::vector<uint8_t>{
-			35, /*Pathway*/
-			25, /*UnbreakableBlock*/
-			40 /*BreakableBlock*/ },
+			35, 
+			25, 
+			40  },
 			uint32_t seed = std::random_device{}()
 			);
 
 
-	//Methods
 private:
 	bool VerifyProbabilities();
 	void GenerateDimensions();
@@ -61,7 +56,6 @@ private:
 	void BreakUnbreakableOnBestPath(std::vector<std::vector<std::pair<size_t, size_t>>> path, std::pair<size_t, size_t> start, std::pair<size_t, size_t> end);
 
 private:
-	//Usings
 	using Clock = std::chrono::high_resolution_clock;
 
 	class BestPathNode {
@@ -88,7 +82,6 @@ private:
 
 
 
-	//Constants
 private:
 	const uint8_t kMinMapWidth { 12 }, kMinMapHeight { 8 },
 		kMaxMapWidth { 20 }, kMaxMapHeight  { 12 };
@@ -96,7 +89,6 @@ private:
 
 	const std::chrono::seconds kShrinkCooldown = std::chrono::seconds(15);
 
-	//Atributes
 private:
 	std::vector<std::vector<std::shared_ptr<Object>>> m_matrix;
 	std::vector<uint8_t> m_probabilities;

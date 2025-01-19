@@ -16,15 +16,12 @@ class Player: public Object {
 public:
 	ObjectType GetType() const override { return ObjectType::Player; };
 	
-	// Constructors
 	Player() = default;
 	Player(Map* m, const std::pair<int,int>& pos, const int& id, const std::string& username, uint8_t points, uint8_t fireRate, bool bulletSpeedUpgrade, Direction facing, State playerState, uint8_t score = 0, uint8_t teamid = 0, uint8_t hp = 3);
 	Player(const int& id, const std::string& username, uint8_t score, uint16_t points, uint8_t fireRate, bool bulletSpeedUpgrade);
 	~Player() = default;
 
-	// Operators
 	Player& operator=(const Player& other);
-	// Getters
 	const int GetId() const;
 	const std::string GetUsername() const;
 	uint8_t GetScore() const;
@@ -35,13 +32,12 @@ public:
 	float GetX() const;
 	float GetY() const;
 	bool GetMovingState() const;
-	State GetPlayerState() const;	// This will be moved in client, maybe
+	State GetPlayerState() const;	
 	Direction GetFacing() const;
 	Map* GetMap() const;
 	uint8_t GetTeamId() const;
 	std::tuple<std::shared_ptr<Object>, std::shared_ptr<Object>, float> GetBulletToPlayerColision(std::shared_ptr<Bullet> bullet);
 
-	// Setteri
 	void SetId(int id);
 	void SetUsername(const std::string& username);
 	void SetScore(uint8_t score);
@@ -55,7 +51,6 @@ public:
 	void SetY(const int& y);
 	void SetPlayerInGame(Map* map, const std::pair<int, int>& pos, Direction facing, State state, uint8_t teamid, uint8_t hp);
 
-	// Movement
 	bool CanMoveHere() override;
 	void Move(float deltaTime);
 	void MoveUp();
@@ -63,18 +58,15 @@ public:
 	void MoveLeft();
 	void MoveRight();
 
-	// Facing
 	void FaceNorth();
 	void FaceSouth();
 	void FaceWest();
 	void FaceEast();
 	
-	// Functionalities
 	void Shoot(std::vector<std::shared_ptr<Bullet>>& bullets);
 	void Kill();
 	void OnDeath();
 	void Respawn();
-	void Print() const override;
 	virtual crow::json::wvalue toJson() override;
 	std::string DirectionToString(Direction direction);
 	std::string StateToString(State state);
@@ -82,7 +74,6 @@ public:
 private:
 	using Clock = std::chrono::high_resolution_clock;
 	using fSecDur = std::chrono::duration<float>;
-	//Constants
 	const float kFireRates[4] = {
 		1.0f,
 		0.5f,
@@ -97,7 +88,6 @@ private:
 	const float kPlayerHitBoxRadius = 0.3f;
 	const float kSpawnProtection = 3.0f;
 
-	//Atributes
 	int m_id;
 	std::string m_username;
 	Map* m_playerMap;

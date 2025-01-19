@@ -1,5 +1,4 @@
-#include "pch.h" // Include only if using precompiled headers
-
+#include "pch.h" 
 
 #include "SpriteManager.h"
 
@@ -28,7 +27,6 @@ QVector<QPair<QVariant, QPair<double, double>>> SpriteManager::processGameState(
 
     return sprites;
 }
-//TODO: DYNAMIC FOR ALL
 void SpriteManager::processMapSprites(const crow::json::rvalue& mapData, QVector<QPair<QVariant, QPair<double, double>>>& sprites) {
     for (const auto& mapObject : mapData) {
         if (mapObject.has("x") && mapObject.has("y") && mapObject.has("type")) {

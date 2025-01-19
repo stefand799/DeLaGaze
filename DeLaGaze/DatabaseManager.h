@@ -31,17 +31,14 @@ namespace database
     class PlayerStorage
     {
     public:
-        // Constructor pentru sincronizarea schemei bazei de date
         PlayerStorage();
 
-        // Metode CRUD pentru tabela Players
         bool AddPlayer(const std::shared_ptr<Player>& player);
         std::shared_ptr<Player> GetPlayer(const std::string& username);
         bool UpdatePlayer(const std::shared_ptr<Player>& player);
         bool DeletePlayer(const std::string& username);
         std::vector<std::shared_ptr<Player>> GetAllPlayers();
-        //std::shared_ptr<Player> GetPlayerByName(const std::vector<std::shared_ptr<Player>>& playersVector,
-        //    const std::string& name);
+       
         std::shared_ptr<Player> GetPlayerByName(const std::string& username);
 
     private:

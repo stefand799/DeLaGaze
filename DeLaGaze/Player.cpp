@@ -2,7 +2,6 @@
 #include "Bullet.h"
 #include "DeadlyBlock.h"
 
-// Constructors
 
 Player::Player(Map* m, const std::pair<int, int>& pos, const int& id, const std::string& username, uint8_t points, uint8_t fireRate, bool bulletSpeedUpgrade, Direction facing, State playerState, uint8_t score, uint8_t teamid, uint8_t hp) :
 	m_playerMap{ m },
@@ -39,7 +38,6 @@ Player::Player(const int& id, const std::string& username, uint8_t score, uint16
 	m_bulletSpeed(fireRate),
 	m_bulletSpeedUpgrade(bulletSpeedUpgrade) {}
 
-// Operators
 
 Player& Player::operator=(const Player& other) {
 	if (this == &other)
@@ -75,7 +73,6 @@ Player& Player::operator=(const Player& other) {
 }
 
 
-// Getters
 const int Player::GetId() const{ return m_id; }
 const std::string Player::GetUsername() const { return m_username; }
 uint8_t Player::GetScore() const { return m_score; }
@@ -91,7 +88,6 @@ Direction Player::GetFacing() const { return m_facing; }
 Map* Player::GetMap() const { return m_playerMap; }
 uint8_t Player::GetTeamId() const { return m_teamId; }
 
-// Setters
 void Player::SetId(int id) { m_id = id; }
 void Player::SetUsername(const std::string& username) { m_username = username; }
 void Player::SetScore(uint8_t score) { m_score = score; }
@@ -104,7 +100,6 @@ void Player::SetPlayerState(const State& playerState) { m_playerState = playerSt
 void Player::SetX(const int& x) { m_mapX = x; }
 void Player::SetY(const int& y) { m_mapY = y; }
 
-// Movement
 bool Player::CanMoveHere() { return false; }
 
 void Player::Move(float deltaTime)
@@ -255,13 +250,11 @@ void Player::MoveRight()
 	m_endOfMove = Clock::now() + std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::duration<float>(kDefaultMoveCooldown));
 }
 
-// Facing
 void Player::FaceNorth() { m_facing = Direction::North; m_playerState = State::Idle; }
 void Player::FaceSouth() { m_facing = Direction::South; m_playerState = State::Idle;}
 void Player::FaceWest() { m_facing = Direction::West; m_playerState = State::Idle;}
 void Player::FaceEast() { m_facing = Direction::East; m_playerState = State::Idle;}
 
-// Functionalities
 void Player::Shoot(std::vector<std::shared_ptr<Bullet>>& bullets) {
 	if (m_hp == 0) return;
 	if (fSecDur(Clock::now() - m_lastShotTime).count() < kFireRates[m_fireRate]) return;
@@ -300,7 +293,7 @@ void Player::OnDeath()
 		Respawn();
 	}
 	else {
-		//TODO: Delete the player from the game
+		
 		(*m_playerMap)[m_mapY][m_mapX] = std::make_shared<Pathway>(std::pair<size_t, size_t>{m_mapY, m_mapX});
 	}
 }
@@ -362,13 +355,7 @@ std::tuple<std::shared_ptr<Object>, std::shared_ptr<Object>, float> Player::GetB
 	return std::tuple<std::shared_ptr<Object>, std::shared_ptr<Object>, float>{(*m_playerMap)[m_mapY][m_mapX], bullet, T };
 }
 
-void Player::Print() const
-{
-	if (m_facing == Direction::North) std::cout << "\033[37;41m" << "^" << "\033[0m";
-	if (m_facing == Direction::South) std::cout << "\033[37;41m" << "v" << "\033[0m";
-	if (m_facing == Direction::West) std::cout << "\033[37;41m" << "<" << "\033[0m";
-	if (m_facing == Direction::East) std::cout << "\033[37;41m" << ">" << "\033[0m";
-}
+
 std::string Player::StateToString(State state)
 {
 	switch (state)

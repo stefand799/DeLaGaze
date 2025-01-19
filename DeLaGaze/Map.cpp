@@ -74,7 +74,7 @@ void Map::Shrink()
 	if (m_isGenerated == false) return;
 
 	Clock::time_point now = Clock::now();
-	if (std::chrono::duration<float>(now - m_lastShrinkTime) < (m_shrinkOrder==0? std::chrono::seconds(5) : kShrinkCooldown))
+	if (std::chrono::duration<float>(now - m_lastShrinkTime) < (m_shrinkOrder==0? std::chrono::seconds(10) : kShrinkCooldown))
 		return;
 	if (m_shrinkOrder * 2 > std::min(m_mapWidth, m_mapHeight)) 
 		return;

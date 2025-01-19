@@ -1,6 +1,5 @@
 #include "Bullet.h"
 
-// Constructors
 Bullet::Bullet(std::shared_ptr<Player> owner, float x, float y, float speed, Direction direction) :
 	m_owner{ owner },
 	m_x{ x },
@@ -28,7 +27,6 @@ Bullet::Bullet(std::shared_ptr<Player> owner, float x, float y, float speed, Dir
 	}
 }
 
-// Getters 
 float Bullet::GetX() const
 {
 	return m_x;
@@ -57,7 +55,6 @@ std::shared_ptr<Player> Bullet::GetOwner() const
 	return m_owner;
 }
 
-// Functionalities
 void Bullet::Move(float deltaTime)
 {
 	if (deltaTime < 0.0f) return;
@@ -111,13 +108,7 @@ crow::json::wvalue Bullet::toJson()
 	jsonObj["direction"] = DirectionToString(m_direction);
 	return jsonObj;
 }
-void Bullet::Print() const
-{
-	if (m_direction == Direction::North) std::cout << "\033[37;42m" << "^" << "\033[0m";
-	if (m_direction == Direction::South) std::cout << "\033[37;42m" << "v" << "\033[0m";
-	if (m_direction == Direction::West) std::cout << "\033[37;42m" << "<" << "\033[0m";
-	if (m_direction == Direction::East) std::cout << "\033[37;42m" << ">" << "\033[0m";
-}
+
 
 
 

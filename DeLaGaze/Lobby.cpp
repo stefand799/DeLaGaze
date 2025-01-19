@@ -55,7 +55,7 @@ void Lobby::StartGame() {
 }
 
 
-// Getters
+
 std::shared_ptr<Game> Lobby::GetGame() {
     if (m_game) return m_game;
     return nullptr;
