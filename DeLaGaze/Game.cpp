@@ -208,7 +208,6 @@ void Game::HandleBulletToPlayerCollisions(std::shared_ptr<Bullet>& bullet)
 
 void Game::RemoveDestroyedObjects()
 {
-	std::lock_guard<std::mutex> lockCollisions(m_collisionsMutex);
 	std::unordered_set<std::shared_ptr<Object>> destroyedObjects;
 	while (!m_collisions.empty()) {
 		ObjectCollision currCollision = m_collisions.top();
@@ -312,7 +311,7 @@ void Game::Run()
 		Nsec sleepTime{ m_targetFrameDuration - frameTime };
 		if (frameTime < m_targetFrameDuration) {
 			Nsec remainingSleepTime = sleepTime;
-			if (sleepTime >= Nsec((1000000 / 64) * 2)) std::this_thread::sleep_for(sleepTime / 2);
+			if(sleepTime >= Nsec((1000000/64)*2)) std::this_thread::sleep_for(sleepTime / 2);
 			while (Clock::now() < frameFinalTimePoint + sleepTime);
 		}
 
@@ -320,6 +319,7 @@ void Game::Run()
 	}
 
 	HandleEndOfGameActions();
+
 }
 
 void Game::CheckDeathmatchCondition()
@@ -363,7 +363,7 @@ bool Game::CheckEndCondition()
 			m_eliminatedTeams.insert(id);
 			if (m_teamLeaderboard.size() == currPos)
 				m_teamLeaderboard.push_back({ id });
-			else
+			else 
 				m_teamLeaderboard[currPos].push_back(id);
 		}
 	}
@@ -423,7 +423,14 @@ bool Game::AddPlayers(const std::vector<std::shared_ptr<Player>>& players, GameM
 		return false;
 	}
 
-	m_players.reserve(players.size());
+	try {
+		m_players.resize(players.size());
+		std::cout << "Resized m_players to: " << m_players.size() << std::endl;
+	}
+	catch (const std::exception& e) {
+		std::cerr << "Error resizing players vector: " << e.what() << std::endl;
+		return false;
+	}
 
 	m_mode = gm;
 
@@ -438,11 +445,13 @@ bool Game::AddPlayers(const std::vector<std::shared_ptr<Player>>& players, GameM
 		{0, static_cast<int>(m_map.GetMapHeight() - 1)},
 		{static_cast<int>(m_map.GetMapWidth() - 1), static_cast<int>(m_map.GetMapHeight() - 1)}
 	};
-	if (m_mode == GameMode::FFA) {
-		for (size_t i = 0; i < players.size() && i < spawnPoints.size(); ++i) {
-			if (players[i]) {
-				auto playerCopy = std::make_shared<Player>(*players[i]);
-				playerCopy->SetPlayerInGame(
+
+	if(m_mode == GameMode::FFA){
+		for (size_t i = 0; i < players.size() && i < 4; ++i) {
+			if (players[i] != nullptr) {
+				std::cout << "Adding player " << i << " at position (" << spawnPoints[i].x << ", " << spawnPoints[i].y << ")" << std::endl;
+				m_players[i] = players[i];
+				m_players[i]->SetPlayerInGame(
 					&m_map,
 					{ spawnPoints[i].x, spawnPoints[i].y },
 					Direction::South,
@@ -450,20 +459,19 @@ bool Game::AddPlayers(const std::vector<std::shared_ptr<Player>>& players, GameM
 					i,
 					3
 				);
-				m_map[spawnPoints[i].y][spawnPoints[i].x] = playerCopy;
-				m_players.push_back(playerCopy);
-				std::cout << "Added player " << i << " successfully" << std::endl;
+				m_map[spawnPoints[i].y][spawnPoints[i].x] = m_players[i];
+				std::cout << "Successfully added player " << i << " to map" << std::endl;
 			}
 		}
-		std::cout << "Final player count: " << m_players.size() << std::endl;
-		return !m_players.empty();
+		return true;
 	}
 	else
 	{
-		for (size_t i = 0; i < players.size() && i < spawnPoints.size(); ++i) {
-			if (players[i]) {
-				auto playerCopy = std::make_shared<Player>(*players[i]);
-				playerCopy->SetPlayerInGame(
+		for (size_t i = 0; i < players.size() && i < 4; ++i) {
+			if (players[i] != nullptr) {
+				std::cout << "Adding player " << i << " at position (" << spawnPoints[i].x << ", " << spawnPoints[i].y << ")" << std::endl;
+				m_players[i] = players[i];
+				m_players[i]->SetPlayerInGame(
 					&m_map,
 					{ spawnPoints[i].x, spawnPoints[i].y },
 					Direction::South,
@@ -471,13 +479,11 @@ bool Game::AddPlayers(const std::vector<std::shared_ptr<Player>>& players, GameM
 					i%2,
 					1
 				);
-				m_map[spawnPoints[i].y][spawnPoints[i].x] = playerCopy;
-				m_players.push_back(playerCopy);
-				std::cout << "Added player " << i << " successfully" << std::endl;
+				m_map[spawnPoints[i].y][spawnPoints[i].x] = m_players[i];
+				std::cout << "Successfully added player " << i << " to map" << std::endl;
 			}
 		}
-		std::cout << "Final player count: " << m_players.size() << std::endl;
-		return !m_players.empty();
+		return true;
 	}
 
 	std::cout << "Unknown game mode" << std::endl;

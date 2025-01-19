@@ -35,14 +35,11 @@ public:
 
 	bool IsRunning() { return m_isRunning; };
 private:
-	std::mutex m_collisionsMutex;
-	//Usings
 	using Clock = std::chrono::high_resolution_clock;
 	using Nsec = std::chrono::nanoseconds;
 	using fSecDur = std::chrono::duration<float>;
 
 
-	//Methods
 	crow::json::wvalue BulletsToJson();
 	crow::json::wvalue PlayersToJson();
 	crow::json::wvalue MapToJson();
@@ -62,16 +59,14 @@ private:
 	void RemoveDestroyedObjects();
 
 	
-	//Constants
 	const uint16_t kMaxFps = 60;
 
-	const std::chrono::seconds kTimeUntilDeathmatch = std::chrono::seconds(175);
+	const std::chrono::seconds kTimeUntilDeathmatch = std::chrono::seconds(170);
 
 
 	Nsec m_shortestSleepTime;
 
 
-	//Atributes
 	Map m_map;
 	std::vector<std::shared_ptr<Player>> m_players;
 	std::vector<std::shared_ptr<Bullet>> m_bullets;
