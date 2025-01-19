@@ -40,7 +40,6 @@ void Game::Update(){
 	std::for_each(m_bullets.begin(), m_bullets.end(), [&](const std::shared_ptr<Bullet>& bullet) {bullet->Move(m_deltaTime); });
 	std::for_each(m_players.begin(), m_players.end(), [&](const std::shared_ptr<Player>& player) {player->Move(m_deltaTime); });
 	
-	
 	HandleCollisions();
 
 	if (CheckEndCondition()) {
