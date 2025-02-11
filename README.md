@@ -18,11 +18,11 @@
 
 ## Installation
 * Clone the repository
-* Install dependencies :
-Qt: *Install the library according to its documentation*
-Cpr: *Install the library according to its documentation*
-Crow: *Install the library according to its documentation*
-Nlohmann JSON: *as above*
+* Install dependencies :  
+   * Qt: *Install the library according to its documentation*  
+   * Cpr: *Install the library according to its documentation*  
+   * Crow: *Install the library according to its documentation*  
+   * Nlohmann JSON: *as above*  
 * Build the DLL, then, the server and client
 * Run the server, and open as many clients as you desire
 
