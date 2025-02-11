@@ -12,7 +12,7 @@
 * **Client-Server Architecture**;
 * **DLL**: used to manage the sprites;
 * **Modern C++ features** : didactically implemented in order to satisfy our course's requests;
-* **Networking**: ensured by the implementation of CROW, CPR, and OkHTTP protocol;
+* **Networking**: ensured by the implementation of CROW, CPR, and HTTP protocol;
 * **Qt**: used in order to construct the GUI;
 * The possibility of running **multiple game instances** through our lobby management system .
 
@@ -27,9 +27,9 @@ Nlohmann JSON: *as above*
 * Run the server, and open as many clients as you desire
 
 ## Credits
-* Dinu Ionel-Ștefan  
-* Florea Alexandru-Florentin  
-* Jîtea Ștefan-Alexandru  
-* Sava Ștefan-Cristian  
-**Special thanks** to Oancea Alessia-Maria (Suksii) for her work on our game art. [Check her ArtStation account out!](https://suki_25.artstation.com/)
+* [Dinu Ionel-Ștefan](https://github.com/stefand799)  
+* [Florea Alexandru-Florentin](https://github.com/Alexfl14)  
+* [Jîtea Ștefan-Alexandru](https://github.com/Stefannn444)  
+* [Sava Ștefan-Cristian](https://github.com/SavaStefanCristian)  
+**Special thanks** to Oancea Alessia-Maria for her work on our game art. [Check her ArtStation account out!](https://suki_25.artstation.com/)
 ![HIGH RES SHOOT_FACING_EAST_SKIN2](https://github.com/user-attachments/assets/ad46feba-0c0b-4b40-87f9-cae7c7a9218e)
