@@ -13,6 +13,7 @@
 * **DLL**: used to manage the sprites;
 * **Modern C++ features** : didactically implemented in order to satisfy our course's requests;
 * **Networking**: ensured by the implementation of CROW, CPR, and HTTP protocol;
+* **Database Management**: ensured by the usage of SQLite ORM, for all pertaining user details;  
 * **Qt**: used in order to construct the GUI;
 * The possibility of running **multiple game instances** through our lobby management system .
 
@@ -21,7 +22,8 @@
 * Install dependencies :  
    * Qt: *Install the library according to its documentation*  
    * Cpr: *Install the library according to its documentation*  
-   * Crow: *Install the library according to its documentation*  
+   * Crow: *Install the library according to its documentation*
+   * SQLite ORM: *Install the library according to its documentation*  
    * Nlohmann JSON: *as above*  
 * Build the DLL, then, the server and client
 * Run the server, and open as many clients as you desire
