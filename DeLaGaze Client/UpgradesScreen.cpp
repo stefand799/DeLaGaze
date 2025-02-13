@@ -10,7 +10,9 @@ UpgradesScreen::UpgradesScreen(QWidget* parent)
 	bulletSpeedLabel(new QLabel("Bullet Speed", this)),
 	fireRateBuyButton(new QPushButton("Buy\n(500 points)", this)),
 	bulletSpeedBuyButton(new QPushButton("Buy\n(10 score)", this)),
-	backButton(new QPushButton("Back", this))
+	backButton(new QPushButton("Back", this)),
+	pointsLabel(new QLabel("Points: "+QString::number(points), this)),
+	scoreLabel(new QLabel("Score: "+QString::number(score), this))
 {
 	
 
@@ -18,6 +20,8 @@ UpgradesScreen::UpgradesScreen(QWidget* parent)
 	bulletSpeedLabel->setStyleSheet("QLabel { background-color: yellow; }");
 
 	auto groupLayout = new QFormLayout;
+	groupLayout->setAlignment(Qt::AlignCenter);
+
 	QList<QPair<QLabel*, QPushButton*>> items = { {fireRateLabel,fireRateBuyButton},{bulletSpeedLabel,bulletSpeedBuyButton} };
 	QFont buttonFont;
 	QFont labelFont;
@@ -37,10 +41,9 @@ UpgradesScreen::UpgradesScreen(QWidget* parent)
 		groupLayout->addRow(label, button);
 
 	}
-	auto mainLayout = new QVBoxLayout;
-	mainLayout->addLayout(groupLayout);
-	mainLayout->setAlignment(Qt::AlignCenter);
-	setLayout(mainLayout);
+
+	auto groupWidget = new QWidget(this);
+	groupWidget->setLayout(groupLayout);
 
 	QFont backButtonFont;
 	backButtonFont.setPointSize(15);
@@ -48,13 +51,50 @@ UpgradesScreen::UpgradesScreen(QWidget* parent)
 	backButton->setFont(backButtonFont);
 	connect(backButton, &QPushButton::clicked, this, &UpgradesScreen::buttonClicked);
 
+
 	auto topLayout = new QHBoxLayout;
 	topLayout->addWidget(backButton);
 	topLayout->addStretch();
+	topLayout->addWidget(pointsLabel);
+	topLayout->addStretch();
+	topLayout->addWidget(scoreLabel);
+	topLayout->addStretch();
+
+	auto mainLayout = new QVBoxLayout;
+	mainLayout->addLayout(topLayout);
+	mainLayout->addStretch();
+
+	auto centerLayout = new QHBoxLayout;
+	centerLayout->addStretch();
+	centerLayout->addWidget(groupWidget);
+	centerLayout->addStretch();
+
+	mainLayout->addLayout(centerLayout);
+	mainLayout->addStretch();
+
+
+	setLayout(mainLayout);
+
 }
 
 UpgradesScreen::~UpgradesScreen()
 {}
+
+void UpgradesScreen::setPointsAndLevel(int points, int fireRateLevel)
+{	points = points;
+	fireRateLevel = fireRateLevel;
+	pointsLabel->setText("Points: " + QString::number(points));
+	fireRateLabel->setText("Fire Rate\n" + QString::number(fireRateLevel) + "/4");
+	update();
+}
+
+void UpgradesScreen::setScoreAndLevel(int score, bool bulletSpeedLevel)
+{	score = score;
+	bulletSpeedLevel = bulletSpeedLevel;
+	scoreLabel->setText("Score: " + QString::number(score));
+	bulletSpeedLabel->setText("Bullet Speed\n" + QString::number(bulletSpeedLevel) + "/1");
+	update();
+}
 
 void UpgradesScreen::buttonClicked() {
 	QPushButton* clickedButton = qobject_cast<QPushButton*>(sender());

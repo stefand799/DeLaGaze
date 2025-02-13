@@ -36,6 +36,8 @@ void DeLaGazeClient::initializeConnections(){
 
 	connect(reqManager, &GameClientReqManager::loginSuccess, this, [&](int id, const std::string& username, int score, int points, int fireRate, bool upgradeBS, const std::string& successMessage)
         {
+            upgradesScreen->setPointsAndLevel(points,fireRate);
+            upgradesScreen->setScoreAndLevel(score,upgradeBS);
             std::cout << "Login successful for username: " << username << std::endl;
             stackedWidget->setCurrentWidget(mainScreen);
         });
@@ -46,17 +48,19 @@ void DeLaGazeClient::initializeConnections(){
         });
    
 
-    connect(reqManager, &GameClientReqManager::upgradeBulletSpeedSuccess, this, [&]()
+    connect(reqManager, &GameClientReqManager::upgradeBulletSpeedSuccess, this, [&](int score, bool upgradeBS, const std::string& successMessage)
         {
-            qDebug() << "Bullet speed UPGRADED!\n";
+            upgradesScreen->setScoreAndLevel(score, upgradeBS);
+            qDebug() << successMessage;
         });
     connect(reqManager, &GameClientReqManager::upgradeBulletSpeedFailed, this, [&](const std::string& errorMessage)
         {
             qDebug() << "Bullet speed FAILED!\n"<<errorMessage;
         });
-    connect(reqManager, &GameClientReqManager::upgradeFireRateSuccess, this, [&]()
+    connect(reqManager, &GameClientReqManager::upgradeFireRateSuccess, this, [&](int points, int fireRate, const std::string& successMessage)
         {
-            qDebug() << "FireRate UPGRADED!\n";
+            upgradesScreen->setPointsAndLevel(points,fireRate);
+            qDebug() << successMessage ;
         });
     connect(reqManager, &GameClientReqManager::upgradeFireRateFailed, this, [&](const std::string& errorMessage)
         {

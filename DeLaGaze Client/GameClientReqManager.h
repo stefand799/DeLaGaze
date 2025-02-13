@@ -20,9 +20,9 @@ public:
 signals:
 	void loginSuccess(int id,const std::string& username, int score, int points, int fireRate, bool upgradeBS, const std::string& successMessage);
 	void loginFailed(const std::string& errorMessage);
-	void upgradeFireRateSuccess(const std::string& successMessage);
+	void upgradeFireRateSuccess(int points,int fireRate,const std::string& successMessage);
 	void upgradeFireRateFailed(const std::string& errorMessage);
-	void upgradeBulletSpeedSuccess(const std::string& successMessage);
+	void upgradeBulletSpeedSuccess(int score, bool upgradeBS, const std::string& successMessage);
 	void upgradeBulletSpeedFailed(const std::string& errorMessage);
 	void joinLobbySuccess(const std::string& successMessage);
 	void joinLobbyFailed(const std::string& errorMessage);

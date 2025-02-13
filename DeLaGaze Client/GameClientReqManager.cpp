@@ -40,8 +40,14 @@ void GameClientReqManager::upgradeFireRate()
 	);
 
 	if (response.status_code == 200)
-		emit upgradeFireRateSuccess(response.text);
-	else
+	{
+		auto jsonResponse = crow::json::load(response.text);
+		int points = jsonResponse["points"].i();
+		int fireRate = jsonResponse["fireRate"].i();
+		std::string message = jsonResponse["message"].s();
+		emit upgradeFireRateSuccess(points,fireRate,message);
+	}
+		else
 		emit upgradeFireRateFailed(response.text);
 }
 
@@ -53,7 +59,13 @@ void GameClientReqManager::upgradeBulletSpeed()
 	);
 
 	if (response.status_code == 200)
-		emit upgradeBulletSpeedSuccess(response.text);
+	{
+		auto jsonResponse = crow::json::load(response.text);
+		int score = jsonResponse["score"].i();
+		int upgradeBS = jsonResponse["upgrade_bs"].b();
+		std::string message = jsonResponse["message"].s();
+		emit upgradeBulletSpeedSuccess(score,upgradeBS,message);
+	}
 	else
 		emit upgradeBulletSpeedFailed(response.text);
 }

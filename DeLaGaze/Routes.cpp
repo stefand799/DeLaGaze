@@ -176,11 +176,18 @@ crow::response Routes::UpdatePlayerFirerate(std::shared_ptr<database::PlayerStor
 {
 	auto player = playerStorage->GetPlayerByName(username);
 
+	if (player->GetFireRate() == 4)
+		return crow::response(201, "Upgrade already maxed out");
+
 	if (player->GetPoints() >= 500) {
 		player->SetFireRate(player->GetFireRate() + 1);
 		player->SetPoints(player->GetPoints() - 500);
 		if (playerStorage->UpdatePlayer(player)) {
-			return crow::response(200, "Player updated successfully");
+			crow::json::wvalue response_json;
+			response_json["points"] = player->GetPoints();
+			response_json["fireRate"] = player->GetFireRate();
+			response_json["message"] = "Player updated successfully!";
+			return crow::response(200, response_json);
 		}
 		else {
 			return crow::response(500, "Error updating player");
@@ -197,12 +204,16 @@ crow::response Routes::UpdatePlayerBulletSpeed(std::shared_ptr<database::PlayerS
 		return crow::response(400, "Player not found");
 	}
 	if (player->GetBulletSpeedUpgrade()){
-		return crow::response(200, "Upgrade already purchased");
+		return crow::response(201, "Upgrade already maxed out");
 	}
 	if (player->GetScore() >= 10) {
 		player->SetBulletSpeedUpgrade(true);
 		if (playerStorage->UpdatePlayer(player)) {
-			return crow::response(200, "Player updated successfully");
+			crow::json::wvalue response_json;
+			response_json["score"] = player->GetScore();
+			response_json["upgrade_bs"] = player->GetBulletSpeedUpgrade();
+			response_json["message"] = "Player updated successfully!";
+			return crow::response(200, response_json);
 		}
 		else {
 			return crow::response(500, "Error updating player");

@@ -13,6 +13,8 @@ public:
 	UpgradesScreen(QWidget *parent);
 	~UpgradesScreen();
 
+	void setPointsAndLevel(int points, int fireRateLevel);
+	void setScoreAndLevel(int score, bool bulletSpeedLevel);
 signals:
 	void bulletSpeedUpgradeRequest();
 	void fireRateUpgradeRequest();
@@ -25,4 +27,10 @@ private:
 	QPushButton* fireRateBuyButton;
 	QPushButton* bulletSpeedBuyButton;
 	QPushButton* backButton;
+	QLabel* pointsLabel;
+	QLabel* scoreLabel;
+	int points;
+	int score;
+	int fireRateLevel;
+	int bulletSpeedLevel;
 };
